@@ -1,7 +1,8 @@
 package com.esm.dao;
 
-import com.esm.domain.Sector;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.esm.domain.User;
+import org.apache.ibatis.annotations.Mapper;
 
 /**
  * <p>
@@ -11,6 +12,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  * @author 俞剑辉
  * @since 2022-08-23
  */
-public interface SectorDao extends BaseMapper<Sector> {
+@Mapper
+public interface UserDao extends BaseMapper<User> {
 
 }

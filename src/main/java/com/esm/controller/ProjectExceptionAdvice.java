@@ -15,7 +15,7 @@ public class ProjectExceptionAdvice {
 
     @ExceptionHandler(SystemException.class)
     public Result doSystemException(SystemException ex){
-
+        System.out.println(ex);
         //记录日志
 
         //发送信息给运维
@@ -29,14 +29,14 @@ public class ProjectExceptionAdvice {
 
     @ExceptionHandler(BusinessException.class)
     public Result doBusinessException(BusinessException ex){
-
+        System.out.println(ex);
         return new Result(ex.getCode(), null, ex.getMessage());
     }
 
 
     @ExceptionHandler(Exception.class)
     public Result doException(Exception ex){
-
+        System.out.println(ex);
 
         //记录日志
         //发送信息给运维

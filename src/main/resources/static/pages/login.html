@@ -22,9 +22,10 @@
         <link rel="stylesheet" href="../plugins/elementui/index.css">
 
         <link rel="stylesheet" href="../plugins/font-awesome/css/font-awesome.min.css">
-
-        <link rel="stylesheet" href="../css/style.css">
         <link rel="stylesheet" href="../css/massage.css">
+<!--        <link rel="stylesheet" href="../css/style.css">-->
+
+
         <!--        <link rel="stylesheet" href="../css/login.css">-->
     </head>
     <body>
@@ -42,7 +43,7 @@
                         <div class="div_info">
 <!--                            <span class="user_ico"></span>-->
 <!--                            <input Class="user inptText" style="width: 320px;height: 40px;border-radius: 20px" >-->
-                            <el-input v-model="formData.userName" placeholder="请输入用户名" ><i slot="prefix" class="user_ico"></i></el-input>
+                            <el-input v-model="formData.userId" placeholder="请输入用户名" ><i slot="prefix" class="user_ico"></i></el-input>
                         </div>
                     </li>
                     <li class="text_center" style="list-style:none;">
@@ -64,8 +65,8 @@
 
                             <div style="text-align: right;">
                                 <template>
-<!--                                    <el-link href="https://baidu.com" >忘记密码？</el-link>-->
-                                <a href="https://baidu.com" target="_blank" >忘记密码？</a>
+                                    <el-link href="https://baidu.com" target="_blank">忘记密码？</el-link>
+<!--                                <a href="https://baidu.com" target="_blank" >忘记密码？</a>-->
 
                                 </template>
 
@@ -108,7 +109,7 @@
 
 
                 login(){
-                    axios.post("/users/login",this.formData).then((res) =>{
+                    axios.post("/login",this.formData).then((res) =>{
                         if(res.data.code == 20041){
                             //如果操作成功，关团弹层。显示数据
                             this.dialogFormVisible=false;

@@ -9,6 +9,7 @@ import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.Date;
 
 /**
  * <p>
@@ -23,8 +24,6 @@ import java.time.LocalDateTime;
 @TableName("tb_user")
 public class User implements Serializable {
 
-    private static final long serialVersionUID = 1L;
-
     @TableId(value = "user_id", type = IdType.ASSIGN_ID)
     private Integer userId;
 
@@ -34,7 +33,7 @@ public class User implements Serializable {
 
     private String sex;
 
-    private LocalDateTime birthday;
+    private Date birthday;
 
     private String tel;
 
@@ -42,7 +41,7 @@ public class User implements Serializable {
 
     private String address;
 
-    private LocalDateTime createDate;
+    private Date createDate;
 
     private Integer roleId;
 
@@ -51,5 +50,21 @@ public class User implements Serializable {
     @TableLogic
     private Integer deleted;
 
-
+    @Override
+    public String toString() {
+        return "User{" +
+                "userId=" + userId +
+                ", password='" + password + '\'' +
+                ", name='" + name + '\'' +
+                ", sex='" + sex + '\'' +
+                ", birthday=" + birthday +
+                ", tel='" + tel + '\'' +
+                ", email='" + email + '\'' +
+                ", address='" + address + '\'' +
+                ", createDate=" + createDate +
+                ", roleId=" + roleId +
+                ", gradedId=" + gradedId +
+                ", deleted=" + deleted +
+                '}';
+    }
 }

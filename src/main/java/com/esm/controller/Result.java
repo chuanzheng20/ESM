@@ -7,6 +7,7 @@ public class Result {
     private Object data;
     private Integer code;
     private String msg;
+    private String url;
 
     public Result() {
     }
@@ -20,6 +21,14 @@ public class Result {
         this.data = data;
         this.code = code;
         this.msg = msg;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
     }
 
     public Object getData() {
