@@ -18,7 +18,7 @@ public class CodeGenerator {
         //设置数据库相关配置
         DataSourceConfig dataSource = new DataSourceConfig();
         dataSource.setDriverName("com.mysql.cj.jdbc.Driver");
-        dataSource.setUrl("jdbc:mysql://localhost:3306/esm_db?serverTimezone=UTC");
+        dataSource.setUrl("jdbc:mysql://yjhh.xyz:13306/esm_db");
         dataSource.setUsername("root");
         dataSource.setPassword("123456");
         autoGenerator.setDataSource(dataSource);
@@ -42,7 +42,7 @@ public class CodeGenerator {
 
         //策略设置
         StrategyConfig strategyConfig = new StrategyConfig();
-        strategyConfig.setInclude("tbl_user");  //设置当前参与生成的表名，参数为可变参数
+        // strategyConfig.setInclude("tbl_user");  //设置当前参与生成的表名，参数为可变参数
         strategyConfig.setTablePrefix("tb_");  //设置数据库表的前缀名称，模块名 = 数据库表名 - 前缀名  例如： User = tbl_user - tbl_
         strategyConfig.setRestControllerStyle(true);    //设置是否启用Rest风格
         strategyConfig.setVersionFieldName("version");  //设置乐观锁字段名

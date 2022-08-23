@@ -1,0 +1,16 @@
+package com.esm.dao;
+
+import com.esm.domain.Graded_wages;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+
+/**
+ * <p>
+ * 员工级别工资表 Mapper 接口
+ * </p>
+ *
+ * @author 俞剑辉
+ * @since 2022-08-23
+ */
+public interface Graded_wagesDao extends BaseMapper<Graded_wages> {
+
+}
