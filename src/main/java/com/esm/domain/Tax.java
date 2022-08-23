@@ -1,5 +1,8 @@
 package com.esm.domain;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 
 import java.io.Serializable;
@@ -19,15 +22,17 @@ import lombok.EqualsAndHashCode;
 @TableName("tb_tax")
 public class Tax implements Serializable {
 
-    private static final long serialVersionUID = 1L;
+    @TableId(value = "tax_id", type = IdType.ASSIGN_ID)
+    private Integer taxId;
 
-    private Integer tax_id;
+    @TableField("start_m")
+    private String startM;
 
-    private String start_m;
+    @TableField("end_m")
+    private String endM;
 
-    private String end_m;
-
-    private String tax_rate;
+    @TableField("tax_rate")
+    private String taxRate;
 
 
 }

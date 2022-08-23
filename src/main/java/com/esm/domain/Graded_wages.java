@@ -1,5 +1,6 @@
 package com.esm.domain;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -20,14 +21,15 @@ import lombok.EqualsAndHashCode;
 @TableName("tb_graded_wages")
 public class Graded_wages implements Serializable {
 
-    private static final long serialVersionUID = 1L;
 
     @TableId(value = "graded_id", type = IdType.AUTO)
-    private Integer graded_id;
+    private Integer gradedId;
 
-    private Integer sector_id;
+    @TableField("sector_id")
+    private Integer sectorId;
 
-    private String graded_name;
+    @TableField("graded_name")
+    private String gradedName;
 
     private Double money;
 

@@ -26,7 +26,7 @@ public class User implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @TableId(value = "user_id", type = IdType.ASSIGN_ID)
-    private Integer user_id;
+    private Integer userId;
 
     private String password;
 
@@ -42,11 +42,11 @@ public class User implements Serializable {
 
     private String address;
 
-    private LocalDateTime create_date;
+    private LocalDateTime createDate;
 
-    private Integer role_id;
+    private Integer roleId;
 
-    private Integer graded_id;
+    private Integer gradedId;
 
     @TableLogic
     private Integer deleted;

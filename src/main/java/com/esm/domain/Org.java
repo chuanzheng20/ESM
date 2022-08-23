@@ -1,9 +1,7 @@
 package com.esm.domain;
 
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableLogic;
+import com.baomidou.mybatisplus.annotation.*;
+
 import java.io.Serializable;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -21,12 +19,12 @@ import lombok.EqualsAndHashCode;
 @TableName("tb_org")
 public class Org implements Serializable {
 
-    private static final long serialVersionUID = 1L;
 
     @TableId(value = "org_id", type = IdType.AUTO)
-    private Integer org_id;
+    private Integer orgId;
 
-    private String org_name;
+    @TableField("org_name")
+    private String orgName;
 
     @TableLogic
     private Integer deleted;

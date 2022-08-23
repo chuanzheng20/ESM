@@ -1,5 +1,6 @@
 package com.esm.domain;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -20,16 +21,18 @@ import lombok.EqualsAndHashCode;
 @TableName("tb_other_details")
 public class Other_details implements Serializable {
 
-    private static final long serialVersionUID = 1L;
 
     @TableId(value = "other_details_id", type = IdType.AUTO)
-    private Integer other_details_id;
+    private Integer otherDetailsId;
 
-    private Integer user_id;
+    @TableField("user_id")
+    private Integer userId;
 
-    private Integer y_m_id;
+    @TableField("y_m_id")
+    private Integer yMId;
 
-    private Integer other_typeid;
+    @TableField("other_type_id")
+    private Integer otherTypeId;
 
     private Integer num;
 
