@@ -38,6 +38,6 @@ public class Five implements Serializable {
     private Double unemployment;
 
     private Double housing;
-//测试1
+
 
 }
