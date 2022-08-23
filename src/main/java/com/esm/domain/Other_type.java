@@ -30,6 +30,6 @@ public class Other_type implements Serializable {
     private String name;
 
     private Double money;
-//测试2
+//测试3
 
 }
