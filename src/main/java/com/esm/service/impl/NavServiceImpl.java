@@ -67,7 +67,7 @@ public class NavServiceImpl implements NavService {
                     }
                 }
             }
-            System.out.println("--------------------------------------");
+            // System.out.println("--------------------------------------");
             System.out.println(listListRoot);
 
             List<Root> fatherRoots = rootDao.selectByFatherId(0);
