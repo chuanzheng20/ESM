@@ -1,9 +1,11 @@
 package com.esm.service.impl;
 
 import com.baomidou.mybatisplus.extension.api.R;
+import com.esm.dao.RoleDao;
 import com.esm.dao.RootDao;
 import com.esm.domain.NavData;
 import com.esm.domain.NavDataItem;
+import com.esm.domain.Role;
 import com.esm.domain.Root;
 import com.esm.service.NavService;
 import jdk.nashorn.internal.runtime.ListAdapter;
@@ -20,9 +22,13 @@ public class NavServiceImpl implements NavService {
     @Autowired
     private RootDao rootDao;
 
-    @Override
-    public List<NavData> getNavByPower(String power) {
+    @Autowired
+    private RoleDao roleDao;
 
+    @Override
+    public List<NavData> getNavByRoleId(Integer RoleId){
+        Role role = roleDao.selectById(RoleId);
+        String power = role.getPower();
         String[] ids = power.split(",");
         ArrayList<Integer> roleIds = new ArrayList<>();
         for (String id : ids) {
