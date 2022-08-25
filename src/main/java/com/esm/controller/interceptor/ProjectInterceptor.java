@@ -34,16 +34,15 @@ public class ProjectInterceptor implements HandlerInterceptor {
             for (Cookie cookie : cookies) {
                 if (cookie.getName().equals("token")) {
                     String token = cookie.getValue();
-
                     Claims claims = JWTUtil.parseToken(token, key);
                     // System.out.println(claims.get("userId"));
                     if (claims!=null)
                         return true;
 
+
                 }
             }
         }
-
 
         //拦截，跳转登录页
         request.setAttribute("msg","请先登录");

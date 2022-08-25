@@ -69,6 +69,9 @@ public class NavServiceImpl implements NavService {
             }
             System.out.println("--------------------------------------");
             System.out.println(listListRoot);
+
+            List<Root> fatherRoots = rootDao.selectByFatherId(0);
+            // System.out.println(fatherRoots);
             for (ArrayList<Root> arrayList: listListRoot) {
                 ArrayList<NavDataItem> navDataItems = new ArrayList<>();
                 for (Root root:arrayList){
@@ -76,9 +79,14 @@ public class NavServiceImpl implements NavService {
                     NavDataItem navDataItem = new NavDataItem(root.getIdx(),root.getName(),root.getPath());
                     navDataItems.add(navDataItem);
                 }
-                Root fatherRoot = rootDao.selectById(arrayList.get(0).getFatherId());
-                NavData navData = new NavData(fatherRoot.getIdx(),fatherRoot.getName(),fatherRoot.getIcon(),navDataItems);
-                data.add(navData);
+                for (Root r: fatherRoots) {
+                    if (r.getRootId().equals(arrayList.get(0).getFatherId())){
+                        // Root fatherRoot = rootDao.selectById(arrayList.get(0).getFatherId());
+                        NavData navData = new NavData(r.getIdx(),r.getName(),r.getIcon(),navDataItems);
+                        data.add(navData);
+                    }
+                }
+
             }
         }
         return data;
