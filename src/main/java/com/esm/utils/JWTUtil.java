@@ -37,7 +37,7 @@ public class JWTUtil {
      * @param userId
      * @return
      */
-    public static String createToken(Integer userId, String username, String key, int expireMinutes) {
+    public static String createToken(Integer userId, String username, Integer roleId,String key, int expireMinutes) {
         SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
         //生成签名密钥
         byte[] apiKeySecretBytes = DatatypeConverter.parseBase64Binary(key);
@@ -48,6 +48,7 @@ public class JWTUtil {
                 // .setSubject(userId.toString())
                 .claim("userId", userId) // 设置载荷信息
                 .claim("username", username)
+                .claim("roleId", roleId)
                 .setExpiration(DateTime.now().plusMinutes(expireMinutes).toDate())// 设置超时时间
                 .signWith(signatureAlgorithm, signingKey);
         //生成JWT

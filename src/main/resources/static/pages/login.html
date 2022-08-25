@@ -1,35 +1,17 @@
-
-
-
-  <!DOCTYPE html>
-
+<!DOCTYPE html>
 <html>
-
     <head>
-
         <!-- 页面meta -->
-
         <meta charset="utf-8">
-
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
-
         <title>SpringMVC案例</title>
-
         <meta content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" name="viewport">
-
         <!-- 引入样式 -->
-
         <link rel="stylesheet" href="../plugins/elementui/index.css">
-
         <link rel="stylesheet" href="../plugins/font-awesome/css/font-awesome.min.css">
         <link rel="stylesheet" href="../css/massage.css">
-<!--        <link rel="stylesheet" href="../css/style.css">-->
-
-
-        <!--        <link rel="stylesheet" href="../css/login.css">-->
     </head>
     <body>
-
         <div id="app" class="body_PE">
             <el-form :model="formData">
             <div class="login clearfix">
@@ -48,30 +30,21 @@
                     </li>
                     <li class="text_center" style="list-style:none;">
                         <div class="div_info">
-<!--                            <span class="password_ico"></span>-->
-
                             <el-input v-model="formData.password" type="password" placeholder="请输入密码" show-password><i slot="prefix" class="password_ico"></i></el-input>
-
-<!--                            <input Class="password inptText"type="password" style="width: 320px;height: 40px;border-radius: 20px">-->
                         </div>
                     </li>
                     <li class="text_center" style="list-style:none;">
                         <div class="cue">
                         </div>
                         <el-button style="background-color: #59cba0; width: 100%" type="success" @click="login()">登录</el-button>
-<!--                        <button ID="btnLogin" CssClass="btn btn_green">登录</button>-->
                     </li>
                     <li class="text_center" style="list-style:none;">
 
                             <div style="text-align: right;">
                                 <template>
                                     <el-link href="https://baidu.com" target="_blank">忘记密码？</el-link>
-<!--                                <a href="https://baidu.com" target="_blank" >忘记密码？</a>-->
-
                                 </template>
-
                             </div>
-
                     </li>
                 </ul>
             </div>
@@ -80,15 +53,10 @@
     </body>
 
     <!-- 引入组件库 -->
-
     <script src="../js/vue.js"></script>
-
     <script src="../plugins/elementui/index.js"></script>
-
     <script type="text/javascript" src="../js/jquery.min.js"></script>
-
     <script src="../js/axios-0.18.0.js"></script>
-
     <script>
         var vue = new Vue({
 
@@ -106,8 +74,6 @@
             },
             methods: {
                 getAll(){},
-
-
                 login(){
                     axios.post("/login",this.formData).then((res) =>{
                         if(res.data.code == 20041){
@@ -120,14 +86,8 @@
                             this.$message.error(res.data.msg)
                         }
                     })
-
                 }
             }
-
-        
         })
-
     </script>
-
-
 </html>
