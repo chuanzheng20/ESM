@@ -67,26 +67,20 @@ public class NavServiceImpl implements NavService {
                     }
                 }
             }
-
             System.out.println("--------------------------------------");
             System.out.println(listListRoot);
-
             for (ArrayList<Root> arrayList: listListRoot) {
                 ArrayList<NavDataItem> navDataItems = new ArrayList<>();
                 for (Root root:arrayList){
 
-                    NavDataItem navDataItem = new NavDataItem(root.getIndex(),root.getName(),root.getPath());
+                    NavDataItem navDataItem = new NavDataItem(root.getIdx(),root.getName(),root.getPath());
                     navDataItems.add(navDataItem);
                 }
                 Root fatherRoot = rootDao.selectById(arrayList.get(0).getFatherId());
-                NavData navData = new NavData(fatherRoot.getIndex(),fatherRoot.getName(),fatherRoot.getIcon(),navDataItems);
+                NavData navData = new NavData(fatherRoot.getIdx(),fatherRoot.getName(),fatherRoot.getIcon(),navDataItems);
                 data.add(navData);
-
             }
-
-
         }
-
         return data;
     }
 

@@ -18,7 +18,7 @@ class EsmApplicationTests {
 
     @Test
     void testGetNavByPower(){
-        System.out.println(navService.getNavByPower("7,8,9,13,"));
+        System.out.println(navService.getNavByRoleId(1));
     }
 
 }

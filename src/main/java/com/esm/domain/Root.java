@@ -12,8 +12,7 @@ import lombok.EqualsAndHashCode;
 public class Root {
     @TableId
     private Integer RootId;
-    @TableField("'index'")
-    private String index;
+    private String idx;
     private String name;
     private String icon;
     private String path;

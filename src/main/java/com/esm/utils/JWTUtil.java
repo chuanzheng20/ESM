@@ -43,11 +43,13 @@ public class JWTUtil {
         byte[] apiKeySecretBytes = DatatypeConverter.parseBase64Binary(key);
         Key signingKey = new SecretKeySpec(apiKeySecretBytes, signatureAlgorithm.getJcaName());
         //添加构成JWT的参数
+        System.out.println(roleId);
         JwtBuilder builder = Jwts.builder()
                 // .setHeaderParam(“type”, “JWT”)
                 // .setSubject(userId.toString())
                 .claim("userId", userId) // 设置载荷信息
                 .claim("username", username)
+
                 .claim("roleId", roleId)
                 .setExpiration(DateTime.now().plusMinutes(expireMinutes).toDate())// 设置超时时间
                 .signWith(signatureAlgorithm, signingKey);
