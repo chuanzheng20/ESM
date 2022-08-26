@@ -1,6 +1,6 @@
 package com.esm.dao;
 
-import com.esm.domain.Other_type;
+import com.esm.domain.OtherType;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -13,6 +13,6 @@ import org.apache.ibatis.annotations.Mapper;
  * @since 2022-08-23
  */
 @Mapper
-public interface Other_typeDao extends BaseMapper<Other_type> {
+public interface OtherTypeDao extends BaseMapper<OtherType> {
 
 }

@@ -3,8 +3,6 @@ package com.esm.domain;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.IdType;
-import java.time.LocalDate;
-
 import com.baomidou.mybatisplus.annotation.TableId;
 import java.io.Serializable;
 import lombok.Data;
@@ -12,7 +10,7 @@ import lombok.EqualsAndHashCode;
 
 /**
  * <p>
- * 年月时间表
+ * 其他收入明细表
  * </p>
  *
  * @author 俞剑辉
@@ -20,18 +18,23 @@ import lombok.EqualsAndHashCode;
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
-@TableName("tb_y_m")
-public class Y_m implements Serializable {
+@TableName("tb_other_details")
+public class OtherDetails implements Serializable {
 
-    private static final long serialVersionUID = 1L;
 
-    @TableId(value = "y_m_id", type = IdType.AUTO)
+    @TableId(value = "other_details_id", type = IdType.AUTO)
+    private Integer otherDetailsId;
+
+    @TableField("user_id")
+    private Integer userId;
+
+    @TableField("y_m_id")
     private Integer yMId;
 
-    @TableField("y_m")
-    private String yM;
+    @TableField("other_type_id")
+    private Integer otherTypeId;
 
-    private LocalDate date;
+    private Integer num;
 
 
 }

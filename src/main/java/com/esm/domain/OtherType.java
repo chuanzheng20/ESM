@@ -10,7 +10,7 @@ import lombok.EqualsAndHashCode;
 
 /**
  * <p>
- * 员工级别工资表
+ * 其他收入类型表
  * </p>
  *
  * @author 俞剑辉
@@ -18,20 +18,17 @@ import lombok.EqualsAndHashCode;
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
-@TableName("tb_graded_wages")
-public class Graded_wages implements Serializable {
+@TableName("tb_other_type")
+public class OtherType implements Serializable {
 
+    @TableId(value = "type_id", type = IdType.ASSIGN_ID)
+    private Integer typeId;
 
-    @TableId(value = "graded_id", type = IdType.AUTO)
-    private Integer gradedId;
+    @TableField("y_m_id")
+    private Integer yMId;
 
-    @TableField("sector_id")
-    private Integer sectorId;
-
-    @TableField("graded_name")
-    private String gradedName;
+    private String name;
 
     private Double money;
-
 
 }

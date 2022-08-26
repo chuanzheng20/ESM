@@ -1,6 +1,6 @@
 package com.esm.dao;
 
-import com.esm.domain.Y_m;
+import com.esm.domain.YM;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -13,6 +13,6 @@ import org.apache.ibatis.annotations.Mapper;
  * @since 2022-08-23
  */
 @Mapper
-public interface Y_mDao extends BaseMapper<Y_m> {
+public interface Y_mDao extends BaseMapper<YM> {
 
 }
