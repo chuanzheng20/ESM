@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <!-- 页面meta -->
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>员工管理</title>
+        <meta content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" name="viewport">
+        <!-- 引入样式 -->
+        <link rel="stylesheet" href="../plugins/elementui/index.css">
+        <link rel="stylesheet" href="../plugins/font-awesome/css/font-awesome.min.css">
+        <link rel="stylesheet" href="../css/style.css">
+
+    </head>
+<body class="hold-transition">
+    <div id="app">
+        <template>
+
+            <!--按钮-->
+
+            <!--搜索-->
+            <el-form :inline="true" :model="brand" class="demo-form-inline" style="margin-top: 10px;">
+                <div style="float: left;">
+                    <el-row>
+                        <el-button type="danger" plain @click="deleteByIds">批量删除</el-button>
+                        <el-button type="primary" plain @click="popwindows">新增</el-button>
+                    </el-row>
+                </div>
+                <div style="float: right;">
+                    <el-form-item label="工号">
+                        <el-input v-model="brand.userId" placeholder="员工号"></el-input>
+                    </el-form-item>
+                    <el-form-item label="姓名">
+                        <el-input v-model="brand.name" placeholder="姓名"></el-input>
+                    </el-form-item>
+                    <el-form-item>
+                        <el-button type="primary" @click="onSubmit">查询</el-button>
+                    </el-form-item>
+                </div>
+            </el-form>
+            <!--新建对话框弹出-->
+            <el-dialog title="新建" :visible.sync="addDialogFormVisible" :close-on-click-modal="false" style="width: 900px;height: 900px;margin: auto;">
+                <el-form :model="brand" ref="brand" :rules="addrules" label-width="100px" class="demo-ruleForm">
+                    <el-form-item label="名字" prop="name" >
+                        <el-input v-model="brand.name" style="width: 230px" ></el-input>
+                    </el-form-item>
+                    <el-form-item label="地址" prop="address" >
+                        <el-input v-model="brand.address" style="width: 230px" ></el-input>
+                    </el-form-item>
+                    <el-form-item prop="email" label="邮箱">
+                        <el-input v-model="brand.email" style="width: 230px"></el-input>
+                    </el-form-item>
+                    <el-form-item label="电话" prop="tel">
+                        <el-input type="age" v-model.number="brand.tel" autocomplete="off" style="width: 230px" maxlength="11"></el-input>
+                    </el-form-item>
+                    <el-form-item label="级别" prop="departmentid" >
+                        <el-cascader :options="options" clearable v-model="brand.departmentid" placeholder="请选择部门/岗位/级别"></el-cascader>
+                    </el-form-item>
+                    <el-form-item label="性别" prop="sex">
+                        <el-radio-group v-model="brand.sex">
+                            <el-radio label="男"></el-radio>
+                            <el-radio label="女"></el-radio>
+                        </el-radio-group>
+                    </el-form-item>
+                    <el-form-item label="生日" required>
+                        <el-col :span="11">
+                            <el-form-item prop="birthDay">
+                                <el-date-picker type="date" placeholder="请填入生日" v-model="brand.birthDay" ></el-date-picker>
+                            </el-form-item>
+                        </el-col>
+                    </el-form-item>
+                    <el-form-item label="入职时间" required>
+                        <el-col :span="11">
+                            <el-form-item prop="createDate">
+                                <el-date-picker type="date" placeholder="请填入入职时间" v-model="brand.createDate" :picker-options="pickerOptions" ></el-date-picker>
+                            </el-form-item>
+                        </el-col>
+                    </el-form-item>
+                    <el-form-item>
+                        <div style="margin-right: 0;">
+                            <el-button @click="resetForm('brand')">重置</el-button>
+                            <el-button @click="dialogForm('brand')">取 消</el-button>
+                            <el-button type="primary" @click="handleAdd" >立即创建</el-button>
+                        </div>
+                    </el-form-item>
+                </el-form>
+            </el-dialog>
+
+            <!--编辑对话框弹出-->
+            <el-dialog title="修改" :visible.sync="compileDialogFormVisible" :close-on-click-modal="false" style="width: 900px;height: 900px;margin: auto;">
+                <el-form :model="brand2" :rules="addrules2" ref="brand2" label-width="100px" class="demo-ruleForm">
+                    <el-form-item label="名字" prop="name" >
+                        <el-input v-model="brand2.name" style="width: 230px" ></el-input>
+                    </el-form-item>
+                    <el-form-item label="地址" prop="address" >
+                        <el-input v-model="brand2.address" style="width: 230px" ></el-input>
+                    </el-form-item>
+                    <el-form-item
+                            prop="email"
+                            label="邮箱">
+                        <el-input v-model="brand2.email" style="width: 230px"></el-input>
+                    </el-form-item>
+                    <el-form-item
+                            label="电话"
+                            prop="tel">
+                        <el-input type="age" v-model.number="brand2.tel" autocomplete="off" style="width: 230px" maxlength="11"></el-input>
+                    </el-form-item>
+                    <!-- <el-form-item label="级别" prop="classScaleid" >
+                      <el-select v-model="brand.classScaleid" placeholder="请选择级别">
+                        <el-option label="1级别" value="yiJ"></el-option>
+                        <el-option label="2级别" value="erJ"></el-option>
+                        <el-option label="3级别" value="sanJ"></el-option>
+                      </el-select>
+                    </el-form-item> -->
+                    <el-form-item label="级别" prop="gradedId" >
+                        <el-cascader :options="options" clearable v-model="brand2.gradedId" placeholder="请选择部门/岗位/级别"></el-cascader>
+                    </el-form-item>
+                    <el-form-item label="性别" prop="sex">
+                        <el-radio-group v-model="brand2.sex">
+                            <el-radio label="男"></el-radio>
+                            <el-radio label="女"></el-radio>
+                        </el-radio-group>
+                    </el-form-item>
+                    <el-form-item label="生日" required>
+                        <el-col :span="11">
+                            <el-form-item prop="birthDay">
+                                <el-date-picker type="date" placeholder="请填入生日" v-model="brand2.birthDay"
+                                ></el-date-picker>
+                            </el-form-item>
+                        </el-col>
+                    </el-form-item>
+                    <el-form-item label="入职时间" required>
+                        <el-col :span="11">
+                            <el-form-item prop="createDate">
+                                <el-date-picker type="date" placeholder="请填入入职时间" v-model="brand2.createDate"
+                                                :picker-options="pickerOptions" ></el-date-picker>
+                            </el-form-item>
+                        </el-col>
+                    </el-form-item>
+                    <el-form-item style="margin-right: 0;">
+                        <el-button @click="compileDialogForm('brand2')">取 消</el-button>
+                        <el-button type="primary" @click="compileHandleAdd(brand2)">立即修改</el-button>
+                    </el-form-item>
+                </el-form>
+            </el-dialog>
+
+            <!--查看对话框弹出-->
+            <el-dialog title="查看" :visible.sync="lookFormVisible" :close-on-click-modal="false" style="width: 900px;height: 900px;margin: auto;">
+                <el-form :model="brand2"  label-width="100px" class="demo-ruleForm">
+                    <el-form-item label="名字" prop="name" >
+                        <el-input v-model="brand2.name" style="width: 230px" :disabled="true"></el-input>
+                    </el-form-item>
+                    <el-form-item label="地址" prop="address" >
+                        <el-input v-model="brand2.address" style="width: 230px" :disabled="true"></el-input>
+                    </el-form-item>
+                    <el-form-item
+                            prop="email"
+                            label="邮箱">
+                        <el-input v-model="brand2.email" style="width: 230px" :disabled="true"></el-input>
+                    </el-form-item>
+                    <el-form-item
+                            label="电话"
+                            prop="tel">
+                        <el-input type="age" v-model.number="brand2.tel" :disabled="true" autocomplete="off" style="width: 230px" maxlength="11"></el-input>
+                    </el-form-item>
+                    <el-form-item label="级别" prop="gradedId" >
+                        <el-cascader :options="options" clearable v-model="brand2.gradedId" placeholder="请选择部门/岗位/级别" :disabled="true"></el-cascader>
+                    </el-form-item>
+                    <el-form-item label="性别" prop="sex">
+                        <el-radio-group v-model="brand2.sex" :disabled="true">
+                            <el-radio label="男"></el-radio>
+                            <el-radio label="女"></el-radio>
+                        </el-radio-group>
+                    </el-form-item>
+                    <el-form-item label="生日" required>
+                        <el-col :span="11">
+                            <el-form-item prop="birthDay">
+                                <el-date-picker type="date" placeholder="请填入生日" v-model="brand2.birthDay" :disabled="true"
+                                ></el-date-picker>
+                            </el-form-item>
+                        </el-col>
+                    </el-form-item>
+                    <el-form-item label="入职时间" required>
+                        <el-col :span="11">
+                            <el-form-item prop="createDate">
+                                <el-date-picker type="date" placeholder="请填入入职时间" v-model="brand2.createDate" :disabled="true"
+                                                :picker-options="pickerOptions" ></el-date-picker>
+                            </el-form-item>
+                        </el-col>
+                    </el-form-item>
+                    <el-form-item style="margin-left: 200px;">
+                        <el-button @click="lookFormVisible=false">关闭窗口</el-button>
+                    </el-form-item>
+                </el-form>
+            </el-dialog>
+            <!--表格-->
+            <el-table
+                    ref="filterTable"
+                    :data="tableData"
+                    style="width: 100%;"
+                    :row-class-name="tableRowClassName"
+                    @selection-change="handleSelectionChange"
+                    @row-click="rowClick">
+                <el-table-column
+                        type="selection"
+                        width="55">
+                </el-table-column>
+                <el-table-column
+                        prop="userId"
+                        label="工号"
+                        sortable
+                        column-key="userId"
+                        align="center"
+                >
+                </el-table-column>
+                <el-table-column
+                        prop="name"
+                        label="姓名"
+                        align="center"
+                >
+                </el-table-column>
+
+                <!-- 筛选内部 filters -->
+                <el-table-column
+                        prop="postid"
+                        label="岗位"
+                        align="center"
+                        :filters="[{ text: '程序员', value: '程序员' }, { text: '架构师', value: '架构师' }]"
+                        :filter-method="formatter"
+                        filter-placement="bottom-end">
+                </el-table-column>
+                <el-table-column
+                        prop="classScaleid"
+                        label="级别"
+                        align="center"
+                        :filters="[{ text: '1级工', value: '1' }, { text: '2级工', value: '2' }, { text: '3级工', value: '3' }]"
+                        :filter-method="forclassScale"
+                        filter-placement="bottom-end">
+                </el-table-column>
+                <el-table-column
+                        prop="createDate"
+                        label="入职时间"
+                        sortable
+                        column-key="createDate"
+                        align="center"
+                >
+                </el-table-column>
+                <el-table-column
+                        align="center"
+                        label="操作"
+                >
+                    <template slot-scope="scope">
+                        <el-row>
+                            <el-button type="primary" @click.stop="updateHandle(scope.row)">修改</el-button>
+                            <el-button type="danger" @click.stop="handleDelete">删除</el-button>
+                        </el-row>
+                    </template>
+                </el-table-column>
+            </el-table>
+            <!-- 分页功能 -->
+            <div class="block" style="width: 600px;margin: auto;margin-top: 10px;">
+                <el-pagination
+                        @size-change="handleSizeChange"
+                        @current-change="handleCurrentChange"
+                        background
+                        :current-page="currentPage4"
+                        :page-size="pageSize"
+                        :page-sizes="[10,15,20,25]"
+                        layout="total, sizes, prev, pager, next, jumper"
+                        :total="totalCount">
+                </el-pagination>
+            </div>
+        </template>
+
+    </div>
+</body>
+
+<!-- 引入组件库 -->
+<script src="../js/vue.js"></script>
+<script src="../plugins/elementui/index.js"></script>
+<script type="text/javascript" src="../js/jquery.min.js"></script>
+<script src="../js/axios-0.18.0.js"></script>
+<script>
+    var vue = new Vue({
+        el: '#app',
+        mounted(){
+            this.getall();
+        },
+        data() {
+            return {
+                //每页显示数
+                pageSize:5,
+                //总记录数
+                totalCount:100,
+                //选中的数据
+                multipleSelection:[],
+                selectionID:[],
+                //级联选择器
+                // 要传值的
+                options:[{
+                    value: 'yiB',
+                    label: '1部门',
+                    children: [{
+                        value: 'sheji',
+                        label: '设计1',
+                        children: [{
+                            value: 'yiJ',
+                            label: '1级别'
+                        }, {
+                            value: 'erJ',
+                            label: '2级别'
+                        }, {
+                            value: 'sanJ',
+                            label: '3级别'
+                        }, {
+                            value: 'siJ',
+                            label: '4级别'
+                        }],
+
+                    }],
+                },
+                    {
+                        value:'erB',
+                        label:"2部门",
+                        children:[{
+                            value:"qianduan",
+                            label:"前端",
+                            children:[{
+                                value: 'yiJ',
+                                label: '1级别'
+                            }, {
+                                value: 'erJ',
+                                label: '2级别'
+                            }, {
+                                value: 'sanJ',
+                                label: '3级别'
+                            }, {
+                                value: 'siJ',
+                                label: '4级别'
+                            }],
+                        }],
+                    },
+                    {
+                        value:'sanB',
+                        label:"3部门",
+                        children:[{
+                            value:"houduan",
+                            label:"后端",
+                            children:[{
+                                value: 'yiJ',
+                                label: '1级别'
+                            }, {
+                                value: 'erJ',
+                                label: '2级别'
+                            }, {
+                                value: 'sanJ',
+                                label: '3级别'
+                            }, {
+                                value: 'siJ',
+                                label: '4级别'
+                            }]
+                        }],
+                    }],
+
+                // 页数存放
+                currentPage4: 1,
+                // 创建时间必须大于当今时间
+                pickerOptions: {
+                    disabledDate(time) {
+                        return time.getTime() < Date.now() - 8.64e7
+                    }
+                },
+                listLoading: false,
+                multipleSelection:[],
+                //搜索的两个筛选 ，也能当数据模板
+                brand: {
+                    userId:null,
+                    name:null,
+                    birthDay:null,
+                    sex:null,
+                    tel:null,
+                    email:null,
+                    address:null,
+                    departmentid:null,
+                    gradedid:null,
+                    classScaleid:null,
+                    createDate:null,
+                },
+                //查看和修改的显示模板
+                brand2: {
+                    userId:null,
+                    password:null,
+                    name:null,
+                    sex:null,
+                    birthDay:null,
+                    tel:null,
+                    email:null,
+                    address:null,
+                    createDate: null,
+                    gradedId:null,
+                },
+                //传数据的模板
+                brand3: {
+                    userId:null,
+                    password:null,
+                    name:null,
+                    sex:null,
+                    birthDay:null,
+                    tel:null,
+                    email:null,
+                    address:null,
+                    createDate: null,
+                    gradedId:null,
+                },
+
+                // ['yiB','sheji','yiJ'];
+                //表格信息（传值）
+                tableData: [
+                    {
+                        userId:"205805106",
+                        name:"俞剑辉",
+                        birthDay:"2002-2-16",
+                        sex:"男",
+                        tel:"1369915473",
+                        email:"yjh.163.com",
+                        departmentid:"yiB",
+                        address:"莆田",
+                        postid:"sheji",
+                        classScaleid:"yiJ" ,
+                        createDate:"2016-03-05",
+                    }, {
+                        userId:"205805107",
+                        name:"黄进恒",
+                        birthDay:"2002-2-16",
+                        sex:"男",
+                        tel:"1369915473",
+                        email:"yjh.163.com",
+                        address:"莆田",
+                        departmentid:"1部门",
+                        postid:"前端",
+                        classScaleid:"2" ,
+                        createDate:"2016-03-05",
+                    }, {
+                        userId:"205805108",
+                        name:"范思炜",
+                        birthDay:"2002-2-16",
+                        sex:"男",
+                        tel:"1369915473",
+                        email:"yjh.163.com",
+                        address:"湖南",
+                        departmentid:"1部门",
+                        postid:"前端",
+                        classScaleid:"2" ,
+                        createDate:"2016-03-05",
+                    }, {
+                        userId:"205805109",
+                        name:"陈炜灵",
+                        birthDay:"2002-2-16",
+                        sex:"男",
+                        tel:"1369915473",
+                        email:"yjh.163.com",
+                        address:"厦门",
+                        departmentid:"1部门",
+                        postid:"后端",
+                        classScaleid:"2" ,
+                        createDate:"2016-03-05",
+                    },
+                    {
+                        userId:"205805110",
+                        name:"庄伟杰",
+                        birthDay:"2002-2-16",
+                        sex:"男",
+                        tel:"1369915473",
+                        email:"yjh.163.com",
+                        address:"晋江",
+                        departmentid:"1部门",
+                        postid:"设计",
+                        classScaleid:"1" ,
+                        createDate:"2016-03-05",
+                    },{
+                        userId:"205805109",
+                        name:"陈炜灵",
+                        birthDay:"2002-2-16",
+                        sex:"男",
+                        tel:"1369915473",
+                        email:"yjh.163.com",
+                        address:"厦门",
+                        departmentid:"1部门",
+                        postid:"后端",
+                        classScaleid:"2" ,
+                        createDate:"2016-03-05",
+                    },{
+                        userId:"205805109",
+                        name:"庄伟杰",
+                        birthDay:"2002-2-16",
+                        sex:"男",
+                        tel:"1369915473",
+                        email:"yjh.163.com",
+                        address:"厦门",
+                        departmentid:"1部门",
+                        postid:"后端",
+                        classScaleid:"2" ,
+                        createDate:"2016-03-05",
+                    },{
+                        userId:"205805109",
+                        name:"俞剑辉",
+                        birthDay:"2002-2-16",
+                        sex:"男",
+                        tel:"1369915473",
+                        email:"yjh.163.com",
+                        address:"厦门",
+                        departmentid:"1部门",
+                        postid:"后端",
+                        classScaleid:"2" ,
+                        createDate:"2016-03-05",
+                    }
+                ],
+                //打开弹窗
+                // dialogTableVisible: false,
+                addDialogFormVisible: false,
+                compileDialogFormVisible:false,
+                lookFormVisible:false,
+                formLabelWidth: '120px',
+
+
+                //弹出窗口中的提示信息
+                addrules: {
+                    name: [
+                        { required: true, message: '请输入姓名', trigger: 'blur' },
+                        { min: 2, max: 10, message: '长度在 2 到 10 个字符', trigger: 'blur' }
+                    ],
+                    departmentid: [
+                        { required: true, message: '请选择部门/岗位' ,trigger: 'blur' }
+                    ],
+                    birthDay: [
+                        { type: 'date', required: true, message: '请填写生日日期', trigger: 'change' }
+                    ],
+                    createDate: [
+                        { type: 'date', required: true, message: '请填写入职时间', trigger: 'change' }
+                    ],
+                    sex: [
+                        { required: true, message: '请输入性别', trigger: 'change' }
+                    ],
+                    email: [
+                        { required: true, message: '请输入邮箱地址', trigger: 'blur' },
+                        { type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur', 'change'] }
+                    ],
+                    tel:[
+                        { required: true, message: '电话不能为空'},
+                        { type: 'number', message: '电话必须为数字值'}
+                    ],
+                    address:[
+                        { required: true, message: '请输入地址', trigger: 'blur' },
+                        { min: 1,  message: '长度至少1字符', trigger: 'blur' }
+                    ]
+                },
+
+                //弹出修改窗口中的提示信息
+                addrules2: {
+                    name: [
+                        { required: true, message: '请输入姓名', trigger: 'blur' },
+                        { min: 2, max: 10, message: '长度在 2 到 10 个字符', trigger: 'blur' }
+                    ],
+                    departmentid: [
+                        { required: true, message: '请选择部门/岗位/级别' ,trigger: 'blur' }
+                    ],
+                    birthDay: [
+                        { type: 'date', required: true, message: '请填写生日日期', trigger: 'change' }
+                    ],
+                    createDate: [
+                        { type: 'date', required: true, message: '请填写入职时间', trigger: 'change' }
+                    ],
+                    sex: [
+                        { required: true, message: '请输入性别', trigger: 'blur' }
+                    ],
+                    email: [
+                        { required: true, message: '请输入邮箱地址', trigger: 'blur' },
+                        { type: 'email', message: '请输入正确的邮箱地址', trigger: 'change' }
+                    ],
+                    tel:[
+                        { required: true, message: '电话不能为空'},
+                        { type: 'number', message: '电话必须为数字值' ,trigger: 'change'}
+                    ],
+                    address:[
+                        { required: true, message: '请输入地址', trigger: 'blur' },
+                        { min: 1,  message: '长度至少1字符', trigger: 'blur' }
+                    ]
+                }
+            }
+        },
+        created() {
+            // this.getAll();
+        },
+        methods: {
+            // 点击查看
+            rowClick(row) {
+                this.lookFormVisible = true;
+                this.brand2.name = row.name;
+                this.brand2.sex = row.sex;
+                this.brand2.birthDay = row.birthDay;
+                this.brand2.tel = row.tel;
+                this.brand2.email = row.email;
+                this.brand2.address = row.address;
+                this.brand2.createDate = row.createDate;
+                this.brand2.roleId = row.roleId;
+                this.brand2.gradedId = [row.departmentid,row.postid,row.classScaleid];
+            },
+            //表格数据
+            getAll(){
+                //发送ajax请求
+                axios.post("/selectByPageAndCurrentPage?currentPage="+this.currentPage+"&pageSize="+this.pageSize,this.brand).then((res)=>{
+                    this.tableData = res.data.data.rows;
+                    //设置总记录数
+                    this.totalCount = res.data.totalCount;
+                }).then((resp)=>{
+                    this.tableData = resp.data.rows;//{rpws:{},totalCount:100}
+                    //消息总记录数
+                    this.totalCount = resp.data.totalCount;
+                })
+            },
+            //新建窗口添加数据 确定按钮事件
+            handleAdd(){
+                // console.log(this.brand.departmentid[1])
+                var _this = this;
+                axios.post("/yuanGongXX",this.brand2).then((res)=>{
+                    if(res.data.code == 20011){
+                        _this.addDialogFormVisible = false;
+                        _this.$message.success("添加成功");
+                    }else if(res.data.code == 20010){
+                        _this.$message.error("添加失败！");
+                    }else{
+                        _this.$message.error(res.data.msg);
+                    }
+
+                }).finally(()=>{
+                    _this.getAll();
+                })
+            },
+
+            // 修改按钮事件(弹出窗口)
+            updateHandle(row) {
+                this.compileDialogFormVisible = true;
+                this.brand2.name = row.name;
+                this.brand2.sex = row.sex;
+                this.brand2.birthDay = row.birthDay;
+                this.brand2.tel = row.tel;
+                this.brand2.email = row.email;
+                this.brand2.address = row.address;
+                this.brand2.createDate = row.createDate;
+                this.brand2.roleId = row.roleId;
+                this.brand2.gradedId = [row.departmentid,row.postid,row.classScaleid];
+                //  axios.get("/yuanGongXX/"+row.userId).then((res)=>{
+                //    if(res.data.code == 20041){
+                //       this.brand2 = res.data.data;
+                //       this.compileDialogFormVisible = true;
+                //    }else{
+                //      this.$message.error(res.data.msg);
+                //    }
+                //  });
+            },
+            //修改窗口确定按钮
+            compileHandleAdd(brand2){
+                this.brand3.name = brand2.name;
+                this.brand3.sex = brand2.sex;
+                this.brand3.birthDay = brand2.birthDay;
+                this.brand3.tel = brand2.tel;
+                this.brand3.email = brand2.email;
+                this.brand3.address = brand2.address;
+                this.brand3.createDate = brand2.createDate;
+                this.brand3.roleId = brand2.roleId;
+                this.brand3.gradedId = brand2.gradedId[1];
+                console.log(this.brand3);
+                // axios.put("/yuanGongXX"+row.userId,this.brand3).then((res)=>{
+                //   if(res.data.code == 20031){
+                //     this.$message.success("修改成功");
+                //     this.compileDialogFormVisible = false;
+                //   }else if(res.data.code == 20030){
+                //     this.$message.error("修改失败！");
+                //   }else{
+                //     this.$message.error(res.data.msg);
+                //   }
+
+                // }).finally(()=>{
+                //   _this.getAll();
+                // })
+            },
+            // 修改窗口取消按钮
+            compileDialogForm(formName) {
+                this.$refs[formName].resetFields();
+                this.compileDialogFormVisible = false;
+            },
+            // 主要显示部分
+            clearFilter() {
+                this.$refs.filterTable.clearFilter();
+            },
+            formatter(value,row) {
+                return row.postid === value;
+            },
+            forclassScale(value, row) {
+                return row.classScaleid === value;
+            },
+            filterHandler(value, row, column) {
+                const property = column['property'];
+                return row[property] === value;
+            },
+            // 表格颜色
+            tableRowClassName({row, rowIndex}) {
+                if ((rowIndex + 1)%4 === 0) {
+                    return 'warning-row';
+                } else if ((rowIndex + 1)%2 === 0 && (rowIndex + 1)%4 != 0) {
+                    return 'success-row';
+                }
+
+                return '';
+            },
+            // 复选框选中
+            handleSelectionChange(val) {
+                for(var i = 0;i<val.length;i++){
+                    this.multipleSelection[i] = val[i].userId;
+                }
+                console.log(this.multipleSelection);
+            },
+            //搜索按钮点击事件
+            onSubmit() {
+                // console.log(this.brand);
+                this.getAll();
+            },
+            //新建弹窗部分
+            popwindows(){
+                this.addDialogFormVisible = true;
+                this.$refs[formName].resetFields();
+            },
+            // 表单重置按钮
+            resetForm(formName) {
+                this.$refs[formName].resetFields();
+            },
+            // 表单取消按钮
+            dialogForm(formName) {
+                this.$refs[formName].resetFields();
+                this.addDialogFormVisible = false;
+            },
+            // 每页多少条
+            handleSizeChange(val) {
+                // console.log(`每页 ${val} 条`);
+                this.pageSize = val;
+                this.getAll();
+            },
+            // 当前页
+            handleCurrentChange(val) {
+                //console.log(`当前页: ${val}`);
+                this.currentPage = val;
+                this.getAll();
+            }
+        },
+        //单独删除
+        handleDelete(row){
+            this.$confirm("是否删除当前员工信息（不可撤销）","提示",{
+                type:'info'
+            }).then(()=>{
+                axios.delete("/yuanGong/"+row.userId).then((res)=>{
+                    if(res.data.code == 20021){
+                        this.$message.success("删除成功");
+
+                    }else{
+                        this.$message.error("删除失败");
+                    }
+                }).finally(()=>{
+                    this.getall();
+                })
+            }).catch(()=>{
+                this.$message.info("取消删除");
+            })
+        },
+        //批量删除
+        deleteByIds(){
+            for(let i = 0;i <  this.multipleSelection.length; i++){
+                let idSelection = this.multipleSelection[i];
+                this.selectionID[i] = idSelection.userId;
+            }
+            axios.delete("/yuanGongXX",this.selectionID).then((res)=>{
+                if(res.data.code == 20021){
+                    this.$message.success("删除成功");
+
+                }else{
+                    this.$message.error("删除失败");
+                }
+            }).finally(()=>{
+                this.getall();
+            }).catch(()=>{
+                this.$message.info("取消删除");
+            })
+        },
+
+    })
+
+</script>
+
+</html>

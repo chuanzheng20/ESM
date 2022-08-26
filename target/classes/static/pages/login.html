@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <!-- 页面meta -->
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>SpringMVC案例</title>
+        <meta content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" name="viewport">
+        <!-- 引入样式 -->
+        <link rel="stylesheet" href="../plugins/elementui/index.css">
+        <link rel="stylesheet" href="../plugins/font-awesome/css/font-awesome.min.css">
+        <link rel="stylesheet" href="../css/massage.css">
+    </head>
+    <body>
+        <div id="app" class="body_PE">
+            <el-form :model="formData">
+            <div class="login clearfix">
+                <ul class="load_ul">
+                    <li id="logoCS_EE" class="tc logo_li" style="list-style:none;">
+                        <div id="logoCS">
+                            <h1>薪酬管理系统</h1>
+                        </div>
+                    </li>
+                    <li class="text_center" style="list-style:none;">
+                        <div class="div_info">
+<!--                            <span class="user_ico"></span>-->
+<!--                            <input Class="user inptText" style="width: 320px;height: 40px;border-radius: 20px" >-->
+                            <el-input v-model="formData.userId" placeholder="请输入用户名" ><i slot="prefix" class="user_ico"></i></el-input>
+                        </div>
+                    </li>
+                    <li class="text_center" style="list-style:none;">
+                        <div class="div_info">
+                            <el-input v-model="formData.password" type="password" placeholder="请输入密码" show-password><i slot="prefix" class="password_ico"></i></el-input>
+                        </div>
+                    </li>
+                    <li class="text_center" style="list-style:none;">
+                        <div class="cue">
+                        </div>
+                        <el-button style="background-color: #59cba0; width: 100%" type="success" @click="login()">登录</el-button>
+                    </li>
+                    <li class="text_center" style="list-style:none;">
+
+                            <div style="text-align: right;">
+                                <template>
+                                    <el-link href="https://baidu.com" target="_blank">忘记密码？</el-link>
+                                </template>
+                            </div>
+                    </li>
+                </ul>
+            </div>
+            </el-form>
+        </div>
+    </body>
+
+    <!-- 引入组件库 -->
+    <script src="../js/vue.js"></script>
+    <script src="../plugins/elementui/index.js"></script>
+    <script type="text/javascript" src="../js/jquery.min.js"></script>
+    <script src="../js/axios-0.18.0.js"></script>
+    <script>
+        var vue = new Vue({
+
+            el: '#app',
+            data:{
+                pagination: {},
+                dataList: [],//当前页要展示的列表数据
+                formData: {},//表单数据
+                dialogFormVisible: false,//控制表单是否可见
+                dialogFormVisible4Edit:false,//编辑表单是否可见
+                rules: {//校验规则
+                    type: [{ required: true, message: '图书类别为必填项', trigger: 'blur' }],
+                    name: [{ required: true, message: '图书名称为必填项', trigger: 'blur' }]
+                }
+            },
+            methods: {
+                getAll(){},
+                login(){
+                    axios.post("/login",this.formData).then((res) =>{
+                        if(res.data.code == 20041){
+                            //如果操作成功，关团弹层。显示数据
+                            this.dialogFormVisible=false;
+                            this.$message.success("登录成功");
+                            window.location=res.data.url;
+
+                        }else {
+                            this.$message.error(res.data.msg)
+                        }
+                    })
+                }
+            }
+        })
+    </script>
+</html>
