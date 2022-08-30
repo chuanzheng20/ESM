@@ -40,47 +40,47 @@
             </el-form>
             <!--新建对话框弹出-->
             <el-dialog title="新建" :visible.sync="addDialogFormVisible" :close-on-click-modal="false" style="width: 900px;height: 900px;margin: auto;">
-                <el-form :model="brand" ref="brand" :rules="addrules" label-width="100px" class="demo-ruleForm">
+                <el-form :model="brand2" ref="brand2" :rules="addRules" label-width="100px" class="demo-ruleForm">
                     <el-form-item label="名字" prop="name" >
-                        <el-input v-model="brand.name" style="width: 230px" ></el-input>
+                        <el-input v-model="brand2.name" style="width: 230px" ></el-input>
                     </el-form-item>
                     <el-form-item label="地址" prop="address" >
-                        <el-input v-model="brand.address" style="width: 230px" ></el-input>
+                        <el-input v-model="brand2.address" style="width: 230px" ></el-input>
                     </el-form-item>
                     <el-form-item prop="email" label="邮箱">
-                        <el-input v-model="brand.email" style="width: 230px"></el-input>
+                        <el-input v-model="brand2.email" style="width: 230px"></el-input>
                     </el-form-item>
                     <el-form-item label="电话" prop="tel">
-                        <el-input type="age" v-model.number="brand.tel" autocomplete="off" style="width: 230px" maxlength="11"></el-input>
+                        <el-input type="age" v-model.number="brand2.tel" autocomplete="off" style="width: 230px" maxlength="11"></el-input>
                     </el-form-item>
-                    <el-form-item label="级别" prop="departmentid" >
-                        <el-cascader :options="options" clearable v-model="brand.departmentid" placeholder="请选择部门/岗位/级别"></el-cascader>
+                    <el-form-item label="级别" prop="gradedId" >
+                        <el-cascader :options="options" clearable v-model="brand2.gradedId" placeholder="请选择部门/岗位/级别"></el-cascader>
                     </el-form-item>
                     <el-form-item label="性别" prop="sex">
-                        <el-radio-group v-model="brand.sex">
+                        <el-radio-group v-model="brand2.sex">
                             <el-radio label="男"></el-radio>
                             <el-radio label="女"></el-radio>
                         </el-radio-group>
                     </el-form-item>
                     <el-form-item label="生日" required>
                         <el-col :span="11">
-                            <el-form-item prop="birthDay">
-                                <el-date-picker type="date" placeholder="请填入生日" v-model="brand.birthDay" ></el-date-picker>
+                            <el-form-item prop="birthday">
+                                <el-date-picker type="date" placeholder="请填入生日" v-model="brand2.birthday" ></el-date-picker>
                             </el-form-item>
                         </el-col>
                     </el-form-item>
                     <el-form-item label="入职时间" required>
                         <el-col :span="11">
                             <el-form-item prop="createDate">
-                                <el-date-picker type="date" placeholder="请填入入职时间" v-model="brand.createDate" :picker-options="pickerOptions" ></el-date-picker>
+                                <el-date-picker type="date" placeholder="请填入入职时间" v-model="brand2.createDate" :picker-options="pickerOptions" ></el-date-picker>
                             </el-form-item>
                         </el-col>
                     </el-form-item>
                     <el-form-item>
                         <div style="margin-right: 0;">
-                            <el-button @click="resetForm('brand')">重置</el-button>
-                            <el-button @click="dialogForm('brand')">取 消</el-button>
-                            <el-button type="primary" @click="handleAdd" >立即创建</el-button>
+                            <el-button @click="resetForm(brand2)">重置</el-button>
+                            <el-button @click="dialogForm(brand2)">取 消</el-button>
+                            <el-button type="primary" @click="handleAdd(brand2)" >立即创建</el-button>
                         </div>
                     </el-form-item>
                 </el-form>
@@ -88,7 +88,7 @@
 
             <!--编辑对话框弹出-->
             <el-dialog title="修改" :visible.sync="compileDialogFormVisible" :close-on-click-modal="false" style="width: 900px;height: 900px;margin: auto;">
-                <el-form :model="brand2" :rules="addrules2" ref="brand2" label-width="100px" class="demo-ruleForm">
+                <el-form :model="brand2" :rules="addRules2" ref="brand2" label-width="100px" class="demo-ruleForm">
                     <el-form-item label="名字" prop="name" >
                         <el-input v-model="brand2.name" style="width: 230px" ></el-input>
                     </el-form-item>
@@ -105,15 +105,15 @@
                             prop="tel">
                         <el-input type="age" v-model.number="brand2.tel" autocomplete="off" style="width: 230px" maxlength="11"></el-input>
                     </el-form-item>
-                    <!-- <el-form-item label="级别" prop="classScaleid" >
-                      <el-select v-model="brand.classScaleid" placeholder="请选择级别">
+                    <!-- <el-form-item label="级别" prop="gradedId" >
+                      <el-select v-model="brand.gradedId" placeholder="请选择级别">
                         <el-option label="1级别" value="yiJ"></el-option>
                         <el-option label="2级别" value="erJ"></el-option>
                         <el-option label="3级别" value="sanJ"></el-option>
                       </el-select>
                     </el-form-item> -->
                     <el-form-item label="级别" prop="gradedId" >
-                        <el-cascader :options="options" clearable v-model="brand2.gradedId" placeholder="请选择部门/岗位/级别"></el-cascader>
+                        <el-cascader :options="options" clearable v-model="brand2.gradedId" placeholder="请选择部门/岗位"></el-cascader>
                     </el-form-item>
                     <el-form-item label="性别" prop="sex">
                         <el-radio-group v-model="brand2.sex">
@@ -123,8 +123,8 @@
                     </el-form-item>
                     <el-form-item label="生日" required>
                         <el-col :span="11">
-                            <el-form-item prop="birthDay">
-                                <el-date-picker type="date" placeholder="请填入生日" v-model="brand2.birthDay"
+                            <el-form-item prop="birthday">
+                                <el-date-picker type="date" placeholder="请填入生日" v-model="brand2.birthday"
                                 ></el-date-picker>
                             </el-form-item>
                         </el-col>
@@ -174,8 +174,8 @@
                     </el-form-item>
                     <el-form-item label="生日" required>
                         <el-col :span="11">
-                            <el-form-item prop="birthDay">
-                                <el-date-picker type="date" placeholder="请填入生日" v-model="brand2.birthDay" :disabled="true"
+                            <el-form-item prop="birthday">
+                                <el-date-picker type="date" placeholder="请填入生日" v-model="brand2.birthday" :disabled="true"
                                 ></el-date-picker>
                             </el-form-item>
                         </el-col>
@@ -189,7 +189,7 @@
                         </el-col>
                     </el-form-item>
                     <el-form-item style="margin-left: 200px;">
-                        <el-button @click="lookFormVisible=false">关闭窗口</el-button>
+                        <el-button @click="lookFormVisible=false;this.clearBrand2()">关闭窗口</el-button>
                     </el-form-item>
                 </el-form>
             </el-dialog>
@@ -200,7 +200,8 @@
                     style="width: 100%;"
                     :row-class-name="tableRowClassName"
                     @selection-change="handleSelectionChange"
-                    @row-click="rowClick">
+                    @row-click="rowClick"
+                    @sort-change="sortById">
                 <el-table-column
                         type="selection"
                         width="55">
@@ -208,7 +209,7 @@
                 <el-table-column
                         prop="userId"
                         label="工号"
-                        sortable
+                        sortable="custom"
                         column-key="userId"
                         align="center"
                 >
@@ -222,20 +223,18 @@
 
                 <!-- 筛选内部 filters -->
                 <el-table-column
-                        prop="postid"
-                        label="岗位"
-                        align="center"
-                        :filters="[{ text: '程序员', value: '程序员' }, { text: '架构师', value: '架构师' }]"
-                        :filter-method="formatter"
-                        filter-placement="bottom-end">
+                        prop="sectorName"
+                        label="部门"
+                        align="center">
+<!--                        :filters="[{ text: '程序员', value: '程序员' }, { text: '架构师', value: '架构师' }]"-->
+<!--                        :filter-method="formatter"-->
+<!--                        filter-placement="bottom-end">-->
                 </el-table-column>
                 <el-table-column
-                        prop="classScaleid"
+                        prop="gradedName"
                         label="级别"
-                        align="center"
-                        :filters="[{ text: '1级工', value: '1' }, { text: '2级工', value: '2' }, { text: '3级工', value: '3' }]"
-                        :filter-method="forclassScale"
-                        filter-placement="bottom-end">
+                        align="center">
+
                 </el-table-column>
                 <el-table-column
                         prop="createDate"
@@ -243,16 +242,15 @@
                         sortable
                         column-key="createDate"
                         align="center"
-                >
+                        :formatter="formatDate">
                 </el-table-column>
                 <el-table-column
                         align="center"
-                        label="操作"
-                >
+                        label="操作">
                     <template slot-scope="scope">
                         <el-row>
                             <el-button type="primary" @click.stop="updateHandle(scope.row)">修改</el-button>
-                            <el-button type="danger" @click.stop="handleDelete">删除</el-button>
+                            <el-button type="danger" @click.stop="handleDelete(scope.row)">删除</el-button>
                         </el-row>
                     </template>
                 </el-table-column>
@@ -263,9 +261,9 @@
                         @size-change="handleSizeChange"
                         @current-change="handleCurrentChange"
                         background
-                        :current-page="currentPage4"
+                        :current-page="currentPage"
                         :page-size="pageSize"
-                        :page-sizes="[10,15,20,25]"
+                        :page-sizes="pageSizes"
                         layout="total, sizes, prev, pager, next, jumper"
                         :total="totalCount">
                 </el-pagination>
@@ -283,87 +281,24 @@
 <script>
     var vue = new Vue({
         el: '#app',
-        mounted(){
-            this.getall();
-        },
         data() {
             return {
                 //每页显示数
-                pageSize:5,
+                pageSize:10,
+                pageSizes: [10,15,20,25],
                 //总记录数
                 totalCount:100,
+
+                isAse: true,
                 //选中的数据
                 multipleSelection:[],
                 selectionID:[],
                 //级联选择器
                 // 要传值的
-                options:[{
-                    value: 'yiB',
-                    label: '1部门',
-                    children: [{
-                        value: 'sheji',
-                        label: '设计1',
-                        children: [{
-                            value: 'yiJ',
-                            label: '1级别'
-                        }, {
-                            value: 'erJ',
-                            label: '2级别'
-                        }, {
-                            value: 'sanJ',
-                            label: '3级别'
-                        }, {
-                            value: 'siJ',
-                            label: '4级别'
-                        }],
-
-                    }],
-                },
-                    {
-                        value:'erB',
-                        label:"2部门",
-                        children:[{
-                            value:"qianduan",
-                            label:"前端",
-                            children:[{
-                                value: 'yiJ',
-                                label: '1级别'
-                            }, {
-                                value: 'erJ',
-                                label: '2级别'
-                            }, {
-                                value: 'sanJ',
-                                label: '3级别'
-                            }, {
-                                value: 'siJ',
-                                label: '4级别'
-                            }],
-                        }],
-                    },
-                    {
-                        value:'sanB',
-                        label:"3部门",
-                        children:[{
-                            value:"houduan",
-                            label:"后端",
-                            children:[{
-                                value: 'yiJ',
-                                label: '1级别'
-                            }, {
-                                value: 'erJ',
-                                label: '2级别'
-                            }, {
-                                value: 'sanJ',
-                                label: '3级别'
-                            }, {
-                                value: 'siJ',
-                                label: '4级别'
-                            }]
-                        }],
-                    }],
+                options:[],
 
                 // 页数存放
-                currentPage4: 1,
+                currentPage: 1,
                 // 创建时间必须大于当今时间
                 pickerOptions: {
                     disabledDate(time) {
@@ -371,19 +306,16 @@
                     }
                 },
                 listLoading: false,
-                multipleSelection:[],
                 //搜索的两个筛选 ，也能当数据模板
                 brand: {
                     userId:null,
                     name:null,
-                    birthDay:null,
+                    birthday:null,
                     sex:null,
                     tel:null,
                     email:null,
                     address:null,
-                    departmentid:null,
-                    gradedid:null,
-                    classScaleid:null,
+                    gradedId:null,
                     createDate:null,
                 },
                 //查看和修改的显示模板
@@ -392,129 +324,15 @@
                     password:null,
                     name:null,
                     sex:null,
-                    birthDay:null,
+                    birthday:null,
                     tel:null,
                     email:null,
                     address:null,
                     createDate: null,
                     gradedId:null,
                 },
-                //传数据的模板
-                brand3: {
-                    userId:null,
-                    password:null,
-                    name:null,
-                    sex:null,
-                    birthDay:null,
-                    tel:null,
-                    email:null,
-                    address:null,
-                    createDate: null,
-                    gradedId:null,
-                },
-
-                // ['yiB','sheji','yiJ'];
                 //表格信息（传值）
-                tableData: [
-                    {
-                        userId:"205805106",
-                        name:"俞剑辉",
-                        birthDay:"2002-2-16",
-                        sex:"男",
-                        tel:"1369915473",
-                        email:"yjh.163.com",
-                        departmentid:"yiB",
-                        address:"莆田",
-                        postid:"sheji",
-                        classScaleid:"yiJ" ,
-                        createDate:"2016-03-05",
-                    }, {
-                        userId:"205805107",
-                        name:"黄进恒",
-                        birthDay:"2002-2-16",
-                        sex:"男",
-                        tel:"1369915473",
-                        email:"yjh.163.com",
-                        address:"莆田",
-                        departmentid:"1部门",
-                        postid:"前端",
-                        classScaleid:"2" ,
-                        createDate:"2016-03-05",
-                    }, {
-                        userId:"205805108",
-                        name:"范思炜",
-                        birthDay:"2002-2-16",
-                        sex:"男",
-                        tel:"1369915473",
-                        email:"yjh.163.com",
-                        address:"湖南",
-                        departmentid:"1部门",
-                        postid:"前端",
-                        classScaleid:"2" ,
-                        createDate:"2016-03-05",
-                    }, {
-                        userId:"205805109",
-                        name:"陈炜灵",
-                        birthDay:"2002-2-16",
-                        sex:"男",
-                        tel:"1369915473",
-                        email:"yjh.163.com",
-                        address:"厦门",
-                        departmentid:"1部门",
-                        postid:"后端",
-                        classScaleid:"2" ,
-                        createDate:"2016-03-05",
-                    },
-                    {
-                        userId:"205805110",
-                        name:"庄伟杰",
-                        birthDay:"2002-2-16",
-                        sex:"男",
-                        tel:"1369915473",
-                        email:"yjh.163.com",
-                        address:"晋江",
-                        departmentid:"1部门",
-                        postid:"设计",
-                        classScaleid:"1" ,
-                        createDate:"2016-03-05",
-                    },{
-                        userId:"205805109",
-                        name:"陈炜灵",
-                        birthDay:"2002-2-16",
-                        sex:"男",
-                        tel:"1369915473",
-                        email:"yjh.163.com",
-                        address:"厦门",
-                        departmentid:"1部门",
-                        postid:"后端",
-                        classScaleid:"2" ,
-                        createDate:"2016-03-05",
-                    },{
-                        userId:"205805109",
-                        name:"庄伟杰",
-                        birthDay:"2002-2-16",
-                        sex:"男",
-                        tel:"1369915473",
-                        email:"yjh.163.com",
-                        address:"厦门",
-                        departmentid:"1部门",
-                        postid:"后端",
-                        classScaleid:"2" ,
-                        createDate:"2016-03-05",
-                    },{
-                        userId:"205805109",
-                        name:"俞剑辉",
-                        birthDay:"2002-2-16",
-                        sex:"男",
-                        tel:"1369915473",
-                        email:"yjh.163.com",
-                        address:"厦门",
-                        departmentid:"1部门",
-                        postid:"后端",
-                        classScaleid:"2" ,
-                        createDate:"2016-03-05",
-                    }
-                ],
+                tableData: [],
                 //打开弹窗
                 // dialogTableVisible: false,
                 addDialogFormVisible: false,
@@ -524,15 +342,15 @@
 
 
                 //弹出窗口中的提示信息
-                addrules: {
+                addRules: {
                     name: [
                         { required: true, message: '请输入姓名', trigger: 'blur' },
                         { min: 2, max: 10, message: '长度在 2 到 10 个字符', trigger: 'blur' }
                     ],
-                    departmentid: [
+                    gradedId: [
                         { required: true, message: '请选择部门/岗位' ,trigger: 'blur' }
                     ],
-                    birthDay: [
+                    birthday: [
                         { type: 'date', required: true, message: '请填写生日日期', trigger: 'change' }
                     ],
                     createDate: [
@@ -556,15 +374,15 @@
                 },
 
                 //弹出修改窗口中的提示信息
-                addrules2: {
+                addRules2: {
                     name: [
                         { required: true, message: '请输入姓名', trigger: 'blur' },
                         { min: 2, max: 10, message: '长度在 2 到 10 个字符', trigger: 'blur' }
                     ],
-                    departmentid: [
+                    gradedId: [
                         { required: true, message: '请选择部门/岗位/级别' ,trigger: 'blur' }
                     ],
-                    birthDay: [
+                    birthday: [
                         { type: 'date', required: true, message: '请填写生日日期', trigger: 'change' }
                     ],
                     createDate: [
@@ -575,7 +393,7 @@
                     ],
                     email: [
                         { required: true, message: '请输入邮箱地址', trigger: 'blur' },
-                        { type: 'email', message: '请输入正确的邮箱地址', trigger: 'change' }
+                        { type: 'email', message: '请输入正确的邮箱地址', trigger: 'blur' }
                     ],
                     tel:[
                         { required: true, message: '电话不能为空'},
@@ -589,43 +407,74 @@
             }
         },
         created() {
-            // this.getAll();
+            this.getAll();
         },
         methods: {
+            sortById(){
+                this.isAse = !this.isAse;
+                this.getAll();
+            },
+            //获取岗位级别数据
+            getLevelData(){
+              axios.get("/users/getLevelAll").then((res)=>{
+                  if(res.data.code == 20041){
+                      //如果操作成功，关团弹层。显示数据
+                      this.options = res.data.data;
+                  }else {
+                      this.$message.error(res.data.msg)
+                  }
+              })
+            },
+
+
             // 点击查看
             rowClick(row) {
-                this.lookFormVisible = true;
-                this.brand2.name = row.name;
-                this.brand2.sex = row.sex;
-                this.brand2.birthDay = row.birthDay;
-                this.brand2.tel = row.tel;
-                this.brand2.email = row.email;
-                this.brand2.address = row.address;
-                this.brand2.createDate = row.createDate;
-                this.brand2.roleId = row.roleId;
-                this.brand2.gradedId = [row.departmentid,row.postid,row.classScaleid];
+                this.getLevelData()
+                axios.get("/users/selectById/"+row.userId).then((res)=>{
+                    if(res.data.code == 20041){
+                        console.log(res.data.code)
+                        this.brand2 = res.data.data;
+                        this.brand2.gradedId = [res.data.data.sectorId,res.data.data.gradedId];
+                        this.compileDialogFormVisible = true;
+                    }else{
+                        this.$message.error(res.data.msg);
+                    }
+                });
             },
             //表格数据
             getAll(){
                 //发送ajax请求
-                axios.post("/selectByPageAndCurrentPage?currentPage="+this.currentPage+"&pageSize="+this.pageSize,this.brand).then((res)=>{
+                axios.post("/users/selectByPageAndCurrentPage?currentPage="+this.currentPage+"&pageSize="+this.pageSize+"&isAse="+this.isAse,this.brand).then((res)=>{
                     this.tableData = res.data.data.rows;
                     //设置总记录数
-                    this.totalCount = res.data.totalCount;
-                }).then((resp)=>{
-                    this.tableData = resp.data.rows;//{rpws:{},totalCount:100}
-                    //消息总记录数
-                    this.totalCount = resp.data.totalCount;
+                    this.totalCount = res.data.data.totalCount;
                 })
             },
+
+            //时间格式化
+            formatDate(row, column) {
+                // 获取单元格数据
+                let data = row[column.property]
+                if(data == null) {
+                    return null
+                }
+                let dt = new Date(data)
+                return dt.getFullYear() + '-' + (dt.getMonth() + 1) + '-' + dt.getDate() + ' ' + dt.getHours() + ':' + dt.getMinutes() + ':' + dt.getSeconds()
+            },
+            clearBrand2(){
+                this.brand2 = {}
+            },
             //新建窗口添加数据 确定按钮事件
-            handleAdd(){
-                // console.log(this.brand.departmentid[1])
+            handleAdd(brand2){
+
+                var brandUpdate = { ...brand2 }
+                brandUpdate.gradedId = brand2.gradedId[1]
                 var _this = this;
-                axios.post("/yuanGongXX",this.brand2).then((res)=>{
+                axios.post("/users",brandUpdate).then((res)=>{
                     if(res.data.code == 20011){
                         _this.addDialogFormVisible = false;
                         _this.$message.success("添加成功");
+                        this.clearBrand2();
                     }else if(res.data.code == 20010){
                         _this.$message.error("添加失败！");
                     }else{
@@ -639,65 +488,55 @@
 
             // 修改按钮事件(弹出窗口)
             updateHandle(row) {
-                this.compileDialogFormVisible = true;
-                this.brand2.name = row.name;
-                this.brand2.sex = row.sex;
-                this.brand2.birthDay = row.birthDay;
-                this.brand2.tel = row.tel;
-                this.brand2.email = row.email;
-                this.brand2.address = row.address;
-                this.brand2.createDate = row.createDate;
-                this.brand2.roleId = row.roleId;
-                this.brand2.gradedId = [row.departmentid,row.postid,row.classScaleid];
-                //  axios.get("/yuanGongXX/"+row.userId).then((res)=>{
-                //    if(res.data.code == 20041){
-                //       this.brand2 = res.data.data;
-                //       this.compileDialogFormVisible = true;
-                //    }else{
-                //      this.$message.error(res.data.msg);
-                //    }
-                //  });
+
+                // this.compileDialogFormVisible = true;
+                this.getLevelData()
+                // this.brand2 = { ...row};
+                // this.brand2.gradedId = [row.sectorId,row.gradedId];
+
+                 axios.get("/users/selectById/"+row.userId).then((res)=>{
+                   if(res.data.code == 20041){
+                       console.log(res.data.code)
+                       this.brand2 = res.data.data;
+                       this.brand2.gradedId = [res.data.data.sectorId,res.data.data.gradedId];
+                       this.compileDialogFormVisible = true;
+                   }else{
+                     this.$message.error(res.data.msg);
+                   }
+                 });
             },
             //修改窗口确定按钮
             compileHandleAdd(brand2){
-                this.brand3.name = brand2.name;
-                this.brand3.sex = brand2.sex;
-                this.brand3.birthDay = brand2.birthDay;
-                this.brand3.tel = brand2.tel;
-                this.brand3.email = brand2.email;
-                this.brand3.address = brand2.address;
-                this.brand3.createDate = brand2.createDate;
-                this.brand3.roleId = brand2.roleId;
-                this.brand3.gradedId = brand2.gradedId[1];
-                console.log(this.brand3);
-                // axios.put("/yuanGongXX"+row.userId,this.brand3).then((res)=>{
-                //   if(res.data.code == 20031){
-                //     this.$message.success("修改成功");
-                //     this.compileDialogFormVisible = false;
-                //   }else if(res.data.code == 20030){
-                //     this.$message.error("修改失败！");
-                //   }else{
-                //     this.$message.error(res.data.msg);
-                //   }
+                var brandUpdate = { ...brand2 }
+                brandUpdate.gradedId = brand2.gradedId[1]
+                console.log(brandUpdate)
+                axios.put("/users",brandUpdate).then((res)=>{
+                  if(res.data.code == 20031){
+                    this.$message.success("修改成功");
+                    this.compileDialogFormVisible = false;
+                    this.clearBrand2();
 
-                // }).finally(()=>{
-                //   _this.getAll();
-                // })
+                  }else if(res.data.code == 20030){
+                    this.$message.error("修改失败！");
+                  }else{
+                    this.$message.error(res.data.msg);
+                  }
+                }).finally(()=>{
+                  this.getAll();
+                })
             },
             // 修改窗口取消按钮
             compileDialogForm(formName) {
                 this.$refs[formName].resetFields();
                 this.compileDialogFormVisible = false;
+                this.clearBrand2();
             },
             // 主要显示部分
             clearFilter() {
                 this.$refs.filterTable.clearFilter();
             },
             formatter(value,row) {
-                return row.postid === value;
-            },
-            forclassScale(value, row) {
-                return row.classScaleid === value;
+                return row.gradedName === value;
             },
             filterHandler(value, row, column) {
                 const property = column['property'];
@@ -727,6 +566,7 @@
             },
             //新建弹窗部分
             popwindows(){
+                this.getLevelData();
                 this.addDialogFormVisible = true;
                 this.$refs[formName].resetFields();
             },
@@ -750,14 +590,38 @@
                 //console.log(`当前页: ${val}`);
                 this.currentPage = val;
                 this.getAll();
-            }
-        },
-        //单独删除
-        handleDelete(row){
-            this.$confirm("是否删除当前员工信息（不可撤销）","提示",{
-                type:'info'
-            }).then(()=>{
-                axios.delete("/yuanGong/"+row.userId).then((res)=>{
+            },
+            //单独删除
+            handleDelete(row){
+                this.$confirm("是否删除当前员工信息（不可撤销）","提示",{
+                    type:'info'
+                }).then(()=>{
+                    axios.delete("/users"+row.userId).then((res)=>{
+                        if(res.data.code == 20021){
+                            this.$message.success("删除成功");
+
+                        }else{
+                            this.$message.error("删除失败");
+                        }
+                    }).finally(()=>{
+                        this.getall();
+                    })
+                }).catch(()=>{
+                    this.$message.info("取消删除");
+                })
+            },
+            //批量删除
+            deleteByIds(){
+                // for(let i = 0;i <  this.multipleSelection.length; i++){
+                //     console.log(this.multipleSelection[i])
+                //     this.selectionID[i] = this.multipleSelection[i];
+                // }
+                // console.log(this.selectionID)
+                var ids =""
+                for (var multipleSelectionKey in this.multipleSelection) {
+
+                }
+                axios.delete("/users",this.multipleSelection).then((res)=>{
                     if(res.data.code == 20021){
                         this.$message.success("删除成功");
 
@@ -766,30 +630,12 @@
                     }
                 }).finally(()=>{
                     this.getall();
+                }).catch(()=>{
+                    this.$message.info("取消删除");
                 })
-            }).catch(()=>{
-                this.$message.info("取消删除");
-            })
+            },
         },
-        //批量删除
-        deleteByIds(){
-            for(let i = 0;i <  this.multipleSelection.length; i++){
-                let idSelection = this.multipleSelection[i];
-                this.selectionID[i] = idSelection.userId;
-            }
-            axios.delete("/yuanGongXX",this.selectionID).then((res)=>{
-                if(res.data.code == 20021){
-                    this.$message.success("删除成功");
 
-                }else{
-                    this.$message.error("删除失败");
-                }
-            }).finally(()=>{
-                this.getall();
-            }).catch(()=>{
-                this.$message.info("取消删除");
-            })
-        },
 
     })
 

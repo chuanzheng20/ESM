@@ -12,12 +12,7 @@
     line-height: 45px;
   }
   
-  .el-main {
-    background-color: #E9EEF3;
-    color: #333;
-    text-align: center;
-    line-height: 160px;
-  }
+
   
   body > .el-container {
     margin-bottom: 40px;
@@ -33,7 +28,7 @@
   }
 
   .el-menu-vertical-demo:not(.el-menu--collapse) {
-    width: 200px;
+    width: 160px;
     min-height: 660px;
   }
   .el-dropdown-link {
@@ -43,6 +38,10 @@
   .el-icon-arrow-down {
     font-size: 12px;
   }
+
+.el-submenu .el-menu-item{
+  min-width: auto;
+}
 .el-menu-item.is-active{
   background-color:  #1c74b3 !important;
   color: white;

@@ -1,14 +1,10 @@
 package com.esm.domain;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableLogic;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
 import java.util.Date;
 
 /**
@@ -24,9 +20,9 @@ import java.util.Date;
 @TableName("tb_user")
 public class User implements Serializable {
 
-    @TableId(value = "user_id", type = IdType.ASSIGN_ID)
-    private Integer userId;
-
+    @TableId(value = "user_id", type = IdType.ASSIGN_UUID)
+    private String userId;
+    @TableField(select = false)
     private String password;
 
     private String name;

@@ -37,7 +37,7 @@ public class JWTUtil {
      * @param userId
      * @return
      */
-    public static String createToken(Integer userId, String username, Integer roleId,String key, int expireMinutes) {
+    public static String createToken(String userId, String username, Integer roleId,String key, int expireMinutes) {
         SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
         //生成签名密钥
         byte[] apiKeySecretBytes = DatatypeConverter.parseBase64Binary(key);

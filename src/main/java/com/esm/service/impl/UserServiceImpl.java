@@ -1,14 +1,21 @@
 package com.esm.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.esm.dao.GradedWagesDao;
 import com.esm.dao.SectorDao;
+import com.esm.dao.UserDao;
+import com.esm.dao.UserQueryDao;
 import com.esm.domain.GradedWages;
 import com.esm.domain.Level;
 import com.esm.domain.Sector;
 import com.esm.domain.User;
+import com.esm.domain.query.UserQuery;
 import com.esm.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,57 +29,100 @@ public class UserServiceImpl implements UserService {
     @Autowired
     public GradedWagesDao gradedWagesDao;
 
+    @Autowired
+    public UserDao userDao;
+
+    @Autowired
+    public UserQueryDao userQueryDao;
 
     @Override
     public User getById(Integer id) {
-        return null;
+
+        User user = userDao.selectById(id);
+        return user;
+    }
+
+    public boolean save(User user){
+        user.setPassword("123456");
+        int i = userDao.insert(user);
+        return i>0?true:false;
+    }
+
+    public boolean delete(Integer id){
+        int i = userDao.deleteById(id);
+        if (i>0){
+            return true;
+        }else {
+            return false;
+        }
+    }
+
+    @Override
+    public boolean update(User user) {
+        user.setPassword(null);
+        int i = userDao.updateById(user);
+        return i>0?true:false;
+    }
+
+    @Override
+    public List<User> getAll() {
+        List<User> userList = userDao.selectList(null);
+        return userList;
+    }
+
+
+    @Override
+    public IPage<UserQuery> selectByPageAndCurrentPage(IPage<UserQuery> page,String userId, String name, Boolean isAse){
+
+        QueryWrapper<UserQuery> queryWrapper = new QueryWrapper<>();
+        queryWrapper.like(StringUtils.hasText(userId), "tb_user.user_id", userId);
+        queryWrapper.like(StringUtils.hasText(name), "tb_user.name", name);
+        queryWrapper.apply("tb_user.graded_id = tb_graded_wages.graded_id");
+        queryWrapper.apply("tb_graded_wages.sector_id = tb_sector.sector_id");
+        queryWrapper.orderBy(true,isAse,"tb_user.user_id");
+        userQueryDao.findByPage(page, queryWrapper);
+
+        return page;
+    }
+
+    @Override
+    public UserQuery selectById(String userId) {
+
+        QueryWrapper<UserQuery> queryWrapper = new QueryWrapper<>();
+        queryWrapper.in("tb_user.user_id",userId);
+        queryWrapper.apply("tb_user.graded_id = tb_graded_wages.graded_id");
+        queryWrapper.apply("tb_graded_wages.sector_id = tb_sector.sector_id");
+
+        return userQueryDao.findById(queryWrapper);
     }
 
     @Override
     public List<Level> getLevel() {
         List<Sector> sectorList = sectorDao.getAll();
         List<GradedWages> gradedWagesList = gradedWagesDao.getAll();
-
-        // {
-        //     value: 'yiB',
-        //             label: '1部门',
-        //         children: [{
-        //     value: 'sheji',
-        //             label: '设计1',
-        //             children: [{
-        //         value: 'yiJ',
-        //                 label: '1级别'
-        //     }, {
-        //         value: 'erJ',
-        //                 label: '2级别'
-        //     }, {
-        //         value: 'sanJ',
-        //                 label: '3级别'
-        //     }, {
-        //         value: 'siJ',
-        //                 label: '4级别'
-        //     }],
-        //
-        // }],
         List<Level> levelList = new ArrayList<>();
         for (Sector sector: sectorList) {
             List<Level> levels = new ArrayList<>();
             for (GradedWages gradedWages : gradedWagesList) {
-                if(gradedWages.getSectorId().equals(sector.getSectorId())){
+                if(gradedWages.getSectorId()==sector.getSectorId()){
                     Level level = new Level();
                     level.setValue(gradedWages.getGradedId());
                     level.setLabel(gradedWages.getGradedName());
+                    levels.add(level);
                 }
             }
+            System.out.println(levels);
             if (levels.size()>0){
                 Level level = new Level();
                 level.setValue(sector.getSectorId());
                 level.setLabel(sector.getSectorName());
+                level.setChildren(levels);
                 levelList.add(level);
             }
         }
-
-
         return levelList;
     }
+
+
+
 }

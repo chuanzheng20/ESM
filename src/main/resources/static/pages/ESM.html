@@ -62,11 +62,11 @@
         </div>
       </el-header>
       <el-container>
-        <el-aside style="width: auto;height: 100%">
+        <el-aside style="height: 100%" width="auto">
           <el-row class="tac">
             <el-col :span="12">
 
-                <el-menu  class="el-menu-vertical-demo" :collapse="false" ref="operationsTable"  :unique-opened="true" text-color="white"  background-color="#213141" >
+                <el-menu :router="true" class="el-menu-vertical-demo" :collapse="false" ref="operationsTable"  :unique-opened="true" text-color="white"  background-color="#213141" >
 
                   <li  @click="test1()"><i class="icon iconfont icon-houtaishangpinguanli" style="width: 64px;margin-left: 0px;font-size: large;color:white" ></i></li>
 <!--                  <el-button  @click="test1()" size="small" class="icon iconfont icon-houtaishangpinguanli" type="text"></el-button>-->
@@ -98,13 +98,19 @@
             </el-col>
           </el-row>
         </el-aside>
-        <el-main style="background-color: white">
-          <el-breadcrumb separator-class="el-icon-arrow-right">
-            <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
-            <el-breadcrumb-item v-for="o in breadcrumbListData" :key="o.id">{{o.name}}</el-breadcrumb-item>
-          </el-breadcrumb>
-          <iframe :src="path" height="100%" width="100%" frameborder="0" scrolling="no" >
-
+        <el-main style="line-height: 0 ;background-color: white;padding: 0 0 0 0">
+<!--          <el-breadcrumb separator-class="el-icon-arrow-right">-->
+<!--            <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>-->
+<!--            <el-breadcrumb-item v-for="o in breadcrumbListData" :key="o.id">{{o.name}}</el-breadcrumb-item>-->
+<!--          </el-breadcrumb>-->
+<!--          <router-view></router-view>-->
+<!--          <iframe :src="path" height="100%" width="100%" frameborder="0" scrolling="no" marginwidth='0' marginheight='0' >-->
+          <iframe :src="path"
+                  width="100%"
+                  :height="iframeH"
+                  frameborder="0"
+                  scrolling="auto"
+                  ref="iframe" >
           </iframe>
 
         </el-main>
@@ -121,85 +127,87 @@
   var vue = new Vue({
     el: '#app',
     data:{
-
-        navData: [
-          {
-            name:"系统概况",
-            index: "1",
-            icon: "icon iconfont icon-xitongyunzhuanqingkuang",
-            items:[
-              {
-                index: "1-1",
-                name: "系统概述",
-                path: "system.html"
-              }
-            ]
-          },
-          {
-            name:"员工信息",
-            index: "2",
-            icon: "icon iconfont icon-yuangongxinxi",
-            items:[
-              {
-                index: "2-1",
-                name: "员工信息",
-                path: "books.html"
-              }
-            ]
-          },
-          {
-            name:"用户管理",
-            index: "3",
-            icon: "icon iconfont icon-navicon-yhgl",
-            items:[
-              {
-                index: "3-1",
-                name: "用户管理",
-                path: "system.html"
-              }
-            ]
-          },
-          {
-            name:"组织结构",
-            index: "4",
-            icon: "icon iconfont icon-zuzhiguanli",
-            items:[
-              {
-                index: "4-1",
-                name: "组织结构",
-                path: "system.html"
-              }
-            ]
-          },
-          {
-            index: "5",
-            name:"薪酬结构",
-
-            icon: "icon iconfont icon-jiegou",
-            items:[
-              {
-                index: "5-1",
-                name: "薪酬结构",
-                url: "system.html"
-              }
-            ]
-          },
-          {
-            name:"薪酬计算",
-            index: "6",
-            icon: "icon iconfont icon-navicon-yhgl",
-            items:[
-              {
-                index: '6-1',
-                name: "薪酬计算",
-                path: "system.html"
-              }
-            ]
-          }
+      // tempSrc: '',
+      iframeH: '',
+      navData: [
+        //   {
+        //     name:"系统概况",
+        //     index: "1",
+        //     icon: "icon iconfont icon-xitongyunzhuanqingkuang",
+        //     items:[
+        //       {
+        //         index: "1-1",
+        //         name: "系统概述",
+        //         path: "system.html"
+        //       }
+        //     ]
+        //   },
+        //   {
+        //     name:"员工信息",
+        //     index: "2",
+        //     icon: "icon iconfont icon-yuangongxinxi",
+        //     items:[
+        //       {
+        //         index: "2-1",
+        //         name: "员工信息",
+        //         path: "books.html"
+        //       }
+        //     ]
+        //   },
+        //   {
+        //     name:"用户管理",
+        //     index: "3",
+        //     icon: "icon iconfont icon-navicon-yhgl",
+        //     items:[
+        //       {
+        //         index: "3-1",
+        //         name: "用户管理",
+        //         path: "system.html"
+        //       }
+        //     ]
+        //   },
+        //   {
+        //     name:"组织结构",
+        //     index: "4",
+        //     icon: "icon iconfont icon-zuzhiguanli",
+        //     items:[
+        //       {
+        //         index: "4-1",
+        //         name: "组织结构",
+        //         path: "system.html"
+        //       }
+        //     ]
+        //   },
+        //   {
+        //     index: "5",
+        //     name:"薪酬结构",
+        //
+        //     icon: "icon iconfont icon-jiegou",
+        //     items:[
+        //       {
+        //         index: "5-1",
+        //         name: "薪酬结构",
+        //         url: "system.html"
+        //       }
+        //     ]
+        //   },
+        //   {
+        //     name:"薪酬计算",
+        //     index: "6",
+        //     icon: "icon iconfont icon-navicon-yhgl",
+        //     items:[
+        //       {
+        //         index: '6-1',
+        //         name: "薪酬计算",
+        //         path: "system.html"
+        //       }
+        //     ]
+        //   }
         ],
       path: "",
 
     },
+
     computed:{
       // noChildren(){
       //   return this.navData.filter((item)=>!item.items)
@@ -217,9 +225,13 @@
     },
 
     created() {
+      // this.tempSrc= '获取的url地址';
       this.getNavData()
+      this.mounted ()
     },
+
     methods: {
+
       getNavData(){
         axios.get("/getNavData").then((res)=>{
           this.navData = res.data.data;
@@ -257,10 +269,39 @@
         this.path = item.$vnode.data.key;
         // this.$route.push({path:item.path})
         console.log(this.$route)
+        this.mounted();
+
       },
       handleSelect (index, indexPath) {
         this.indexBreadcrumbs = indexPath // indexPath为一个数组，里面包含选中的菜单，和菜单的index标识
       },
+      // mounted() {
+      //   setTimeout(()=>{
+      //     this.$nextTick(()=>{ // 必须在页面加载完成之后获取高
+      //       // iframe自适应高
+      //       this.iframeH = this.$refs.iframe.contentWindow.document.documentElement.scrollHeight || this.$refs.iframe.contentWindow.document.body.scrollHeight
+      //     })
+      //   }, 300)
+      //   // setTimeout("runResizeTask()",1000);
+      //   // 清除定时器
+      //   // this.$once('hook:beforeDestroy',()=>{
+      //   //   clearInterval(timer);
+      //   //   timer = null;
+      //   // })
+      // },
+
+
+
+      mounted () {
+          this.timer = setInterval(()=>{
+            this.$nextTick(()=>{ // 必须在页面加载完成之后获取高
+              // iframe自适应高
+              // console.log(document.body.clientHeight);
+              this.iframeH = document.body.clientHeight-60
+            })
+          }, 500)
+
+      }
 
 
     }
@@ -270,5 +311,7 @@
   })
 
 </script>
+
+
 
 </html>
