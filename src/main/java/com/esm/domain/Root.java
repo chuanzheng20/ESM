@@ -11,7 +11,7 @@ import lombok.EqualsAndHashCode;
 @TableName("tb_root")
 public class Root {
     @TableId
-    private Integer RootId;
+    private Integer rootId;
     private String idx;
     private String name;
     private String icon;

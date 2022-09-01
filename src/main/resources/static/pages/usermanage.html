@@ -39,8 +39,8 @@
                 </div>
             </el-form>
             <!--新建对话框弹出-->
-            <el-dialog title="新建" :visible.sync="addDialogFormVisible" :close-on-click-modal="false" style="width: 900px;height: 900px;margin: auto;">
-                <el-form :model="brand2" ref="brand2" :rules="addRules" label-width="100px" class="demo-ruleForm">
+            <el-dialog title="新建" :visible.sync="addDialogFormVisible" :close-on-click-modal="false" style="width: 900px;height: 900px;margin: auto;" @close="clearBrand2">
+                <el-form :model="brand2" ref="formAdd" :rules="addRules" label-width="100px" class="demo-ruleForm">
                     <el-form-item label="名字" prop="name" >
                         <el-input v-model="brand2.name" style="width: 230px" ></el-input>
                     </el-form-item>
@@ -51,10 +51,10 @@
                         <el-input v-model="brand2.email" style="width: 230px"></el-input>
                     </el-form-item>
                     <el-form-item label="电话" prop="tel">
-                        <el-input type="age" v-model.number="brand2.tel" autocomplete="off" style="width: 230px" maxlength="11"></el-input>
+                        <el-input type="age" v-model.number="brand2.tel" style="width: 230px" maxlength="11"></el-input>
                     </el-form-item>
                     <el-form-item label="级别" prop="gradedId" >
-                        <el-cascader :options="options" clearable v-model="brand2.gradedId" placeholder="请选择部门/岗位/级别"></el-cascader>
+                        <el-cascader :options="options" clearable v-model="brand2.gradedId" placeholder="请选择部门/岗位"></el-cascader>
                     </el-form-item>
                     <el-form-item label="性别" prop="sex">
                         <el-radio-group v-model="brand2.sex">
@@ -78,8 +78,8 @@
                     </el-form-item>
                     <el-form-item>
                         <div style="margin-right: 0;">
-                            <el-button @click="resetForm(brand2)">重置</el-button>
-                            <el-button @click="dialogForm(brand2)">取 消</el-button>
+                            <el-button @click="resetForm('formAdd')">重置</el-button>
+                            <el-button @click="dialogForm('formAdd')">取 消</el-button>
                             <el-button type="primary" @click="handleAdd(brand2)" >立即创建</el-button>
                         </div>
                     </el-form-item>
@@ -87,8 +87,8 @@
             </el-dialog>
 
             <!--编辑对话框弹出-->
-            <el-dialog title="修改" :visible.sync="compileDialogFormVisible" :close-on-click-modal="false" style="width: 900px;height: 900px;margin: auto;">
-                <el-form :model="brand2" :rules="addRules2" ref="brand2" label-width="100px" class="demo-ruleForm">
+            <el-dialog title="修改" :visible.sync="compileDialogFormVisible" @close="clearBrand2" :close-on-click-modal="false" style="width: 900px;height: 900px;margin: auto;">
+                <el-form :model="brand2" :rules="addRules2" ref="formUpdate" label-width="100px" class="demo-ruleForm">
                     <el-form-item label="名字" prop="name" >
                         <el-input v-model="brand2.name" style="width: 230px" ></el-input>
                     </el-form-item>
@@ -103,7 +103,7 @@
                     <el-form-item
                             label="电话"
                             prop="tel">
-                        <el-input type="age" v-model.number="brand2.tel" autocomplete="off" style="width: 230px" maxlength="11"></el-input>
+                        <el-input type="age" v-model.number="brand2.tel" style="width: 230px" maxlength="11"></el-input>
                     </el-form-item>
                     <!-- <el-form-item label="级别" prop="gradedId" >
                       <el-select v-model="brand.gradedId" placeholder="请选择级别">
@@ -138,14 +138,14 @@
                         </el-col>
                     </el-form-item>
                     <el-form-item style="margin-right: 0;">
-                        <el-button @click="compileDialogForm('brand2')">取 消</el-button>
+                        <el-button @click="compileDialogForm('formUpdate')">取 消</el-button>
                         <el-button type="primary" @click="compileHandleAdd(brand2)">立即修改</el-button>
                     </el-form-item>
                 </el-form>
             </el-dialog>
 
             <!--查看对话框弹出-->
-            <el-dialog title="查看" :visible.sync="lookFormVisible" :close-on-click-modal="false" style="width: 900px;height: 900px;margin: auto;">
+            <el-dialog title="查看" :visible.sync="lookFormVisible" @close="clearBrand2" :close-on-click-modal="false" style="width: 900px;height: 900px;margin: auto;">
                 <el-form :model="brand2"  label-width="100px" class="demo-ruleForm">
                     <el-form-item label="名字" prop="name" >
                         <el-input v-model="brand2.name" style="width: 230px" :disabled="true"></el-input>
@@ -365,7 +365,7 @@
                     ],
                     tel:[
                         { required: true, message: '电话不能为空'},
-                        { type: 'number', message: '电话必须为数字值'}
+                        { type: 'number', message: '电话必须为数字值1'}
                     ],
                     address:[
                         { required: true, message: '请输入地址', trigger: 'blur' },
@@ -380,13 +380,13 @@
                         { min: 2, max: 10, message: '长度在 2 到 10 个字符', trigger: 'blur' }
                     ],
                     gradedId: [
-                        { required: true, message: '请选择部门/岗位/级别' ,trigger: 'blur' }
+                        { required: true, message: '请选择部门/岗位' ,trigger: 'blur' }
                     ],
                     birthday: [
-                        { type: 'date', required: true, message: '请填写生日日期', trigger: 'change' }
+                        { type: 'date', required: true, message: '请填写生日日期'}
                     ],
                     createDate: [
-                        { type: 'date', required: true, message: '请填写入职时间', trigger: 'change' }
+                        { type: 'date', required: true, message: '请填写入职时间'}
                     ],
                     sex: [
                         { required: true, message: '请输入性别', trigger: 'blur' }
@@ -395,9 +395,9 @@
                         { required: true, message: '请输入邮箱地址', trigger: 'blur' },
                         { type: 'email', message: '请输入正确的邮箱地址', trigger: 'blur' }
                     ],
-                    tel:[
+                    tel: [
                         { required: true, message: '电话不能为空'},
-                        { type: 'number', message: '电话必须为数字值' ,trigger: 'change'}
+                        { type: 'integer', message: '电话必须为数字值2'}
                     ],
                     address:[
                         { required: true, message: '请输入地址', trigger: 'blur' },
@@ -425,8 +425,6 @@
                   }
               })
             },
-
-
             // 点击查看
             rowClick(row) {
                 this.getLevelData()
@@ -435,7 +433,7 @@
                         console.log(res.data.code)
                         this.brand2 = res.data.data;
                         this.brand2.gradedId = [res.data.data.sectorId,res.data.data.gradedId];
-                        this.compileDialogFormVisible = true;
+                        this.lookFormVisible = true;
                     }else{
                         this.$message.error(res.data.msg);
                     }
@@ -466,24 +464,29 @@
             },
             //新建窗口添加数据 确定按钮事件
             handleAdd(brand2){
+                this.$refs.formAdd.validate((valid)=>{
+                   if (valid){
+                       var brandUpdate = { ...brand2 }
+                       brandUpdate.gradedId = brand2.gradedId[1]
+                       console.log(brandUpdate)
+                       axios.post("/users",brandUpdate).then((res)=>{
+                           if(res.data.code == 20011){
+                               this.addDialogFormVisible = false;
+                               this.$message.success("添加成功");
+                               this.clearBrand2();
+                           }else if(res.data.code == 20010){
+                               this.$message.error("添加失败！");
+                           }else{
+                               this.$message.error(res.data.msg);
+                           }
 
-                var brandUpdate = { ...brand2 }
-                brandUpdate.gradedId = brand2.gradedId[1]
-                var _this = this;
-                axios.post("/users",brandUpdate).then((res)=>{
-                    if(res.data.code == 20011){
-                        _this.addDialogFormVisible = false;
-                        _this.$message.success("添加成功");
-                        this.clearBrand2();
-                    }else if(res.data.code == 20010){
-                        _this.$message.error("添加失败！");
-                    }else{
-                        _this.$message.error(res.data.msg);
-                    }
+                       }).finally(()=>{
+                           this.getAll();
+                       })
+                   }
 
-                }).finally(()=>{
-                    _this.getAll();
                 })
+
             },
 
             // 修改按钮事件(弹出窗口)
@@ -496,9 +499,13 @@
 
                  axios.get("/users/selectById/"+row.userId).then((res)=>{
                    if(res.data.code == 20041){
-                       console.log(res.data.code)
+                       console.log(res.data.code);
                        this.brand2 = res.data.data;
                        this.brand2.gradedId = [res.data.data.sectorId,res.data.data.gradedId];
+                       this.brand2.tel = parseInt(res.data.data.tel);
+                       this.brand2.createDate =  new Date(res.data.data.createDate);
+                       this.brand2.birthday =  new Date(res.data.data.birthday);
+
                        this.compileDialogFormVisible = true;
                    }else{
                      this.$message.error(res.data.msg);
@@ -507,23 +514,30 @@
             },
             //修改窗口确定按钮
             compileHandleAdd(brand2){
-                var brandUpdate = { ...brand2 }
-                brandUpdate.gradedId = brand2.gradedId[1]
-                console.log(brandUpdate)
-                axios.put("/users",brandUpdate).then((res)=>{
-                  if(res.data.code == 20031){
-                    this.$message.success("修改成功");
-                    this.compileDialogFormVisible = false;
-                    this.clearBrand2();
+                this.$refs.formUpdate.validate((valid)=>{
+                    if (valid){
+                        var brandUpdate = { ...brand2 }
+                        brandUpdate.gradedId = brand2.gradedId[1]
+                        console.log(brandUpdate)
+                        axios.put("/users",brandUpdate).then((res)=>{
+                            if(res.data.code == 20031){
+                                this.$message.success("修改成功");
+                                this.compileDialogFormVisible = false;
+                                this.clearBrand2();
 
-                  }else if(res.data.code == 20030){
-                    this.$message.error("修改失败！");
-                  }else{
-                    this.$message.error(res.data.msg);
-                  }
-                }).finally(()=>{
-                  this.getAll();
-                })
+                            }else if(res.data.code == 20030){
+                                this.$message.error("修改失败！");
+                            }else{
+                                this.$message.error(res.data.msg);
+                                // console.log(message);
+                            }
+                        }).finally(()=>{
+                            this.getAll();
+                        })
+                    }
+                //
+                });
+
             },
             // 修改窗口取消按钮
             compileDialogForm(formName) {
@@ -596,42 +610,36 @@
                 this.$confirm("是否删除当前员工信息（不可撤销）","提示",{
                     type:'info'
                 }).then(()=>{
-                    axios.delete("/users"+row.userId).then((res)=>{
+                    axios.delete("/users/"+row.userId).then((res)=>{
                         if(res.data.code == 20021){
                             this.$message.success("删除成功");
 
                         }else{
                             this.$message.error("删除失败");
                         }
-                    }).finally(()=>{
-                        this.getall();
                     })
                 }).catch(()=>{
                     this.$message.info("取消删除");
+                }).finally(()=>{
+                    this.getAll();
                 })
             },
             //批量删除
             deleteByIds(){
-                // for(let i = 0;i <  this.multipleSelection.length; i++){
-                //     console.log(this.multipleSelection[i])
-                //     this.selectionID[i] = this.multipleSelection[i];
-                // }
-                // console.log(this.selectionID)
-                var ids =""
-                for (var multipleSelectionKey in this.multipleSelection) {
-
-                }
-                axios.delete("/users",this.multipleSelection).then((res)=>{
-                    if(res.data.code == 20021){
-                        this.$message.success("删除成功");
-
-                    }else{
-                        this.$message.error("删除失败");
-                    }
-                }).finally(()=>{
-                    this.getall();
+                this.$confirm("是否删除当前员工信息（不可撤销）","提示",{
+                    type:'info'
+                }).then(()=>{
+                    axios.delete("/users/"+this.multipleSelection.join(",")).then((res)=>{
+                        if(res.data.code == 20021){
+                            this.$message.success("删除成功");
+                        }else{
+                            this.$message.error("删除失败");
+                        }
+                })
                 }).catch(()=>{
                     this.$message.info("取消删除");
+                }).finally(()=> {
+                    this.getAll();
                 })
             },
         },

@@ -9,10 +9,10 @@ import java.util.List;
 
 
 public interface UserService {
-    public User getById(Integer id);
+    public User getById(String id);
     public List<Level> getLevel();
     public boolean save(User user);
-    public boolean delete(Integer userId);
+    public boolean delete(List<String> ids);
     public boolean update(User user);
     public List<User> getAll();
     public IPage<UserQuery> selectByPageAndCurrentPage(IPage<UserQuery> page, String userId, String name,Boolean isAse);

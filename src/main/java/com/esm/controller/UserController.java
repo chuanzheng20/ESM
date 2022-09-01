@@ -78,18 +78,20 @@ public class UserController {
         System.out.println(user.getGradedId());
         user.setRoleId(3);
         boolean b = userService.save(user);
-        Integer code = b  ? Code.UPDATE_OK : Code.UPDATE_ERR;
+        Integer code = b  ? Code.SAVE_OK : Code.SAVE_ERR;
         String msg = b  ? "" : "用户信息错误，请重试！";
         return new Result(code,null, msg);
     }
 
 
-    @PostMapping("/delete")
-    public Result delete(@RequestBody List<Integer> ids){
+    @DeleteMapping("/{ids}")
+    public Result deleteById(@PathVariable List<String> ids){
         System.out.println(ids);
-        return new Result();
+        boolean b = userService.delete(ids);
+        Integer code = b  ? Code.DELETE_OK : Code.DELETE_ERR;
+        String msg = b  ? "" : "删除错误！";
+        return new Result(code,null, msg);
     }
-
 
 
 

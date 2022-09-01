@@ -36,20 +36,21 @@ public class UserServiceImpl implements UserService {
     public UserQueryDao userQueryDao;
 
     @Override
-    public User getById(Integer id) {
+    public User getById(String id) {
 
         User user = userDao.selectById(id);
         return user;
     }
-
+    @Override
     public boolean save(User user){
         user.setPassword("123456");
         int i = userDao.insert(user);
         return i>0?true:false;
     }
 
-    public boolean delete(Integer id){
-        int i = userDao.deleteById(id);
+    @Override
+    public boolean delete(List<String> ids){
+        int i = userDao.deleteBatchIds(ids);
         if (i>0){
             return true;
         }else {
@@ -80,6 +81,7 @@ public class UserServiceImpl implements UserService {
         queryWrapper.apply("tb_user.graded_id = tb_graded_wages.graded_id");
         queryWrapper.apply("tb_graded_wages.sector_id = tb_sector.sector_id");
         queryWrapper.orderBy(true,isAse,"tb_user.user_id");
+        queryWrapper.in("deleted",0);
         userQueryDao.findByPage(page, queryWrapper);
 
         return page;
@@ -92,7 +94,7 @@ public class UserServiceImpl implements UserService {
         queryWrapper.in("tb_user.user_id",userId);
         queryWrapper.apply("tb_user.graded_id = tb_graded_wages.graded_id");
         queryWrapper.apply("tb_graded_wages.sector_id = tb_sector.sector_id");
-
+        queryWrapper.in("deleted",0);
         return userQueryDao.findById(queryWrapper);
     }
 
