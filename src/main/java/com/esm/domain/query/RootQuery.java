@@ -11,9 +11,8 @@ public class RootQuery extends Root {
 
     @Override
     public String toString() {
-        return super.toString() +
-                "RootQuery{" +
-                "children=" + children +
+        return super.toString().replace("}",",").replace("'","\"").replace("Root","") +
+                "\"children\":" + children +
                 '}';
     }
 }

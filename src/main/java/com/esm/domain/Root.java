@@ -22,13 +22,13 @@ public class Root {
     @Override
     public String toString() {
         return "Root{" +
-                "rootId=" + rootId +
-                ", idx='" + idx + '\'' +
-                ", name='" + name + '\'' +
-                ", icon='" + icon + '\'' +
-                ", path='" + path + '\'' +
-                ", fatherId=" + fatherId +
-                ", apiPaths='" + apiPaths + '\'' +
+                "\"rootId\":" + rootId +
+                ", \"idx\":'" + idx + '\'' +
+                ", \"name\":'" + name + '\'' +
+                ", \"icon\":'" + icon + '\'' +
+                ", \"path\":'" + path + '\'' +
+                ", \"fatherId\":" + fatherId +
+                ", \"apiPath\":" + apiPaths +
                 '}';
     }
 }
