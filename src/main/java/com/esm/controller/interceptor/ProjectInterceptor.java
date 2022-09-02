@@ -1,7 +1,9 @@
 package com.esm.controller.interceptor;
 
+import com.esm.service.AuthenticationService;
 import com.esm.utils.JWTUtil;
 import io.jsonwebtoken.Claims;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
@@ -19,12 +21,15 @@ import javax.servlet.http.HttpServletResponse;
 public class ProjectInterceptor implements HandlerInterceptor {
     @Value("${key}")
     private String key;
+
+    @Autowired
+    private AuthenticationService authenticationService;
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         // System.out.println("preHandle....");
         String requestURL=request.getRequestURI();
         System.out.println("preHandle Interceptor路径："+requestURL);
-        if (requestURL.equals("/login")){
+        if (requestURL.equals("/login") || requestURL.equals("/pages/ESM.html") || requestURL.equals("/getNavData")){
             return true;
         }
         //自动登录检查业务逻辑
@@ -37,9 +42,16 @@ public class ProjectInterceptor implements HandlerInterceptor {
                     Claims claims = JWTUtil.parseToken(token, key);
                     // System.out.println(claims.get("userId"));
                     if (claims!=null)
+
+                        // if(claims.get("roleId")!=null || claims.get("roleId").equals("")){
+                        //
+                        //     Integer roleId = (Integer) claims.get("roleId");
+                        //     System.out.println(roleId);
+                        //     // (Integer) roleId
+                        //     return authenticationService.Authentication((Integer) claims.get("roleId"),requestURL);
+                        //
+                        // }
                         return true;
-
-
                 }
             }
         }

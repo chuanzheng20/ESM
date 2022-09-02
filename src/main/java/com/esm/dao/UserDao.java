@@ -6,7 +6,7 @@ import org.apache.ibatis.annotations.Mapper;
 
 /**
  * <p>
- * 部门表 Mapper 接口
+ * 用户表 Mapper 接口
  * </p>
  *
  * @author 俞剑辉

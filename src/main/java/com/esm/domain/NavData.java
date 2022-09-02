@@ -12,6 +12,7 @@ public class NavData {
     private List<NavDataItem> items;
 
     public NavData() {
+
     }
 
     public NavData(String index, String name, String icon, List<NavDataItem> items) {

@@ -17,5 +17,18 @@ public class Root {
     private String icon;
     private String path;
     private Integer fatherId;
+    private String apiPaths;
 
+    @Override
+    public String toString() {
+        return "Root{" +
+                "rootId=" + rootId +
+                ", idx='" + idx + '\'' +
+                ", name='" + name + '\'' +
+                ", icon='" + icon + '\'' +
+                ", path='" + path + '\'' +
+                ", fatherId=" + fatherId +
+                ", apiPaths='" + apiPaths + '\'' +
+                '}';
+    }
 }

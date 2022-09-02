@@ -13,6 +13,7 @@
     </head>
     <body>
         <div id="app" class="body_PE">
+
             <el-form :model="formData">
             <div class="login clearfix">
                 <ul class="load_ul">
@@ -30,7 +31,7 @@
                     </li>
                     <li class="text_center" style="list-style:none;">
                         <div class="div_info">
-                            <el-input v-model="formData.password" type="password" placeholder="请输入密码" show-password><i slot="prefix" class="password_ico"></i></el-input>
+                            <el-input v-model="formData.password" type="password" placeholder="请输入密码" show-password  @keyup.enter.native="login"><i slot="prefix" class="password_ico"></i></el-input>
                         </div>
                     </li>
                     <li class="text_center" style="list-style:none;">

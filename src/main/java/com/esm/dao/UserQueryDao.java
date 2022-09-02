@@ -9,7 +9,14 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
-
+/**
+ * <p>
+ * 用户，部门，级别表 Mapper 接口
+ * </p>
+ *
+ * @author 俞剑辉
+ * @since 2022-08-23
+ */
 @Mapper
 public interface UserQueryDao extends BaseMapper<UserQuery> {
 
@@ -28,8 +35,9 @@ public interface UserQueryDao extends BaseMapper<UserQuery> {
     @Select("SELECT user_id, name, sex, birthday, tel, email, address, create_date, role_id, tb_user.graded_id, deleted, tb_graded_wages.sector_id, graded_name, money, sector_name, org_id " +
             " FROM  tb_user, tb_graded_wages, tb_sector" +
             " ${ew.customSqlSegment} ")
-    IPage<UserQuery> findByPage(IPage<UserQuery> page, @Param("ew") Wrapper wrapper);/**
+    IPage<UserQuery> findByPage(IPage<UserQuery> page, @Param("ew") Wrapper wrapper);
 
+    /**
      * 动态查询
      */
     @Select("SELECT user_id, name, sex, birthday, tel, email, address, create_date, role_id, tb_user.graded_id, deleted, tb_graded_wages.sector_id, graded_name, money, sector_name, org_id " +

@@ -49,7 +49,6 @@ public class JWTUtil {
                 // .setSubject(userId.toString())
                 .claim("userId", userId) // 设置载荷信息
                 .claim("username", username)
-
                 .claim("roleId", roleId)
                 .setExpiration(DateTime.now().plusMinutes(expireMinutes).toDate())// 设置超时时间
                 .signWith(signatureAlgorithm, signingKey);
