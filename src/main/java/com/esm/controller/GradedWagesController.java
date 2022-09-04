@@ -28,10 +28,11 @@ public class GradedWagesController {
         return new Result(code,null,msg);
     }
 
-    @DeleteMapping("/{gradedId}")
-    public Result delete(@PathVariable Integer gradedId){
 
-        boolean flag = gradedWagesService.delete(gradedId);
+    @DeleteMapping("/{ids}")
+    public Result delete(@PathVariable List<String> ids){
+
+        boolean flag = gradedWagesService.delete(ids);
         Integer code = flag ? Code.DELETE_OK : Code.DELETE_ERR;
         String msg = flag ? "" : "删除岗位信息错误，请重试！";
         return new Result(code,null,msg);
@@ -67,12 +68,10 @@ public class GradedWagesController {
     }
 
     @PostMapping("/selectByPageAndCurrentPage")
-    public Result getUserPageRole(@RequestParam Integer currentPage, @RequestParam Integer pageSize,@RequestParam Boolean isAse, @RequestBody GradedWages gradedWages) throws JSONException {
+    public Result getUserPageRole(@RequestParam Integer currentPage, @RequestParam Integer pageSize,@RequestParam Boolean isAse,@RequestParam List<String> sectorIds, @RequestBody GradedWages gradedWages) throws JSONException {
         System.out.println(gradedWages);
         IPage<GradedWagesQuery> page = new Page<>(currentPage,pageSize);
-        String sectorId = String.valueOf(gradedWages.getSectorId()).equals("null")? null:String.valueOf(gradedWages.getSectorId());
-
-        gradedWagesService.selectByPageAndCurrentPage(page,gradedWages.getGradedName(),sectorId,isAse);
+        gradedWagesService.selectByPageAndCurrentPage(page,gradedWages.getGradedName(),sectorIds,isAse);
         System.out.println(page);
         ResultPage resultPageData = new ResultPage();
         resultPageData.setRows(page.getRecords());
@@ -84,9 +83,5 @@ public class GradedWagesController {
         return new Result(code, resultPageData,msg);
 
     }
-
-
-
-
 
 }
