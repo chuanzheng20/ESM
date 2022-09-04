@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- 页面meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>用户管理</title>
+    <meta content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" name="viewport">
+    <!-- 引入样式 -->
+    <link rel="stylesheet" href="../plugins/element-ui/lib/theme-chalk/index.css">
+    <link rel="stylesheet" href="../plugins/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+
+</head>
+<body class="hold-transition">
+<div id="app">
+    <template>
+        <div class="content-header">
+            <h1>员工信息</h1>
+        </div>
+        <!--按钮-->
+        <div class="app-container">
+            <div class="box">
+
+                <!--搜索-->
+                <el-form :inline="true" :model="brand" class="demo-form-inline" style="margin-top: 10px;">
+                    <div>
+                        <el-form-item label="工号">
+                            <el-input v-model="brand.userId" placeholder="员工号"></el-input>
+                        </el-form-item>
+                        <el-form-item label="姓名">
+                            <el-input v-model="brand.name" placeholder="姓名"></el-input>
+                        </el-form-item>
+                        <el-form-item>
+                            <el-button type="primary" @click="onSubmit">查询</el-button>
+                        </el-form-item>
+                    </div>
+                </el-form>
+
+
+                <!--编辑对话框弹出-->
+                <el-dialog title="编辑" :visible.sync="compileDialogFormVisible" @close="clearBrand2"
+                           :close-on-click-modal="false" style="margin: auto;">
+                    <el-form :model="brand2" :rules="addRules2" ref="formUpdate" label-width="100px"
+                             class="demo-ruleForm">
+                        <el-row>
+                            <el-col :span="12">
+                                <el-form-item label="工号" prop="name" :disabled="true">
+                                    <el-input v-model="brand2.userId" :disabled="true" style="width: 230px"></el-input>
+                                </el-form-item>
+                                <el-form-item label="名字" prop="name">
+                                    <el-input v-model="brand2.name" style="width: 230px"></el-input>
+                                </el-form-item>
+
+                                <el-form-item label="角色" prop="roleId">
+                                    <el-select v-model="brand2.roleId" placeholder="请选择角色" @change="optionChange"
+                                               style="width: 230px">
+                                        <el-option
+                                                v-for="item in options"
+                                                :key="item.roleId"
+                                                :label="item.roleName"
+                                                :value="item.roleId"
+                                        >
+                                        </el-option>
+                                    </el-select>
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="12">
+                                <el-form-item label="权限">
+                                    <el-tree
+                                            ref="tree"
+                                            :data="rootData"
+                                            :default-expand-all="true"
+                                            show-checkbox
+                                            node-key="rootId"
+                                            :props="defaultProps">
+                                    </el-tree>
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
+                        <el-row>
+                            <el-form-item style="margin-right: 0;">
+                                <el-button @click="compileDialogForm('formUpdate')">取 消</el-button>
+                                <el-button type="primary" @click="compileHandleAdd(brand2)">立即修改</el-button>
+                            </el-form-item>
+                        </el-row>
+                    </el-form>
+                </el-dialog>
+
+                <!--查看对话框弹出-->
+                <el-dialog title="查看" :visible.sync="lookFormVisible" @close="clearBrand2" :close-on-click-modal="false"
+                           style="margin: auto;">
+                    <el-form :model="brand2" label-width="100px" class="demo-ruleForm">
+                        <el-row>
+                            <el-col :span="12">
+                                <el-form-item label="工号" prop="name">
+                                    <el-input v-model="brand2.userId" :disabled="true" style="width: 230px"></el-input>
+                                </el-form-item>
+                                <el-form-item label="名字" prop="name">
+                                    <el-input v-model="brand2.name" :disabled="true"  style="width: 230px"></el-input>
+                                </el-form-item>
+                                <el-form-item label="角色" prop="roleId">
+                                    <el-select v-model="brand2.roleId" :disabled="true"  placeholder="请选择角色" @change="optionChange"
+                                               style="width: 230px">
+                                        <el-option
+                                                v-for="item in options"
+                                                :key="item.roleId"
+                                                :label="item.roleName"
+                                                :value="item.roleId"
+                                        >
+                                        </el-option>
+                                    </el-select>
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="12">
+                                <el-form-item label="权限">
+                                    <el-tree
+                                            :disabled="true"
+                                            ref="tree"
+                                            :data="rootData"
+                                            :default-expand-all="true"
+                                            show-checkbox
+                                            node-key="rootId"
+                                            :props="defaultProps">
+                                    </el-tree>
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
+                    </el-form>
+
+                </el-dialog>
+                <!--表格-->
+                <el-table
+                        ref="filterTable"
+                        :data="tableData"
+                        style="width: 100%;"
+                        :row-class-name="tableRowClassName"
+                        @selection-change="handleSelectionChange"
+                        @row-click="rowClick"
+                        @sort-change="sortById">
+
+                    <el-table-column
+                            prop="userId"
+                            label="工号"
+                            sortable="custom"
+                            column-key="userId"
+                            align="center"
+                    >
+                    </el-table-column>
+                    <el-table-column
+                            prop="name"
+                            label="姓名"
+                            align="center"
+                    >
+                    </el-table-column>
+                    <el-table-column
+                            prop="roleName"
+                            label="角色"
+                            align="center"
+                    >
+                    </el-table-column>
+
+                    <el-table-column
+                            align="center"
+                            label="操作">
+                        <template slot-scope="scope">
+                            <el-row>
+                                <el-button type="primary" @click.stop="updateHandle(scope.row)">编辑</el-button>
+                            </el-row>
+                        </template>
+                    </el-table-column>
+                </el-table>
+                <!-- 分页功能 -->
+                <div class="block" style="width: 600px;margin: auto;margin-top: 10px;">
+                    <el-pagination
+                            @size-change="handleSizeChange"
+                            @current-change="handleCurrentChange"
+                            background
+                            :current-page="currentPage"
+                            :page-size="pageSize"
+                            :page-sizes="pageSizes"
+                            layout="total, sizes, prev, pager, next, jumper"
+                            :total="totalCount">
+                    </el-pagination>
+                </div>
+            </div>
+        </div>
+    </template>
+
+</div>
+</body>
+
+<!-- 引入组件库 -->
+<script src="../js/vue.js"></script>
+<script src="../plugins/element-ui/lib/index.js"></script>
+<script type="text/javascript" src="../js/jquery.min.js"></script>
+<script src="../js/axios-0.18.0.js"></script>
+<script>
+    var vue = new Vue({
+        el: '#app',
+        data() {
+            return {
+                //每页显示数
+                pageSize: 10,
+                pageSizes: [10, 15, 20, 25],
+                //总记录数
+                totalCount: 100,
+
+                isAse: true,
+                //选中的数据
+                multipleSelection: [],
+                selectionID: [],
+                //级联选择器
+                options: [],
+
+                // 页数存放
+                currentPage: 1,
+                // 创建时间必须大于当今时间
+                pickerOptions: {
+                    disabledDate(time) {
+                        return time.getTime() < Date.now() - 8.64e7
+                    }
+                },
+                listLoading: false,
+                //搜索的两个筛选 ，也能当数据模板
+                rootData: [],
+                defaultProps: {
+                    children: 'children',
+                    label: 'name'
+                },
+                brand: {},
+                //查看和修改的显示模板
+                brand2: {},
+                //表格信息（传值）
+                tableData: [],
+                //打开弹窗
+                // dialogTableVisible: false,
+                addDialogFormVisible: false,
+                compileDialogFormVisible: false,
+                lookFormVisible: false,
+                formLabelWidth: '120px',
+
+
+                //弹出窗口中的提示信息
+                addRules: {
+                    name: [
+                        {required: true, message: '请输入姓名', trigger: 'blur'},
+                        {min: 2, max: 10, message: '长度在 2 到 10 个字符', trigger: 'blur'}
+                    ],
+                },
+
+                //弹出修改窗口中的提示信息
+                addRules2: {
+                    name: [
+                        {required: true, message: '请输入姓名', trigger: 'blur'},
+                        {min: 2, max: 10, message: '长度在 2 到 10 个字符', trigger: 'blur'}
+                    ],
+
+                }
+            }
+        },
+        created() {
+            this.getAll();
+        },
+        methods: {
+            getRoleData() {
+                axios.get("/roles").then((res) => {
+                    if (res.data.code == 20041) {
+                        //如果操作成功，关团弹层。显示数据
+                        this.options = res.data.data;
+                    } else {
+                        this.$message.error(res.data.msg)
+                    }
+                })
+            },
+            //获取权限级别数据
+            getRootData() {
+                axios.get("/roots/getToLevelAll").then((res) => {
+                    if (res.data.code == 20041) {
+                        //如果操作成功，关团弹层。显示数据
+                        this.rootData = res.data.data;
+                    } else {
+                        this.$message.error(res.data.msg)
+                    }
+                })
+            },
+            sortById() {
+                this.isAse = !this.isAse;
+                this.getAll();
+            },
+            // 点击查看
+            rowClick(row) {
+                this.getRoleData()
+                this.getRootData()
+                axios.get("/users/selectByIdRole/" + row.userId).then((res) => {
+                    if (res.data.code == 20041) {
+                        console.log(res.data.code)
+                        this.brand2 = res.data.data;
+                        this.$nextTick(() => {
+                            this.$refs.tree.setCheckedKeys(res.data.data.power.split(","))
+                        });
+                        this.lookFormVisible = true;
+                    } else {
+                        this.$message.error(res.data.msg);
+                    }
+                });
+            },
+            //表格数据
+            getAll() {
+                //发送ajax请求
+                axios.post("/users/selectByPageAndCurrentPageRole?currentPage=" + this.currentPage + "&pageSize=" + this.pageSize + "&isAse=" + this.isAse, this.brand).then((res) => {
+                    this.tableData = res.data.data.rows;
+                    //设置总记录数
+                    this.totalCount = res.data.data.totalCount;
+                })
+            },
+            clearBrand2() {
+                this.brand2 = {}
+            },
+            optionChange(o) {
+                axios.get("/roles/" + o).then((res) => {
+                    if (res.data.code == 20041) {
+                        this.$nextTick(() => {
+                            this.$refs.tree.setCheckedKeys(res.data.data.power.split(","))
+                        });
+                    } else {
+                        this.$message.error(res.data.msg);
+                    }
+                });
+            },
+            // 修改按钮事件(弹出窗口)
+            updateHandle(row) {
+                this.getRoleData()
+                this.getRootData()
+                axios.get("/users/selectByIdRole/" + row.userId).then((res) => {
+                    if (res.data.code == 20041) {
+                        console.log(res.data.code);
+                        this.brand2 = res.data.data;
+                        this.$nextTick(() => {
+                            this.$refs.tree.setCheckedKeys(res.data.data.power.split(","))
+                        });
+                        this.compileDialogFormVisible = true;
+                    } else {
+                        this.$message.error(res.data.msg);
+                    }
+                });
+            },
+            //修改窗口确定按钮
+            compileHandleAdd(brand2) {
+                this.$refs.formUpdate.validate((valid) => {
+                    if (valid) {
+                        var brandUpdate = {...brand2}
+                        console.log(brandUpdate)
+                        axios.put("/users", brandUpdate).then((res) => {
+                            if (res.data.code == 20031) {
+                                this.$message.success("修改成功");
+                                this.compileDialogFormVisible = false;
+                                this.clearBrand2();
+
+                            } else if (res.data.code == 20030) {
+                                this.$message.error("修改失败！");
+                            } else {
+                                this.$message.error(res.data.msg);
+                                // console.log(message);
+                            }
+                        }).finally(() => {
+                            this.getAll();
+                        })
+                    }
+                    //
+                });
+
+            },
+            // 修改窗口取消按钮
+            compileDialogForm(formName) {
+                this.$refs[formName].resetFields();
+                this.compileDialogFormVisible = false;
+                this.clearBrand2();
+            },
+            // 主要显示部分
+            clearFilter() {
+                this.$refs.filterTable.clearFilter();
+            },
+            formatter(value, row) {
+                return row.gradedName === value;
+            },
+            filterHandler(value, row, column) {
+                const property = column['property'];
+                return row[property] === value;
+            },
+            // 表格颜色
+            tableRowClassName({row, rowIndex}) {
+                if ((rowIndex + 1) % 4 === 0) {
+                    return 'warning-row';
+                } else if ((rowIndex + 1) % 2 === 0 && (rowIndex + 1) % 4 != 0) {
+                    return 'success-row';
+                }
+
+                return '';
+            },
+            // 复选框选中
+            handleSelectionChange(val) {
+                for (var i = 0; i < val.length; i++) {
+                    this.multipleSelection[i] = val[i].userId;
+                }
+                console.log(this.multipleSelection);
+            },
+            //搜索按钮点击事件
+            onSubmit() {
+                // console.log(this.brand);
+                this.getAll();
+            },
+            //新建弹窗部分
+            popwindows() {
+                this.getLevelData();
+                this.addDialogFormVisible = true;
+                this.$refs[formName].resetFields();
+            },
+            // 表单重置按钮
+            resetForm(formName) {
+                this.$refs[formName].resetFields();
+            },
+            // 表单取消按钮
+            dialogForm(formName) {
+                this.$refs[formName].resetFields();
+                this.addDialogFormVisible = false;
+            },
+            // 每页多少条
+            handleSizeChange(val) {
+                // console.log(`每页 ${val} 条`);
+                this.pageSize = val;
+                this.getAll();
+            },
+            // 当前页
+            handleCurrentChange(val) {
+                //console.log(`当前页: ${val}`);
+                this.currentPage = val;
+                this.getAll();
+            },
+            //单独删除
+            handleDelete(row) {
+                this.$confirm("是否删除当前员工信息（不可撤销）", "提示", {
+                    type: 'info'
+                }).then(() => {
+                    axios.delete("/users/" + row.userId).then((res) => {
+                        if (res.data.code == 20021) {
+                            this.$message.success("删除成功");
+                            this.getAll();
+                        } else {
+                            this.$message.error("删除失败");
+                        }
+                    })
+                }).catch(() => {
+                    this.$message.info("取消删除");
+                }).finally(() => {
+                    this.getAll();
+                })
+            },
+            //批量删除
+            deleteByIds() {
+                this.$confirm("是否删除当前员工信息（不可撤销）", "提示", {
+                    type: 'info'
+                }).then(() => {
+                    axios.delete("/users/" + this.multipleSelection.join(",")).then((res) => {
+                        if (res.data.code == 20021) {
+                            this.$message.success("删除成功");
+                            this.getAll();
+                        } else {
+                            this.$message.error("删除失败");
+                        }
+                    })
+                }).catch(() => {
+                    this.$message.info("取消删除");
+                }).finally(() => {
+                    this.getAll();
+                })
+            },
+        },
+
+
+    })
+
+</script>
+
+</html>

@@ -5,7 +5,7 @@
     <title>角色管理</title>
     <meta content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" name="viewport">
     <!-- 引入样式 -->
-    <link rel="stylesheet" href="../plugins/elementui/index.css">
+    <link rel="stylesheet" href="../plugins/element-ui/lib/theme-chalk/index.css">
     <link rel="stylesheet" href="../plugins/font-awesome/css/font-awesome.min.css">
     <link rel="stylesheet" href="../css/style.css">
 </head>
@@ -28,8 +28,8 @@
             <div>
                 <!--新建对话框弹出-->
                 <el-dialog title="新建" :visible.sync="addDialogFormVisible" :close-on-click-modal="false"
-                           style="width: 900px;height: 900px;margin: auto;" @close="clearBrand2">
-                    <el-form :model="brand2" ref="formAdd" :rules="addRules" label-width="100px" class="demo-ruleForm">
+                           style="margin: auto;" @close="clearBrand2">
+                    <el-form :model="brand2" ref="formAdd" label-width="100px" class="demo-ruleForm">
                         <el-form-item label="名称" prop="roleName">
                             <el-input v-model="brand2.roleName" style="width: 230px"></el-input>
                         </el-form-item>
@@ -56,8 +56,8 @@
 
                 <!--编辑对话框弹出-->
                 <el-dialog title="修改" :visible.sync="compileDialogFormVisible" @close="clearBrand2"
-                           :close-on-click-modal="false" style="width: 900px;height: 900px;margin: auto;">
-                    <el-form :model="brand2" label-width="100px" class="demo-ruleForm">
+                           :close-on-click-modal="false" style="margin: auto;">
+                    <el-form :model="brand2" label-width="100px" class="demo-ruleForm" ref="formUpdate">
                         <el-form-item label="名称" prop="roleName">
                             <el-input v-model="brand2.roleName" style="width: 230px"></el-input>
                         </el-form-item>
@@ -81,7 +81,7 @@
 
                 <!--查看对话框弹出-->
                 <el-dialog title="查看" :visible.sync="lookFormVisible" :close-on-click-modal="false"
-                           style="width: 900px;height: 900px;margin: auto;" @close="clearBrand2">
+                           style="margin: auto;" @close="clearBrand2">
                     <el-form :model="brand2" label-width="100px" class="demo-ruleForm">
                         <el-form-item label="名称" prop="roleName">
                             <el-input v-model="brand2.roleName" style="width: 230px" :disabled="true"></el-input>
@@ -109,7 +109,7 @@
                         :row-class-name="tableRowClassName"
                         @selection-change="handleSelectionChange"
                         @row-click="rowClick"
-                        @sort-change="sortById">
+                >
                     <el-table-column
                             type="selection"
                             width="55">
@@ -146,7 +146,7 @@
 
 </body>
 <script src="../js/vue.js"></script>
-<script src="../plugins/elementui/index.js"></script>
+<script src="../plugins/element-ui/lib/index.js"></script>
 <script type="text/javascript" src="../js/jquery.min.js"></script>
 <script src="../js/axios-0.18.0.js"></script>
 <script>
@@ -203,11 +203,21 @@
         methods: {
 
             //获取权限级别数据
-            getRootData() {
+            getRootData(flag=true) {
                 axios.get("/roots/getToLevelAll").then((res) => {
                     if (res.data.code == 20041) {
                         //如果操作成功，关团弹层。显示数据
                         this.rootData = res.data.data;
+                        console.log(this.rootData.length)
+                        for(let i = 0;i<this.rootData.length;i++){
+                            this.rootData[i].disabled=flag;
+                            if(this.rootData[i].children!=null){
+                                for (let j = 0; j < this.rootData[i].children.length; j++) {
+                                    this.rootData[i].children[j].disabled=flag;
+                                }
+                            }
+                        }
+
                     } else {
                         this.$message.error(res.data.msg)
                     }
@@ -288,7 +298,7 @@
 
             // 修改按钮事件(弹出窗口)
             updateHandle(row) {
-                this.getRootData()
+                this.getRootData(false)
                 axios.get("/roles/" + row.roleId).then((res) => {
                     if (res.data.code == 20041) {
                         console.log(res.data.code);
@@ -337,7 +347,7 @@
                 this.$refs[formName].resetFields();
                 this.compileDialogFormVisible = false;
                 this.clearBrand2();
-                this.clearTree();
+                // this.clearTree();
             },
             // 主要显示部分
             clearFilter() {
@@ -374,7 +384,7 @@
             },
             //新建弹窗部分
             popwindows() {
-                this.getRootData();
+                this.getRootData(false);
                 this.addDialogFormVisible = true;
                 this.$refs[formName].resetFields();
             },
@@ -398,7 +408,7 @@
                             this.$message.success("删除成功");
                             this.getAll();
                         } else {
-                            this.$message.error("删除失败");
+                            this.$message.error("删除失败，"+res.data.msg);
                         }
                     })
                 }).catch(() => {
@@ -417,7 +427,7 @@
                             this.$message.success("删除成功");
                             this.getAll();
                         } else {
-                            this.$message.error("删除失败");
+                            this.$message.error("删除失败，" + res.data.msg);
                         }
                     })
                 }).catch(() => {

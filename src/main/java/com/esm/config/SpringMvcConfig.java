@@ -16,12 +16,11 @@ public class SpringMvcConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(projectInterceptor).addPathPatterns("/*","/*/*")
+                .addPathPatterns("/pages","/pages/*.html")
                 .excludePathPatterns("/pages/login.html")
                 .excludePathPatterns("/error")
                 .excludePathPatterns("/css","/css/*")
                 .excludePathPatterns("/js","/js/*");
-
-
 
     }
 }

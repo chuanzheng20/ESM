@@ -7,12 +7,15 @@ import com.esm.domain.Level;
 import com.esm.domain.User;
 import com.esm.domain.UserPage;
 import com.esm.domain.query.UserQuery;
+import com.esm.domain.query.UserRoleQuery;
 import com.esm.service.UserService;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 @RestController
@@ -21,7 +24,6 @@ public class UserController {
 
     @Autowired
     private UserService userService;
-
 
     @GetMapping("/getLevelAll")
     public Result getLevelAll(){
@@ -83,7 +85,6 @@ public class UserController {
         return new Result(code,null, msg);
     }
 
-
     @DeleteMapping("/{ids}")
     public Result deleteById(@PathVariable List<String> ids){
         System.out.println(ids);
@@ -91,6 +92,38 @@ public class UserController {
         Integer code = b  ? Code.DELETE_OK : Code.DELETE_ERR;
         String msg = b  ? "" : "删除错误！";
         return new Result(code,null, msg);
+    }
+
+
+    @PostMapping("/selectByPageAndCurrentPageRole")
+    public Result getUserPageRole(@RequestParam Integer currentPage, @RequestParam Integer pageSize,@RequestParam Boolean isAse, @RequestBody User user) throws JSONException {
+        System.out.println(user);
+        IPage<UserRoleQuery> page = new Page<>(currentPage,pageSize);
+        String strUserId = String.valueOf(user.getUserId()).equals("null")? null:String.valueOf(user.getUserId());
+
+        userService.selectByPageAndCurrentPageRole(page,strUserId,user.getName(),isAse);
+        System.out.println(page);
+        UserPage userPageData = new UserPage();
+        userPageData.setRows(page.getRecords());
+        userPageData.setTotalCount((int) page.getTotal());
+
+        Integer code = page.getRecords() != null ? Code.GET_OK : Code.GET_ERR;
+        String msg = page.getRecords() != null ? "" : "用户信息错误，请重试！";
+
+        return new Result(code,userPageData,msg);
+
+    }
+
+    @GetMapping("/selectByIdRole/{id}")
+    public Result selectByIdRole(@PathVariable String id) {
+        System.out.println(id);
+        UserRoleQuery userRoleQuery = userService.selectByIdRole(id);
+
+        Integer code = userRoleQuery != null ? Code.GET_OK : Code.GET_ERR;
+        String msg = userRoleQuery != null ? "" : "用户信息错误，请重试！";
+
+        return new Result(code,userRoleQuery,msg);
+
     }
 
 

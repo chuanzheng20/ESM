@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+    <!-- 页面meta -->
+
+    <meta charset="utf-8">
+
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>公司部门表</title>
+
+    <meta content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" name="viewport">
+
+    <!-- 引入样式 -->
+
+    <link rel="stylesheet" href="../plugins/element-ui/lib/theme-chalk/index.css">
+
+    <link rel="stylesheet" href="../plugins/font-awesome/css/font-awesome.min.css">
+
+    <link rel="stylesheet" href="../css/style.css">
+
+</head>
+
+<body class="hold-transition">
+
+<div id="app">
+    <template>
+        <div class="content-header">
+            <h1>部门管理</h1>
+        </div>
+        <!--按钮-->
+        <div class="app-container">
+            <div class="box">
+                <!--新增-->
+                <el-form :inline="true" :model="brand" class="demo-form-inline" style="margin-top: 10px;">
+                    <div style="float: left;">
+                        <el-row>
+                            <el-button type="primary" plain @click="popWindows">新增</el-button>
+                        </el-row>
+                    </div>
+                </el-form>
+                <!--新建对话框弹出-->
+                <el-dialog title="新增部门" :visible.sync="addDialogFormVisible"
+                           style="width: 900px;height: 700px;margin: auto;"
+                           :close-on-click-modal="false" :before-close="closeDialog">
+                    <el-form :model="brand" :rules="addRules" ref="brand" label-width="100px" class="demo-ruleForm">
+                        <el-form-item label="部门名称" prop="sectorName">
+                            <el-input v-model="brand.sectorName" style="width: 230px;"></el-input>
+                        </el-form-item>
+                        <el-form-item>
+                            <el-button type="primary" @click="handleAdd">立即创建</el-button>
+                            <el-button @click="dialogForm('brand')">取 消</el-button>
+                            <el-button @click="resetForm('brand')">重置</el-button>
+                        </el-form-item>
+                    </el-form>
+                </el-dialog>
+
+                <!--表格-->
+                <el-table ref="filterTable" :data="tableData" style="width: 100%;" :row-class-name="tableRowClassName"
+                          @selection-change="handleSelectionChange" @row-click="rowClick">
+
+                    <el-table-column prop="sectorId" label="部门ID" align="center">
+                    </el-table-column>
+
+                    <!-- 筛选内部 filters -->
+                    <el-table-column prop="sectorName" label="部门名称" align="center">
+                    </el-table-column>
+                    <el-table-column align="center" label="操作">
+                        <template slot-scope="scope">
+                            <el-row>
+                                <el-button type="danger" @click.stop="handleDelete(scope.row)">删除</el-button>
+                            </el-row>
+                        </template>
+                    </el-table-column>
+                </el-table>
+            </div>
+        </div>
+    </template>
+
+</div>
+
+</body>
+
+<!-- 引入组件库 -->
+
+<script src="../js/vue.js"></script>
+
+<script src="../plugins/element-ui/lib/index.js"></script>
+
+<script type="text/javascript" src="../js/jquery.min.js"></script>
+
+<script src="../js/axios-0.18.0.js"></script>
+
+<script>
+    var vue = new Vue({
+        el: '#app',
+        mounted() {
+            this.getAll();
+        },
+        data() {
+            return {
+
+                multipleSelection: [],//选中的数据
+                ruleForm: {
+                    sectorName: '',
+                },
+                addRules: {
+                    sectorName: [
+                        {required: true, message: '请输入部门名称', trigger: 'blur'},
+                        {min: 1, max: 10, message: '长度在 1 到 10 个字符', trigger: 'blur'}
+                    ]
+                },
+                listLoading: false,
+                brand: {},
+                //表格信息
+                tableData: [],
+                //打开弹窗
+                //dialogTableVisible: false,
+                addDialogFormVisible: false,//新建窗口按钮
+                compileDialogFormVisible: false,//编辑窗口按钮
+                lookFormVisible: false,//查看窗口按钮
+                formLabelWidth: '120px',
+            }
+        },
+        methods: {
+            //右上角关闭清空功能
+            closeDialog() {
+                this.addDialogFormVisible = false
+                this.$refs['brand'].resetFields()
+            },
+            //表格数据
+            getAll() {
+                //发送ajax请求
+                axios.get("/sectors").then((res) => {
+                    this.tableData = res.data.data;
+                })
+            },
+            //添加数据 确定按钮事件
+            handleAdd() {
+                this.$refs.brand.validate((valid) => {
+                    if (valid) {
+                        axios.post("/sectors", this.brand).then((res) => {
+                            if (res.data.code == 20011) {
+                                this.addDialogFormVisible = false;
+                                this.$message.success("添加成功");
+                            } else if (res.data.code == 20010) {
+                                this.$message.error("添加失败！");
+                            } else {
+                                this.$message.error(res.data.msg);
+                            }
+
+                        }).finally(() => {
+                            this.getAll();
+                        })
+                    }
+                })
+            },
+            //新增弹窗部分
+            popWindows() {
+                this.addDialogFormVisible = true;
+                this.$refs.brand.resetFields();
+            },
+            // 表单重置按钮
+            resetForm(formName) {
+                this.$refs[formName].resetFields();
+            },
+            // 表单取消按钮
+            dialogForm(formName) {
+                this.$refs[formName].resetFields();
+                this.addDialogFormVisible = false;
+            },
+            //单独删除
+            handleDelete(row) {
+                this.$confirm("是否删除当前角色信息（不可撤销）", "提示", {
+                    type: 'info'
+                }).then(() => {
+                    axios.delete("/sectors/" + row.sectorId).then((res) => {
+                        if (res.data.code == 20021) {
+                            this.$message.success("删除成功");
+                            this.getAll();
+                        } else {
+                            this.$message.error("删除失败，"+res.data.msg);
+                        }
+                    })
+                }).catch(() => {
+                    this.$message.info("取消删除");
+                }).finally(() => {
+                    this.getAll();
+                })
+            },
+
+        },
+    })
+
+</script>
+
+</html>

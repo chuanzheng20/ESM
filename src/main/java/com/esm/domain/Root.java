@@ -2,6 +2,7 @@ package com.esm.domain;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -18,6 +19,8 @@ public class Root {
     private String path;
     private Integer fatherId;
     private String apiPaths;
+    @TableField(exist = false)
+    private boolean disabled=true;
 
     @Override
     public String toString() {

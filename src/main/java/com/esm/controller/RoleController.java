@@ -7,6 +7,8 @@ import com.esm.service.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 @RestController
 @RequestMapping("/roles")
@@ -25,6 +27,12 @@ public class RoleController {
     @DeleteMapping("/{roleIds}")
     public Result delete(@PathVariable List<Integer> roleIds) {
 
+        List<Integer> noDeleteIds = Arrays.asList(1, 2, 3);
+        for (Integer i: roleIds) {
+            if(noDeleteIds.indexOf(i)>0){
+                return new Result(Code.DELETE_ERR,null,"默认角色不可删除");
+            }
+        }
         boolean flag = roleService.delete(roleIds);
         Integer code = flag ? Code.DELETE_OK : Code.DELETE_ERR;
         String msg = flag ? "" : "删除角色信息错误，请重试！";

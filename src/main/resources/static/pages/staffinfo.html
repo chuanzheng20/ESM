@@ -1,65 +1,68 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <!-- 页面meta -->
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <title>员工管理</title>
-        <meta content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" name="viewport">
-        <!-- 引入样式 -->
-        <link rel="stylesheet" href="../plugins/elementui/index.css">
-        <link rel="stylesheet" href="../plugins/font-awesome/css/font-awesome.min.css">
-        <link rel="stylesheet" href="../css/style.css">
+<head>
+    <!-- 页面meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>员工管理</title>
+    <meta content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" name="viewport">
+    <!-- 引入样式 -->
+    <link rel="stylesheet" href="../plugins/element-ui/lib/theme-chalk/index.css">
+    <link rel="stylesheet" href="../plugins/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="../css/style.css">
 
-    </head>
+</head>
 <body class="hold-transition">
-    <div id="app">
-        <template>
-            <div class="content-header">
-                <h1>员工信息</h1>
-            </div>
-            <!--按钮-->
-            <div class="app-container">
-                <div class="box">
+<div id="app">
+    <template>
+        <div class="content-header">
+            <h1>员工信息</h1>
+        </div>
+        <!--按钮-->
+        <div class="app-container">
+            <div class="box">
 
-                    <!--搜索-->
-                    <el-form :inline="true" :model="brand" class="demo-form-inline" style="margin-top: 10px;">
-                        <div style="float: left;">
-                            <el-row>
-                                <el-button type="danger" plain @click="deleteByIds">批量删除</el-button>
-                                <el-button type="primary" plain @click="popwindows">新增</el-button>
-                            </el-row>
-                        </div>
-                        <div style="float: right;">
-                            <el-form-item label="工号">
-                                <el-input v-model="brand.userId" placeholder="员工号"></el-input>
-                            </el-form-item>
-                            <el-form-item label="姓名">
-                                <el-input v-model="brand.name" placeholder="姓名"></el-input>
-                            </el-form-item>
-                            <el-form-item>
-                                <el-button type="primary" @click="onSubmit">查询</el-button>
-                            </el-form-item>
-                        </div>
-                    </el-form>
-
-                    <!--新建对话框弹出-->
-                    <el-dialog title="新建" :visible.sync="addDialogFormVisible" :close-on-click-modal="false" style="width: 900px;height: 900px;margin: auto;" @close="clearBrand2">
-                    <el-form :model="brand2" ref="formAdd" :rules="addRules" label-width="100px" class="demo-ruleForm">
-                        <el-form-item label="名字" prop="name" >
-                            <el-input v-model="brand2.name" style="width: 230px" ></el-input>
+                <!--搜索-->
+                <el-form :inline="true" :model="brand" class="demo-form-inline" style="margin-top: 10px;">
+                    <div style="float: left;">
+                        <el-row>
+                            <el-button type="danger" plain @click="deleteByIds">批量删除</el-button>
+                            <el-button type="primary" plain @click="popwindows">新增</el-button>
+                        </el-row>
+                    </div>
+                    <div style="float: right;">
+                        <el-form-item label="工号">
+                            <el-input v-model="brand.userId" placeholder="员工号"></el-input>
                         </el-form-item>
-                        <el-form-item label="地址" prop="address" >
-                            <el-input v-model="brand2.address" style="width: 230px" ></el-input>
+                        <el-form-item label="姓名">
+                            <el-input v-model="brand.name" placeholder="姓名"></el-input>
+                        </el-form-item>
+                        <el-form-item>
+                            <el-button type="primary" @click="onSubmit">查询</el-button>
+                        </el-form-item>
+                    </div>
+                </el-form>
+
+                <!--新建对话框弹出-->
+                <el-dialog title="新建" :visible.sync="addDialogFormVisible" :close-on-click-modal="false"
+                           style="margin: auto;" @close="clearBrand2">
+                    <el-form :model="brand2" ref="formAdd" :rules="addRules" label-width="100px" class="demo-ruleForm">
+                        <el-form-item label="名字" prop="name">
+                            <el-input v-model="brand2.name" style="width: 230px"></el-input>
+                        </el-form-item>
+                        <el-form-item label="地址" prop="address">
+                            <el-input v-model="brand2.address" style="width: 230px"></el-input>
                         </el-form-item>
                         <el-form-item prop="email" label="邮箱">
                             <el-input v-model="brand2.email" style="width: 230px"></el-input>
                         </el-form-item>
                         <el-form-item label="电话" prop="tel">
-                            <el-input type="age" v-model.number="brand2.tel" style="width: 230px" maxlength="11"></el-input>
+                            <el-input type="age" v-model.number="brand2.tel" style="width: 230px"
+                                      maxlength="11"></el-input>
                         </el-form-item>
-                        <el-form-item label="级别" prop="gradedId" >
-                            <el-cascader :options="options" clearable v-model="brand2.gradedId" placeholder="请选择部门/岗位"></el-cascader>
+                        <el-form-item label="级别" prop="gradedId">
+                            <el-cascader :options="options" clearable v-model="brand2.gradedId"
+                                         placeholder="请选择部门/岗位"></el-cascader>
                         </el-form-item>
                         <el-form-item label="性别" prop="sex">
                             <el-radio-group v-model="brand2.sex">
@@ -70,14 +73,16 @@
                         <el-form-item label="生日" required>
                             <el-col :span="11">
                                 <el-form-item prop="birthday">
-                                    <el-date-picker type="date" placeholder="请填入生日" v-model="brand2.birthday" ></el-date-picker>
+                                    <el-date-picker type="date" placeholder="请填入生日"
+                                                    v-model="brand2.birthday"></el-date-picker>
                                 </el-form-item>
                             </el-col>
                         </el-form-item>
                         <el-form-item label="入职时间" required>
                             <el-col :span="11">
                                 <el-form-item prop="createDate">
-                                    <el-date-picker type="date" placeholder="请填入入职时间" v-model="brand2.createDate" :picker-options="pickerOptions" ></el-date-picker>
+                                    <el-date-picker type="date" placeholder="请填入入职时间" v-model="brand2.createDate"
+                                                    :picker-options="pickerOptions"></el-date-picker>
                                 </el-form-item>
                             </el-col>
                         </el-form-item>
@@ -85,204 +90,213 @@
                             <div style="margin-right: 0;">
                                 <el-button @click="resetForm('formAdd')">重置</el-button>
                                 <el-button @click="dialogForm('formAdd')">取 消</el-button>
-                                <el-button type="primary" @click="handleAdd(brand2)" >立即创建</el-button>
+                                <el-button type="primary" @click="handleAdd(brand2)">立即创建</el-button>
                             </div>
                         </el-form-item>
                     </el-form>
                 </el-dialog>
 
-                    <!--编辑对话框弹出-->
-                    <el-dialog title="修改" :visible.sync="compileDialogFormVisible" @close="clearBrand2" :close-on-click-modal="false" style="width: 900px;height: 900px;margin: auto;">
-                        <el-form :model="brand2" :rules="addRules2" ref="formUpdate" label-width="100px" class="demo-ruleForm">
-                            <el-form-item label="名字" prop="name" >
-                                <el-input v-model="brand2.name" style="width: 230px" ></el-input>
-                            </el-form-item>
-                            <el-form-item label="地址" prop="address" >
-                                <el-input v-model="brand2.address" style="width: 230px" ></el-input>
-                            </el-form-item>
-                            <el-form-item
-                                    prop="email"
-                                    label="邮箱">
-                                <el-input v-model="brand2.email" style="width: 230px"></el-input>
-                            </el-form-item>
-                            <el-form-item
-                                    label="电话"
-                                    prop="tel">
-                                <el-input type="age" v-model.number="brand2.tel" style="width: 230px" maxlength="11"></el-input>
-                            </el-form-item>
-                            <!-- <el-form-item label="级别" prop="gradedId" >
-                              <el-select v-model="brand.gradedId" placeholder="请选择级别">
-                                <el-option label="1级别" value="yiJ"></el-option>
-                                <el-option label="2级别" value="erJ"></el-option>
-                                <el-option label="3级别" value="sanJ"></el-option>
-                              </el-select>
-                            </el-form-item> -->
-                            <el-form-item label="级别" prop="gradedId" >
-                                <el-cascader :options="options" clearable v-model="brand2.gradedId" placeholder="请选择部门/岗位"></el-cascader>
-                            </el-form-item>
-                            <el-form-item label="性别" prop="sex">
-                                <el-radio-group v-model="brand2.sex">
-                                    <el-radio label="男"></el-radio>
-                                    <el-radio label="女"></el-radio>
-                                </el-radio-group>
-                            </el-form-item>
-                            <el-form-item label="生日" required>
-                                <el-col :span="11">
-                                    <el-form-item prop="birthday">
-                                        <el-date-picker type="date" placeholder="请填入生日" v-model="brand2.birthday"
-                                        ></el-date-picker>
-                                    </el-form-item>
-                                </el-col>
-                            </el-form-item>
-                            <el-form-item label="入职时间" required>
-                                <el-col :span="11">
-                                    <el-form-item prop="createDate">
-                                        <el-date-picker type="date" placeholder="请填入入职时间" v-model="brand2.createDate"
-                                                        :picker-options="pickerOptions" ></el-date-picker>
-                                    </el-form-item>
-                                </el-col>
-                            </el-form-item>
-                            <el-form-item style="margin-right: 0;">
-                                <el-button @click="compileDialogForm('formUpdate')">取 消</el-button>
-                                <el-button type="primary" @click="compileHandleAdd(brand2)">立即修改</el-button>
-                            </el-form-item>
-                        </el-form>
-                    </el-dialog>
+                <!--编辑对话框弹出-->
+                <el-dialog title="修改" :visible.sync="compileDialogFormVisible" @close="clearBrand2"
+                           :close-on-click-modal="false" style="width: 900px;height: 900px;margin: auto;">
+                    <el-form :model="brand2" :rules="addRules2" ref="formUpdate" label-width="100px"
+                             class="demo-ruleForm">
+                        <el-form-item label="名字" prop="name">
+                            <el-input v-model="brand2.name" style="width: 230px"></el-input>
+                        </el-form-item>
+                        <el-form-item label="地址" prop="address">
+                            <el-input v-model="brand2.address" style="width: 230px"></el-input>
+                        </el-form-item>
+                        <el-form-item
+                                prop="email"
+                                label="邮箱">
+                            <el-input v-model="brand2.email" style="width: 230px"></el-input>
+                        </el-form-item>
+                        <el-form-item
+                                label="电话"
+                                prop="tel">
+                            <el-input type="age" v-model.number="brand2.tel" style="width: 230px"
+                                      maxlength="11"></el-input>
+                        </el-form-item>
+                        <!-- <el-form-item label="级别" prop="gradedId" >
+                          <el-select v-model="brand.gradedId" placeholder="请选择级别">
+                            <el-option label="1级别" value="yiJ"></el-option>
+                            <el-option label="2级别" value="erJ"></el-option>
+                            <el-option label="3级别" value="sanJ"></el-option>
+                          </el-select>
+                        </el-form-item> -->
+                        <el-form-item label="级别" prop="gradedId">
+                            <el-cascader :options="options" clearable v-model="brand2.gradedId"
+                                         placeholder="请选择部门/岗位"></el-cascader>
+                        </el-form-item>
+                        <el-form-item label="性别" prop="sex">
+                            <el-radio-group v-model="brand2.sex">
+                                <el-radio label="男"></el-radio>
+                                <el-radio label="女"></el-radio>
+                            </el-radio-group>
+                        </el-form-item>
+                        <el-form-item label="生日" required>
+                            <el-col :span="11">
+                                <el-form-item prop="birthday">
+                                    <el-date-picker type="date" placeholder="请填入生日" v-model="brand2.birthday"
+                                    ></el-date-picker>
+                                </el-form-item>
+                            </el-col>
+                        </el-form-item>
+                        <el-form-item label="入职时间" required>
+                            <el-col :span="11">
+                                <el-form-item prop="createDate">
+                                    <el-date-picker type="date" placeholder="请填入入职时间" v-model="brand2.createDate"
+                                                    :picker-options="pickerOptions"></el-date-picker>
+                                </el-form-item>
+                            </el-col>
+                        </el-form-item>
+                        <el-form-item style="margin-right: 0;">
+                            <el-button @click="compileDialogForm('formUpdate')">取 消</el-button>
+                            <el-button type="primary" @click="compileHandleAdd(brand2)">立即修改</el-button>
+                        </el-form-item>
+                    </el-form>
+                </el-dialog>
 
-                    <!--查看对话框弹出-->
-                    <el-dialog title="查看" :visible.sync="lookFormVisible" @close="clearBrand2" :close-on-click-modal="false" style="width: 900px;height: 900px;margin: auto;">
-                        <el-form :model="brand2"  label-width="100px" class="demo-ruleForm">
-                            <el-form-item label="名字" prop="name" >
-                                <el-input v-model="brand2.name" style="width: 230px" :disabled="true"></el-input>
-                            </el-form-item>
-                            <el-form-item label="地址" prop="address" >
-                                <el-input v-model="brand2.address" style="width: 230px" :disabled="true"></el-input>
-                            </el-form-item>
-                            <el-form-item
-                                    prop="email"
-                                    label="邮箱">
-                                <el-input v-model="brand2.email" style="width: 230px" :disabled="true"></el-input>
-                            </el-form-item>
-                            <el-form-item
-                                    label="电话"
-                                    prop="tel">
-                                <el-input type="age" v-model.number="brand2.tel" :disabled="true" autocomplete="off" style="width: 230px" maxlength="11"></el-input>
-                            </el-form-item>
-                            <el-form-item label="级别" prop="gradedId" >
-                                <el-cascader :options="options" clearable v-model="brand2.gradedId" placeholder="请选择部门/岗位/级别" :disabled="true"></el-cascader>
-                            </el-form-item>
-                            <el-form-item label="性别" prop="sex">
-                                <el-radio-group v-model="brand2.sex" :disabled="true">
-                                    <el-radio label="男"></el-radio>
-                                    <el-radio label="女"></el-radio>
-                                </el-radio-group>
-                            </el-form-item>
-                            <el-form-item label="生日" required>
-                                <el-col :span="11">
-                                    <el-form-item prop="birthday">
-                                        <el-date-picker type="date" placeholder="请填入生日" v-model="brand2.birthday" :disabled="true"
-                                        ></el-date-picker>
-                                    </el-form-item>
-                                </el-col>
-                            </el-form-item>
-                            <el-form-item label="入职时间" required>
-                                <el-col :span="11">
-                                    <el-form-item prop="createDate">
-                                        <el-date-picker type="date" placeholder="请填入入职时间" v-model="brand2.createDate" :disabled="true"
-                                                        :picker-options="pickerOptions" ></el-date-picker>
-                                    </el-form-item>
-                                </el-col>
-                            </el-form-item>
-                            <el-form-item style="margin-left: 200px;">
-                                <el-button @click="lookFormVisible=false;this.clearBrand2()">关闭窗口</el-button>
-                            </el-form-item>
-                        </el-form>
-                    </el-dialog>
-                    <!--表格-->
-                    <el-table
-                            ref="filterTable"
-                            :data="tableData"
-                            style="width: 100%;"
-                            :row-class-name="tableRowClassName"
-                            @selection-change="handleSelectionChange"
-                            @row-click="rowClick"
-                            @sort-change="sortById">
-                        <el-table-column
-                                type="selection"
-                                width="55">
-                        </el-table-column>
-                        <el-table-column
-                                prop="userId"
-                                label="工号"
-                                sortable="custom"
-                                column-key="userId"
-                                align="center"
-                        >
-                        </el-table-column>
-                        <el-table-column
-                                prop="name"
-                                label="姓名"
-                                align="center"
-                        >
-                        </el-table-column>
+                <!--查看对话框弹出-->
+                <el-dialog title="查看" :visible.sync="lookFormVisible" @close="clearBrand2" :close-on-click-modal="false"
+                           style="width: 900px;height: 900px;margin: auto;">
+                    <el-form :model="brand2" label-width="100px" class="demo-ruleForm">
+                        <el-form-item label="名字" prop="name">
+                            <el-input v-model="brand2.name" style="width: 230px" :disabled="true"></el-input>
+                        </el-form-item>
+                        <el-form-item label="地址" prop="address">
+                            <el-input v-model="brand2.address" style="width: 230px" :disabled="true"></el-input>
+                        </el-form-item>
+                        <el-form-item
+                                prop="email"
+                                label="邮箱">
+                            <el-input v-model="brand2.email" style="width: 230px" :disabled="true"></el-input>
+                        </el-form-item>
+                        <el-form-item
+                                label="电话"
+                                prop="tel">
+                            <el-input type="age" v-model.number="brand2.tel" :disabled="true" autocomplete="off"
+                                      style="width: 230px" maxlength="11"></el-input>
+                        </el-form-item>
+                        <el-form-item label="级别" prop="gradedId">
+                            <el-cascader :options="options" clearable v-model="brand2.gradedId"
+                                         placeholder="请选择部门/岗位/级别" :disabled="true"></el-cascader>
+                        </el-form-item>
+                        <el-form-item label="性别" prop="sex">
+                            <el-radio-group v-model="brand2.sex" :disabled="true">
+                                <el-radio label="男"></el-radio>
+                                <el-radio label="女"></el-radio>
+                            </el-radio-group>
+                        </el-form-item>
+                        <el-form-item label="生日" required>
+                            <el-col :span="11">
+                                <el-form-item prop="birthday">
+                                    <el-date-picker type="date" placeholder="请填入生日" v-model="brand2.birthday"
+                                                    :disabled="true"
+                                    ></el-date-picker>
+                                </el-form-item>
+                            </el-col>
+                        </el-form-item>
+                        <el-form-item label="入职时间" required>
+                            <el-col :span="11">
+                                <el-form-item prop="createDate">
+                                    <el-date-picker type="date" placeholder="请填入入职时间" v-model="brand2.createDate"
+                                                    :disabled="true"
+                                                    :picker-options="pickerOptions"></el-date-picker>
+                                </el-form-item>
+                            </el-col>
+                        </el-form-item>
+                        <el-form-item style="margin-left: 200px;">
+                            <el-button @click="lookFormVisible=false;this.clearBrand2()">关闭窗口</el-button>
+                        </el-form-item>
+                    </el-form>
+                </el-dialog>
+                <!--表格-->
+                <el-table
+                        ref="filterTable"
+                        :data="tableData"
+                        style="width: 100%;"
+                        :row-class-name="tableRowClassName"
+                        @selection-change="handleSelectionChange"
+                        @row-click="rowClick"
+                        @sort-change="sortById">
+                    <el-table-column
+                            type="selection"
+                            width="55">
+                    </el-table-column>
+                    <el-table-column
+                            prop="userId"
+                            label="工号"
+                            sortable="custom"
+                            column-key="userId"
+                            align="center"
+                    >
+                    </el-table-column>
+                    <el-table-column
+                            prop="name"
+                            label="姓名"
+                            align="center"
+                    >
+                    </el-table-column>
 
-                        <!-- 筛选内部 filters -->
-                        <el-table-column
-                                prop="sectorName"
-                                label="部门"
-                                align="center">
-        <!--                        :filters="[{ text: '程序员', value: '程序员' }, { text: '架构师', value: '架构师' }]"-->
-        <!--                        :filter-method="formatter"-->
-        <!--                        filter-placement="bottom-end">-->
-                        </el-table-column>
-                        <el-table-column
-                                prop="gradedName"
-                                label="级别"
-                                align="center">
+                    <!-- 筛选内部 filters -->
+                    <el-table-column
+                            prop="sectorName"
+                            label="部门"
+                            align="center">
+                        <!--                        :filters="[{ text: '程序员', value: '程序员' }, { text: '架构师', value: '架构师' }]"-->
+                        <!--                        :filter-method="formatter"-->
+                        <!--                        filter-placement="bottom-end">-->
+                    </el-table-column>
+                    <el-table-column
+                            prop="gradedName"
+                            label="级别"
+                            align="center">
 
-                        </el-table-column>
-                        <el-table-column
-                                prop="createDate"
-                                label="入职时间"
-                                sortable
-                                column-key="createDate"
-                                align="center"
-                                :formatter="formatDate">
-                        </el-table-column>
-                        <el-table-column
-                                align="center"
-                                label="操作">
-                            <template slot-scope="scope">
-                                <el-row>
-                                    <el-button type="primary" @click.stop="updateHandle(scope.row)">修改</el-button>
-                                    <el-button type="danger" @click.stop="handleDelete(scope.row)">删除</el-button>
-                                </el-row>
-                            </template>
-                        </el-table-column>
-                    </el-table>
-                    <!-- 分页功能 -->
-                    <div class="block" style="width: 600px;margin: auto;margin-top: 10px;">
-                        <el-pagination
-                                @size-change="handleSizeChange"
-                                @current-change="handleCurrentChange"
-                                background
-                                :current-page="currentPage"
-                                :page-size="pageSize"
-                                :page-sizes="pageSizes"
-                                layout="total, sizes, prev, pager, next, jumper"
-                                :total="totalCount">
-                        </el-pagination>
-                    </div>
+                    </el-table-column>
+                    <el-table-column
+                            prop="createDate"
+                            label="入职时间"
+                            sortable
+                            column-key="createDate"
+                            align="center"
+                            :formatter="formatDate">
+                    </el-table-column>
+                    <el-table-column
+                            align="center"
+                            label="操作">
+                        <template slot-scope="scope">
+                            <el-row>
+                                <el-button type="primary" @click.stop="updateHandle(scope.row)">修改</el-button>
+                                <el-button type="danger" @click.stop="handleDelete(scope.row)">删除</el-button>
+                            </el-row>
+                        </template>
+                    </el-table-column>
+                </el-table>
+                <!-- 分页功能 -->
+                <div class="block" style="width: 600px;margin: auto;margin-top: 10px;">
+                    <el-pagination
+                            @size-change="handleSizeChange"
+                            @current-change="handleCurrentChange"
+                            background
+                            :current-page="currentPage"
+                            :page-size="pageSize"
+                            :page-sizes="pageSizes"
+                            layout="total, sizes, prev, pager, next, jumper"
+                            :total="totalCount">
+                    </el-pagination>
                 </div>
             </div>
-        </template>
+        </div>
+    </template>
 
-    </div>
+</div>
 </body>
 
 <!-- 引入组件库 -->
 <script src="../js/vue.js"></script>
-<script src="../plugins/elementui/index.js"></script>
+<script src="../plugins/element-ui/lib/index.js"></script>
 <script type="text/javascript" src="../js/jquery.min.js"></script>
 <script src="../js/axios-0.18.0.js"></script>
 <script>
@@ -291,18 +305,18 @@
         data() {
             return {
                 //每页显示数
-                pageSize:10,
-                pageSizes: [10,15,20,25],
+                pageSize: 10,
+                pageSizes: [10, 15, 20, 25],
                 //总记录数
-                totalCount:100,
+                totalCount: 100,
 
                 isAse: true,
                 //选中的数据
-                multipleSelection:[],
-                selectionID:[],
+                multipleSelection: [],
+                selectionID: [],
                 //级联选择器
                 // 要传值的
-                options:[],
+                options: [],
 
                 // 页数存放
                 currentPage: 1,
@@ -315,100 +329,100 @@
                 listLoading: false,
                 //搜索的两个筛选 ，也能当数据模板
                 brand: {
-                    userId:null,
-                    name:null,
-                    birthday:null,
-                    sex:null,
-                    tel:null,
-                    email:null,
-                    address:null,
-                    gradedId:null,
-                    createDate:null,
+                    userId: null,
+                    name: null,
+                    birthday: null,
+                    sex: null,
+                    tel: null,
+                    email: null,
+                    address: null,
+                    gradedId: null,
+                    createDate: null,
                 },
                 //查看和修改的显示模板
                 brand2: {
-                    userId:null,
-                    password:null,
-                    name:null,
-                    sex:null,
-                    birthday:null,
-                    tel:null,
-                    email:null,
-                    address:null,
+                    userId: null,
+                    password: null,
+                    name: null,
+                    sex: null,
+                    birthday: null,
+                    tel: null,
+                    email: null,
+                    address: null,
                     createDate: null,
-                    gradedId:null,
+                    gradedId: null,
                 },
                 //表格信息（传值）
                 tableData: [],
                 //打开弹窗
                 // dialogTableVisible: false,
                 addDialogFormVisible: false,
-                compileDialogFormVisible:false,
-                lookFormVisible:false,
+                compileDialogFormVisible: false,
+                lookFormVisible: false,
                 formLabelWidth: '120px',
 
 
                 //弹出窗口中的提示信息
                 addRules: {
                     name: [
-                        { required: true, message: '请输入姓名', trigger: 'blur' },
-                        { min: 2, max: 10, message: '长度在 2 到 10 个字符', trigger: 'blur' }
+                        {required: true, message: '请输入姓名', trigger: 'blur'},
+                        {min: 2, max: 10, message: '长度在 2 到 10 个字符', trigger: 'blur'}
                     ],
                     gradedId: [
-                        { required: true, message: '请选择部门/岗位' ,trigger: 'blur' }
+                        {required: true, message: '请选择部门/岗位', trigger: 'blur'}
                     ],
                     birthday: [
-                        { type: 'date', required: true, message: '请填写生日日期', trigger: 'change' }
+                        {type: 'date', required: true, message: '请填写生日日期', trigger: 'change'}
                     ],
                     createDate: [
-                        { type: 'date', required: true, message: '请填写入职时间', trigger: 'change' }
+                        {type: 'date', required: true, message: '请填写入职时间', trigger: 'change'}
                     ],
                     sex: [
-                        { required: true, message: '请输入性别', trigger: 'change' }
+                        {required: true, message: '请输入性别', trigger: 'change'}
                     ],
                     email: [
-                        { required: true, message: '请输入邮箱地址', trigger: 'blur' },
-                        { type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur', 'change'] }
+                        {required: true, message: '请输入邮箱地址', trigger: 'blur'},
+                        {type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur', 'change']}
                     ],
-                    tel:[
-                        { required: true, message: '电话不能为空'},
-                        { type: 'number', message: '电话必须为数字值1'}
+                    tel: [
+                        {required: true, message: '电话不能为空'},
+                        {type: 'number', message: '电话必须为数字值1'}
                     ],
-                    address:[
-                        { required: true, message: '请输入地址', trigger: 'blur' },
-                        { min: 1,  message: '长度至少1字符', trigger: 'blur' }
+                    address: [
+                        {required: true, message: '请输入地址', trigger: 'blur'},
+                        {min: 1, message: '长度至少1字符', trigger: 'blur'}
                     ]
                 },
 
                 //弹出修改窗口中的提示信息
                 addRules2: {
                     name: [
-                        { required: true, message: '请输入姓名', trigger: 'blur' },
-                        { min: 2, max: 10, message: '长度在 2 到 10 个字符', trigger: 'blur' }
+                        {required: true, message: '请输入姓名', trigger: 'blur'},
+                        {min: 2, max: 10, message: '长度在 2 到 10 个字符', trigger: 'blur'}
                     ],
                     gradedId: [
-                        { required: true, message: '请选择部门/岗位' ,trigger: 'blur' }
+                        {required: true, message: '请选择部门/岗位', trigger: 'blur'}
                     ],
                     birthday: [
-                        { type: 'date', required: true, message: '请填写生日日期'}
+                        {type: 'date', required: true, message: '请填写生日日期'}
                     ],
                     createDate: [
-                        { type: 'date', required: true, message: '请填写入职时间'}
+                        {type: 'date', required: true, message: '请填写入职时间'}
                     ],
                     sex: [
-                        { required: true, message: '请输入性别', trigger: 'blur' }
+                        {required: true, message: '请输入性别', trigger: 'blur'}
                     ],
                     email: [
-                        { required: true, message: '请输入邮箱地址', trigger: 'blur' },
-                        { type: 'email', message: '请输入正确的邮箱地址', trigger: 'blur' }
+                        {required: true, message: '请输入邮箱地址', trigger: 'blur'},
+                        {type: 'email', message: '请输入正确的邮箱地址', trigger: 'blur'}
                     ],
                     tel: [
-                        { required: true, message: '电话不能为空'},
-                        { type: 'integer', message: '电话必须为数字值2'}
+                        {required: true, message: '电话不能为空'},
+                        {type: 'integer', message: '电话必须为数字值2'}
                     ],
-                    address:[
-                        { required: true, message: '请输入地址', trigger: 'blur' },
-                        { min: 1,  message: '长度至少1字符', trigger: 'blur' }
+                    address: [
+                        {required: true, message: '请输入地址', trigger: 'blur'},
+                        {min: 1, message: '长度至少1字符', trigger: 'blur'}
                     ]
                 }
             }
@@ -417,39 +431,39 @@
             this.getAll();
         },
         methods: {
-            sortById(){
+            sortById() {
                 this.isAse = !this.isAse;
                 this.getAll();
             },
             //获取岗位级别数据
-            getLevelData(){
-              axios.get("/users/getLevelAll").then((res)=>{
-                  if(res.data.code == 20041){
-                      //如果操作成功，关团弹层。显示数据
-                      this.options = res.data.data;
-                  }else {
-                      this.$message.error(res.data.msg)
-                  }
-              })
+            getLevelData() {
+                axios.get("/users/getLevelAll").then((res) => {
+                    if (res.data.code == 20041) {
+                        //如果操作成功，关团弹层。显示数据
+                        this.options = res.data.data;
+                    } else {
+                        this.$message.error(res.data.msg)
+                    }
+                })
             },
             // 点击查看
             rowClick(row) {
                 this.getLevelData()
-                axios.get("/users/selectById/"+row.userId).then((res)=>{
-                    if(res.data.code == 20041){
+                axios.get("/users/selectById/" + row.userId).then((res) => {
+                    if (res.data.code == 20041) {
                         console.log(res.data.code)
                         this.brand2 = res.data.data;
-                        this.brand2.gradedId = [res.data.data.sectorId,res.data.data.gradedId];
+                        this.brand2.gradedId = [res.data.data.sectorId, res.data.data.gradedId];
                         this.lookFormVisible = true;
-                    }else{
+                    } else {
                         this.$message.error(res.data.msg);
                     }
                 });
             },
             //表格数据
-            getAll(){
+            getAll() {
                 //发送ajax请求
-                axios.post("/users/selectByPageAndCurrentPage?currentPage="+this.currentPage+"&pageSize="+this.pageSize+"&isAse="+this.isAse,this.brand).then((res)=>{
+                axios.post("/users/selectByPageAndCurrentPage?currentPage=" + this.currentPage + "&pageSize=" + this.pageSize + "&isAse=" + this.isAse, this.brand).then((res) => {
                     this.tableData = res.data.data.rows;
                     //设置总记录数
                     this.totalCount = res.data.data.totalCount;
@@ -460,37 +474,37 @@
             formatDate(row, column) {
                 // 获取单元格数据
                 let data = row[column.property]
-                if(data == null) {
+                if (data == null) {
                     return null
                 }
                 let dt = new Date(data)
                 return dt.getFullYear() + '-' + (dt.getMonth() + 1) + '-' + dt.getDate() + ' ' + dt.getHours() + ':' + dt.getMinutes() + ':' + dt.getSeconds()
             },
-            clearBrand2(){
+            clearBrand2() {
                 this.brand2 = {}
             },
             //新建窗口添加数据 确定按钮事件
-            handleAdd(brand2){
-                this.$refs.formAdd.validate((valid)=>{
-                   if (valid){
-                       var brandUpdate = { ...brand2 }
-                       brandUpdate.gradedId = brand2.gradedId[1]
-                       console.log(brandUpdate)
-                       axios.post("/users",brandUpdate).then((res)=>{
-                           if(res.data.code == 20011){
-                               this.addDialogFormVisible = false;
-                               this.$message.success("添加成功");
-                               this.clearBrand2();
-                           }else if(res.data.code == 20010){
-                               this.$message.error("添加失败！");
-                           }else{
-                               this.$message.error(res.data.msg);
-                           }
+            handleAdd(brand2) {
+                this.$refs.formAdd.validate((valid) => {
+                    if (valid) {
+                        var brandUpdate = {...brand2}
+                        brandUpdate.gradedId = brand2.gradedId[1]
+                        console.log(brandUpdate)
+                        axios.post("/users", brandUpdate).then((res) => {
+                            if (res.data.code == 20011) {
+                                this.addDialogFormVisible = false;
+                                this.$message.success("添加成功");
+                                this.clearBrand2();
+                            } else if (res.data.code == 20010) {
+                                this.$message.error("添加失败！");
+                            } else {
+                                this.$message.error(res.data.msg);
+                            }
 
-                       }).finally(()=>{
-                           this.getAll();
-                       })
-                   }
+                        }).finally(() => {
+                            this.getAll();
+                        })
+                    }
 
                 })
 
@@ -504,45 +518,45 @@
                 // this.brand2 = { ...row};
                 // this.brand2.gradedId = [row.sectorId,row.gradedId];
 
-                 axios.get("/users/selectById/"+row.userId).then((res)=>{
-                   if(res.data.code == 20041){
-                       console.log(res.data.code);
-                       this.brand2 = res.data.data;
-                       this.brand2.gradedId = [res.data.data.sectorId,res.data.data.gradedId];
-                       this.brand2.tel = parseInt(res.data.data.tel);
-                       this.brand2.createDate =  new Date(res.data.data.createDate);
-                       this.brand2.birthday =  new Date(res.data.data.birthday);
+                axios.get("/users/selectById/" + row.userId).then((res) => {
+                    if (res.data.code == 20041) {
+                        console.log(res.data.code);
+                        this.brand2 = res.data.data;
+                        this.brand2.gradedId = [res.data.data.sectorId, res.data.data.gradedId];
+                        this.brand2.tel = parseInt(res.data.data.tel);
+                        this.brand2.createDate = new Date(res.data.data.createDate);
+                        this.brand2.birthday = new Date(res.data.data.birthday);
 
-                       this.compileDialogFormVisible = true;
-                   }else{
-                     this.$message.error(res.data.msg);
-                   }
-                 });
+                        this.compileDialogFormVisible = true;
+                    } else {
+                        this.$message.error(res.data.msg);
+                    }
+                });
             },
             //修改窗口确定按钮
-            compileHandleAdd(brand2){
-                this.$refs.formUpdate.validate((valid)=>{
-                    if (valid){
-                        var brandUpdate = { ...brand2 }
+            compileHandleAdd(brand2) {
+                this.$refs.formUpdate.validate((valid) => {
+                    if (valid) {
+                        var brandUpdate = {...brand2}
                         brandUpdate.gradedId = brand2.gradedId[1]
                         console.log(brandUpdate)
-                        axios.put("/users",brandUpdate).then((res)=>{
-                            if(res.data.code == 20031){
+                        axios.put("/users", brandUpdate).then((res) => {
+                            if (res.data.code == 20031) {
                                 this.$message.success("修改成功");
                                 this.compileDialogFormVisible = false;
                                 this.clearBrand2();
 
-                            }else if(res.data.code == 20030){
+                            } else if (res.data.code == 20030) {
                                 this.$message.error("修改失败！");
-                            }else{
+                            } else {
                                 this.$message.error(res.data.msg);
                                 // console.log(message);
                             }
-                        }).finally(()=>{
+                        }).finally(() => {
                             this.getAll();
                         })
                     }
-                //
+                    //
                 });
 
             },
@@ -556,7 +570,7 @@
             clearFilter() {
                 this.$refs.filterTable.clearFilter();
             },
-            formatter(value,row) {
+            formatter(value, row) {
                 return row.gradedName === value;
             },
             filterHandler(value, row, column) {
@@ -565,9 +579,9 @@
             },
             // 表格颜色
             tableRowClassName({row, rowIndex}) {
-                if ((rowIndex + 1)%4 === 0) {
+                if ((rowIndex + 1) % 4 === 0) {
                     return 'warning-row';
-                } else if ((rowIndex + 1)%2 === 0 && (rowIndex + 1)%4 != 0) {
+                } else if ((rowIndex + 1) % 2 === 0 && (rowIndex + 1) % 4 != 0) {
                     return 'success-row';
                 }
 
@@ -575,7 +589,7 @@
             },
             // 复选框选中
             handleSelectionChange(val) {
-                for(var i = 0;i<val.length;i++){
+                for (var i = 0; i < val.length; i++) {
                     this.multipleSelection[i] = val[i].userId;
                 }
                 console.log(this.multipleSelection);
@@ -586,7 +600,7 @@
                 this.getAll();
             },
             //新建弹窗部分
-            popwindows(){
+            popwindows() {
                 this.getLevelData();
                 this.addDialogFormVisible = true;
                 this.$refs[formName].resetFields();
@@ -613,40 +627,40 @@
                 this.getAll();
             },
             //单独删除
-            handleDelete(row){
-                this.$confirm("是否删除当前员工信息（不可撤销）","提示",{
-                    type:'info'
-                }).then(()=>{
-                    axios.delete("/users/"+row.userId).then((res)=>{
-                        if(res.data.code == 20021){
+            handleDelete(row) {
+                this.$confirm("是否删除当前员工信息（不可撤销）", "提示", {
+                    type: 'info'
+                }).then(() => {
+                    axios.delete("/users/" + row.userId).then((res) => {
+                        if (res.data.code == 20021) {
                             this.$message.success("删除成功");
                             this.getAll();
-                        }else{
+                        } else {
                             this.$message.error("删除失败");
                         }
                     })
-                }).catch(()=>{
+                }).catch(() => {
                     this.$message.info("取消删除");
-                }).finally(()=>{
+                }).finally(() => {
                     this.getAll();
                 })
             },
             //批量删除
-            deleteByIds(){
-                this.$confirm("是否删除当前员工信息（不可撤销）","提示",{
-                    type:'info'
-                }).then(()=>{
-                    axios.delete("/users/"+this.multipleSelection.join(",")).then((res)=>{
-                        if(res.data.code == 20021){
+            deleteByIds() {
+                this.$confirm("是否删除当前员工信息（不可撤销）", "提示", {
+                    type: 'info'
+                }).then(() => {
+                    axios.delete("/users/" + this.multipleSelection.join(",")).then((res) => {
+                        if (res.data.code == 20021) {
                             this.$message.success("删除成功");
                             this.getAll();
-                        }else{
+                        } else {
                             this.$message.error("删除失败");
                         }
-                })
-                }).catch(()=>{
+                    })
+                }).catch(() => {
                     this.$message.info("取消删除");
-                }).finally(()=> {
+                }).finally(() => {
                     this.getAll();
                 })
             },

@@ -29,7 +29,7 @@ public class ProjectInterceptor implements HandlerInterceptor {
         // System.out.println("preHandle....");
         String requestURL=request.getRequestURI();
         System.out.println("preHandle Interceptor路径："+requestURL);
-        if (requestURL.equals("/login") || requestURL.equals("/pages/ESM.html") || requestURL.equals("/getNavData")){
+        if (requestURL.equals("/login") || requestURL.equals("/logout") || requestURL.equals("/getNavData")){
             return true;
         }
         //自动登录检查业务逻辑
@@ -43,15 +43,15 @@ public class ProjectInterceptor implements HandlerInterceptor {
                     // System.out.println(claims.get("userId"));
                     if (claims!=null)
 
-                        // if(claims.get("roleId")!=null || claims.get("roleId").equals("")){
-                        //
-                        //     Integer roleId = (Integer) claims.get("roleId");
-                        //     System.out.println(roleId);
-                        //     // (Integer) roleId
-                        //     return authenticationService.Authentication((Integer) claims.get("roleId"),requestURL);
-                        //
-                        // }
-                        return true;
+                        if(claims.get("roleId")!=null || claims.get("roleId").equals("")){
+
+                            Integer roleId = (Integer) claims.get("roleId");
+                            System.out.println(roleId);
+                            // (Integer) roleId
+                            return authenticationService.Authentication((Integer) claims.get("roleId"),requestURL);
+
+                        }
+                        // return true;
                 }
             }
         }

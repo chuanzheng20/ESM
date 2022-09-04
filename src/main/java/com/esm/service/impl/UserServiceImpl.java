@@ -3,15 +3,13 @@ package com.esm.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.esm.dao.GradedWagesDao;
-import com.esm.dao.SectorDao;
-import com.esm.dao.UserDao;
-import com.esm.dao.UserQueryDao;
+import com.esm.dao.*;
 import com.esm.domain.GradedWages;
 import com.esm.domain.Level;
 import com.esm.domain.Sector;
 import com.esm.domain.User;
 import com.esm.domain.query.UserQuery;
+import com.esm.domain.query.UserRoleQuery;
 import com.esm.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -34,6 +32,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     public UserQueryDao userQueryDao;
+
+    @Autowired
+    public UserRoleQueryDao userRoleQueryDao;
 
     @Override
     public User getById(String id) {
@@ -70,6 +71,29 @@ public class UserServiceImpl implements UserService {
         List<User> userList = userDao.selectList(null);
         return userList;
     }
+
+    @Override
+    public IPage<UserRoleQuery> selectByPageAndCurrentPageRole(IPage<UserRoleQuery> page, String userId, String name, Boolean isAse){
+
+        QueryWrapper<UserRoleQuery> queryWrapper = new QueryWrapper<>();
+        queryWrapper.like(StringUtils.hasText(userId), "tb_user.user_id", userId);
+        queryWrapper.like(StringUtils.hasText(name), "tb_user.name", name);
+        queryWrapper.apply("tb_user.role_id = tb_role.role_id");
+        queryWrapper.orderBy(true,isAse,"tb_user.user_id");
+        queryWrapper.in("deleted",0);
+        userRoleQueryDao.findByPage(page, queryWrapper);
+        return page;
+    }
+
+    @Override
+    public UserRoleQuery selectByIdRole(String id) {
+        QueryWrapper<UserRoleQuery> queryWrapper = new QueryWrapper<>();
+        queryWrapper.in("tb_user.user_id",id);
+        queryWrapper.apply("tb_user.role_id = tb_role.role_id");
+        queryWrapper.in("deleted",0);
+        return userRoleQueryDao.findById(queryWrapper);
+    }
+
 
 
     @Override
@@ -124,6 +148,7 @@ public class UserServiceImpl implements UserService {
         }
         return levelList;
     }
+
 
 
 

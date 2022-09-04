@@ -7,6 +7,6 @@ import java.util.List;
 
 @Data
 public class UserPage {
-    public List<UserQuery> rows;
+    public Object rows;
     public Integer totalCount;
 }

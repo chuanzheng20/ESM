@@ -49,7 +49,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 System.out.println(r.getApiPaths());
                 String[] split = r.getApiPaths().replace("[", "").replace("]", "").split(",");
                 for (String s:split) {
-                    if(s.trim().equals(rootPath.trim())){
+                    if(s.trim().equals(rootPath.trim())||path.trim().equals("/pages/ESM.html")){
                         return true;
                     }
                 }
