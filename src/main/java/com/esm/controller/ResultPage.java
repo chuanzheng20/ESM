@@ -1,4 +1,4 @@
-package com.esm.domain;
+package com.esm.controller;
 
 import com.esm.domain.query.UserQuery;
 import lombok.Data;
@@ -6,7 +6,7 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-public class UserPage {
+public class ResultPage {
     public Object rows;
     public Integer totalCount;
 }

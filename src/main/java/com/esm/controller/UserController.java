@@ -1,21 +1,15 @@
 package com.esm.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.api.R;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.esm.domain.Level;
 import com.esm.domain.User;
-import com.esm.domain.UserPage;
 import com.esm.domain.query.UserQuery;
 import com.esm.domain.query.UserRoleQuery;
 import com.esm.service.UserService;
 import org.json.JSONException;
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 @RestController
@@ -39,19 +33,19 @@ public class UserController {
     @PostMapping("/selectByPageAndCurrentPage")
     public Result getUserPage(@RequestParam Integer currentPage, @RequestParam Integer pageSize,@RequestParam Boolean isAse, @RequestBody User user) throws JSONException {
         System.out.println(user);
-        IPage<UserQuery> page = new Page<>(currentPage,pageSize);
+        IPage<UserQuery> page = new com.baomidou.mybatisplus.extension.plugins.pagination.Page(currentPage,pageSize);
         String strUserId = String.valueOf(user.getUserId()).equals("null")? null:String.valueOf(user.getUserId());
 
         userService.selectByPageAndCurrentPage(page,strUserId,user.getName(),isAse);
         System.out.println(page);
-        UserPage userPageData = new UserPage();
-        userPageData.setRows(page.getRecords());
-        userPageData.setTotalCount((int) page.getTotal());
+        ResultPage resultPageData = new ResultPage();
+        resultPageData.setRows(page.getRecords());
+        resultPageData.setTotalCount((int) page.getTotal());
 
         Integer code = page.getRecords() != null ? Code.GET_OK : Code.GET_ERR;
         String msg = page.getRecords() != null ? "" : "用户信息错误，请重试！";
 
-        return new Result(code,userPageData,msg);
+        return new Result(code, resultPageData,msg);
 
     }
 
@@ -98,19 +92,19 @@ public class UserController {
     @PostMapping("/selectByPageAndCurrentPageRole")
     public Result getUserPageRole(@RequestParam Integer currentPage, @RequestParam Integer pageSize,@RequestParam Boolean isAse, @RequestBody User user) throws JSONException {
         System.out.println(user);
-        IPage<UserRoleQuery> page = new Page<>(currentPage,pageSize);
+        IPage<UserRoleQuery> page = new com.baomidou.mybatisplus.extension.plugins.pagination.Page(currentPage,pageSize);
         String strUserId = String.valueOf(user.getUserId()).equals("null")? null:String.valueOf(user.getUserId());
 
         userService.selectByPageAndCurrentPageRole(page,strUserId,user.getName(),isAse);
         System.out.println(page);
-        UserPage userPageData = new UserPage();
-        userPageData.setRows(page.getRecords());
-        userPageData.setTotalCount((int) page.getTotal());
+        ResultPage resultPageData = new ResultPage();
+        resultPageData.setRows(page.getRecords());
+        resultPageData.setTotalCount((int) page.getTotal());
 
         Integer code = page.getRecords() != null ? Code.GET_OK : Code.GET_ERR;
         String msg = page.getRecords() != null ? "" : "用户信息错误，请重试！";
 
-        return new Result(code,userPageData,msg);
+        return new Result(code, resultPageData,msg);
 
     }
 

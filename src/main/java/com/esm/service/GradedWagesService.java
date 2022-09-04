@@ -1,6 +1,8 @@
 package com.esm.service;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.esm.domain.GradedWages;
+import com.esm.domain.query.GradedWagesQuery;
 
 import java.util.List;
 
@@ -10,4 +12,7 @@ public interface GradedWagesService {
     public boolean update(GradedWages gradedWages);
     public GradedWages getById(Integer gradedWagesId);
     public List<GradedWages> getAll();
+
+    public IPage<GradedWagesQuery> selectByPageAndCurrentPage(IPage<GradedWagesQuery> page, String gradedName, String sectorId, Boolean isAse);
+
 }
