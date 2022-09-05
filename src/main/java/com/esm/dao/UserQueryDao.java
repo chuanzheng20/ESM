@@ -45,5 +45,14 @@ public interface UserQueryDao extends BaseMapper<UserQuery> {
             " ${ew.customSqlSegment} ")
     UserQuery findById(@Param("ew") Wrapper wrapper);
 
+    /**
+     * 动态查询(tb_user, tb_graded_wages, tb_sector, tb_role)
+     *
+     */
+    @Select("SELECT user_id, name, sex, birthday, tel, email, address, create_date, tb_role.role_id, tb_role.role_name,tb_user.graded_id, deleted, tb_graded_wages.sector_id, graded_name, money, sector_name, org_id" +
+            " FROM  tb_user, tb_graded_wages, tb_sector, tb_role" +
+            " ${ew.customSqlSegment} ")
+    UserQuery findByIdRole(@Param("ew") Wrapper wrapper);
+
 
 }

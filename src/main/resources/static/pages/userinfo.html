@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+  <!-- 页面meta -->
+
+  <meta charset="utf-8">
+
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+  <title>五险一金表</title>
+
+  <meta content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" name="viewport">
+
+  <!-- 引入样式 -->
+
+  <link rel="stylesheet" href="../plugins/element-ui/lib/theme-chalk/index.css">
+
+  <link rel="stylesheet" href="../plugins/font-awesome/css/font-awesome.min.css">
+
+  <link rel="stylesheet" href="../css/style.css">
+
+  <link rel="stylesheet" href="../css/iconfont.css">
+
+  <link rel="stylesheet" href="../css/iconfont.ttf">
+
+
+
+
+<body class="hold-transition">
+
+  <div id="app">
+    <template>
+
+      <!--标题-->
+      <div>
+        <div class="content-header">
+
+          <h1>员工信息</h1>
+
+        </div>
+        <div class="app-container">
+          <div class="box">
+
+            <!--编辑对话框弹出-->
+            <el-dialog title="修改" :visible.sync="compileDialogFormVisible" :close-on-click-modal="false"
+              style="width: 900px;height: 900px;margin: auto;">
+              <el-form :model="brand2" :rules="addrules2" ref="brand2" label-width="100px" class="demo-ruleForm">
+                <el-form-item label="名字" prop="name">
+                  <el-input v-model="brand2.name" style="width: 230px"></el-input>
+                </el-form-item>
+                <el-form-item label="性别" prop="sex">
+                  <el-radio-group v-model="brand2.sex">
+                    <el-radio label="男"></el-radio>
+                    <el-radio label="女"></el-radio>
+                  </el-radio-group>
+                </el-form-item>
+                <el-form-item label="密码" prop="password">
+                  <el-input type="age" v-model="brand2.password" autocomplete="off" style="width: 230px"></el-input>
+                </el-form-item>
+                <el-form-item label="生日" required>
+                  <el-col :span="11">
+                    <el-form-item prop="birthDay">
+                      <el-date-picker type="date" placeholder="请填入生日" v-model="brand2.birthDay"></el-date-picker>
+                    </el-form-item>
+                  </el-col>
+                </el-form-item>
+                <el-form-item label="电话" prop="tel">
+                  <el-input type="age" v-model.number="brand2.tel" autocomplete="off" style="width: 230px"
+                    maxlength="11"></el-input>
+                </el-form-item>
+                <el-form-item prop="email" label="邮箱">
+                  <el-input v-model="brand2.email" style="width: 230px"></el-input>
+                </el-form-item>
+                <el-form-item label="地址" prop="address">
+                  <el-input v-model="brand2.address" style="width: 230px"></el-input>
+                </el-form-item>
+                </el-form-item>
+                <el-form-item style="margin-right: 0;">
+                  <el-button @click="compileDialogForm('brand2')">取 消</el-button>
+                  <el-button type="primary" @click="compileHandleAdd(brand2)">立即修改</el-button>
+                </el-form-item>
+              </el-form>
+            </el-dialog>
+
+            <el-descriptions class="margin-top" title="员工信息" :column="3" border>
+              <template slot="extra">
+                <el-button type="primary" size="small" @click="edit">修改</el-button>
+              </template>
+
+              <el-descriptions-item>
+                <template slot="label">
+                  <i class="el-icon-user"></i>
+                  <span>姓名</span>
+                </template>
+                <span>{{userInfo.name}}</span>
+              </el-descriptions-item>
+
+              <el-descriptions-item>
+                <template slot="label">
+                  <i class="el-icon-mobile-phone"></i>
+                  <span>性别</span>
+                </template>
+                <span>{{userInfo.sex}}</span>
+              </el-descriptions-item>
+
+              <el-descriptions-item>
+                <template slot="label">
+                  <i class="el-icon-office-building"></i>
+                  <span>生日</span>
+                </template>
+                <span>{{userInfo.birthday}}</span>
+              </el-descriptions-item>
+
+              <el-descriptions-item>
+                <template slot="label">
+                  <i class="el-icon-office-building"></i>
+                  <span>电话</span>
+                </template>
+                <span>{{userInfo.tel}}</span>
+              </el-descriptions-item>
+
+              <el-descriptions-item>
+                <template slot="label">
+                  <i class="el-icon-office-building"></i>
+                  <span>邮箱</span>
+                </template>
+                <span>{{userInfo.email}}</span>
+              </el-descriptions-item>
+
+              <el-descriptions-item>
+                <template slot="label">
+                  <i class="el-icon-location-outline"></i>
+                  <span>地址</span>
+                </template>
+                <span>{{userInfo.address}}</span>
+              </el-descriptions-item>
+
+              <el-descriptions-item>
+                <template slot="label">
+                  <i class="el-icon-office-building"></i>
+                  <span>角色</span>
+                </template>
+                <span>{{userInfo.roleName}}</span>
+              </el-descriptions-item>
+
+              <el-descriptions-item>
+                <template slot="label">
+                  <i class="el-icon-office-building"></i>
+                  <span>部门</span>
+                </template>
+                <span>{{userInfo.sectorName}}</span>
+              </el-descriptions-item>
+            </el-descriptions>
+            <h4>工资详情</h4>
+            <!--表格-->
+            <el-table :data="tableData" style="width: 100%;" :row-class-name="tableRowClassName" expandedRows
+              @expand-change="handledetail">
+              <el-table-column type="expand">
+                <template slot-scope="props">
+                  <el-form label-position="left" class="demo-table-expand" style="margin-left: 200px;">
+                    <el-row>
+                      <el-col :span="8">
+                        <el-form-item label="基础工资" style="margin:auto;">
+                          <span>{{props.row.money}}</span>
+                        </el-form-item>
+                        <el-form-item label="养老保险" style="margin:auto;">
+                          <span>{{(props.row.endowmentMoney)*(props.row.money)}}</span>
+                        </el-form-item>
+                        <el-form-item label="医疗保险" style="margin:auto;">
+                          <span>{{(props.row.maternityMoney)*(props.row.money)}}</span>
+                        </el-form-item>
+                        <el-form-item label="失业保险" style="margin:auto;">
+                          <span>{{(props.row.medicalMoney)*(props.row.money)}}</span>
+                        </el-form-item>
+                        <el-form-item label="工伤保险" style="margin:auto;">
+                          <span>{{(props.row.employmentMoney)*(props.row.money)}}</span>
+                        </el-form-item>
+                        <el-form-item label="生育保险" style="margin:auto;">
+                          <span>{{(props.row.unemploymentMoney)*(props.row.money)}}</span>
+                        </el-form-item>
+                        <el-form-item label="住房公积金" style="margin:auto;">
+                          <span>{{(props.row.housingMoney)*(props.row.money)}}</span>
+                        </el-form-item>
+                      </el-col>
+                      <el-col :span="8">
+                        <el-form-item v-for="item in otherDataGT" :label="item.text" style="margin:auto;">
+                          <span>{{ (item.money)*(item.num) }}</span>
+                        </el-form-item>
+                      </el-col>
+                      <el-col :span="8">
+                        <el-form-item label="使用税率" style="margin:auto;">
+                          <span>{{ props.row.other_wages }}</span>
+                        </el-form-item>
+                        <el-form-item label="税前总计" style="margin:auto;">
+                          <span>{{ props.row.pre_tax }}</span>
+                        </el-form-item>
+                        <el-form-item label="税后" style="margin:auto;">
+                          <span>{{ props.row.after_tax }}</span>
+                        </el-form-item>
+                      </el-col>
+                    </el-row>
+                  </el-form>
+                </template>
+              </el-table-column>
+
+              <el-table-column prop="years" align="center" label="年月">
+              </el-table-column>
+            </el-table>
+
+          </div>
+        </div>
+      </div>
+    </template>
+
+  </div>
+
+</body>
+
+<!-- 引入组件库 -->
+
+<script src="../js/vue.js"></script>
+
+<!-- <script src="../plugins/elementui/index.js"></script> -->
+<!-- 引入组件库 -->
+
+<script type="text/javascript" src="../js/jquery.min.js"></script>
+<script src="../plugins/element-ui/lib/index.js"></script>
+
+<script src="../js/axios-0.18.0.js"></script>
+<script src="../js/iconfont.js"></script>
+
+<script>
+  var vue = new Vue({
+    el: '#app',
+
+    data() {
+      return {
+        userInfo:{},
+        otherDataGT: [
+          {
+            text: "福利",
+            num: 2,
+            money: 100,
+          },
+          {
+            text: "奖金",
+            num: 2,
+            money: 500,
+          }, {
+            text: "奖品",
+            num: 2,
+            money: 50,
+          }, {
+            text: "加班",
+            num: 2,
+            money: 100,
+          }, {
+            text: "津贴",
+            num: 2,
+            money: 200,
+          }, {
+            text: "未出勤",
+            num: 2,
+            money: -200,
+          },
+        ],
+
+        tableData: [
+          {
+            //年月
+            years: "2002-08-01",
+            // 基础工资
+            money: 8000,
+            //五险一金
+            endowmentMoney: 0.2,
+            maternityMoney: 0.33,
+            medicalMoney: 0.5,
+            employmentMoney: 0.2,
+            unemploymentMoney: 0.1,
+            housingMoney: 0.4,
+            // 税率
+            pre_tax: 8000,
+            after_tax: 7800,
+          },
+          {
+            //年月
+            years: "2002-09-01",
+            // 基础工资
+            money: 8000,
+            //五险一金
+            endowmentMoney: 0.2,
+            maternityMoney: 0.33,
+            medicalMoney: 0.5,
+            employmentMoney: 0.2,
+            unemploymentMoney: 0.1,
+            housingMoney: 0.4,
+            // 税率
+            pre_tax: 8000,
+            after_tax: 7800,
+          },
+          {
+            //年月
+            years: "2002-10-01",
+            // 基础工资
+            money: 8000,
+            //五险一金
+            endowmentMoney: 0.2,
+            maternityMoney: 0.33,
+            medicalMoney: 0.5,
+            employmentMoney: 0.2,
+            unemploymentMoney: 0.1,
+            housingMoney: 0.4,
+            // 税率
+            pre_tax: 8000,
+            after_tax: 7800,
+          }],
+
+        brand2: {
+          password: null,
+          name: null,
+          sex: null,
+          birthDay: null,
+          tel: null,
+          email: null,
+          address: null,
+        },
+        compileDialogFormVisible: false,
+        addrules2: {
+          name: [
+            { required: true, message: '请输入姓名', trigger: 'blur' },
+            { min: 2, max: 10, message: '长度在 2 到 10 个字符', trigger: 'blur' }
+          ],
+          departmentid: [
+            { required: true, message: '请选择部门/岗位/级别', trigger: 'blur' }
+          ],
+          birthDay: [
+            { type: 'date', required: true, message: '请填写生日日期', trigger: 'change' }
+          ],
+          createDate: [
+            { type: 'date', required: true, message: '请填写入职时间', trigger: 'change' }
+          ],
+          sex: [
+            { required: true, message: '请输入性别', trigger: 'blur' }
+          ],
+          email: [
+            { required: true, message: '请输入邮箱地址', trigger: 'blur' },
+            { type: 'email', message: '请输入正确的邮箱地址', trigger: 'change' }
+          ],
+          tel: [
+            { required: true, message: '电话不能为空' },
+            { type: 'number', message: '电话必须为数字值', trigger: 'change' }
+          ],
+          address: [
+            { required: true, message: '请输入地址', trigger: 'blur' },
+            { min: 1, message: '长度至少1字符', trigger: 'blur' }
+          ],
+          password: [
+            { required: true, message: '密码不能为空' },
+          ],
+        }
+      }
+    },
+    mounted() {
+      // this.getall();
+      this.getUsrInfo();
+    },
+    methods: {
+      tableRowClassName({ row, rowIndex }) {
+        if ((rowIndex + 1) % 4 === 0) {
+          return 'warning-row';
+        } else if ((rowIndex + 1) % 2 === 0 && (rowIndex + 1) % 4 != 0) {
+          return 'success-row';
+        }
+
+        return '';
+      },
+      getUsrInfo(){
+        axios.get("/users/userInfo").then((res) => {
+          this.userInfo = res.data.data;
+          let dt = new Date(this.userInfo.birthday)
+          this.userInfo.birthday = dt.getFullYear() + '-' + (dt.getMonth() + 1) + '-' + dt.getDate();
+
+
+        })
+      },
+      getAll() {
+        //发送ajax请求
+        axios.post("/?????????????", this.userId).then((res) => {
+          this.tableData = res.data.data;
+        })
+      },
+      //点击行展开事件
+      handledetail(row) {
+        //获取后台数据
+        // console.log(row.userId);
+        axios.post("/???????????????", row.userId).then((res) => {
+          this.otherDataGT = res.data.data;
+        })
+        // })
+      },
+      edit() {
+        this.brand2 = { ...this.userInfo };
+        this.brand2.birthDay = new Date(this.userInfo.birthday);
+        this.compileDialogFormVisible = true
+      },
+      compileDialogForm(formName) {
+        this.$refs[formName].resetFields();
+        this.compileDialogFormVisible = false;
+      },
+      //修改窗口确定按钮
+      compileHandleAdd(brand2) {
+        // console.log(this.brand3);
+        axios.put("/？？？？",this.brand2,userId).then((res)=>{
+          if(res.data.code == 20031){
+            this.$message.success("修改成功");
+            this.compileDialogFormVisible = false;
+          }else if(res.data.code == 20030){
+            this.$message.error("修改失败！");
+          }else{
+            this.$message.error(res.data.msg);
+          }
+
+        }).finally(()=>{
+          _this.getAll();
+        })
+      },
+
+    },
+  })
+
+</script>
+
+</html>

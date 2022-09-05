@@ -41,6 +41,7 @@
                 <el-form :inline="true" :model="brand" class="demo-form-inline" style="margin-top: 10px;">
                     <div style="float: left;">
                         <el-row>
+                            <el-button type="danger" plain @click="deleteByIds">批量删除</el-button>
                             <el-button type="primary" plain @click="popWindows">新增</el-button>
                         </el-row>
                     </div>
@@ -142,7 +143,10 @@
                 <!--表格-->
                 <el-table ref="filterTable" :data="tableData" style="width: 100%;" :row-class-name="tableRowClassName"
                           @selection-change="handleSelectionChange" @row-click="rowClick" @filter-change="sectorFilterChange">
-
+                    <el-table-column
+                            type="selection"
+                            width="55">
+                    </el-table-column>
                     <el-table-column prop="gradedId" label="岗位ID" align="center">
                     </el-table-column>
                     <el-table-column prop="gradedName" label="岗位名称" align="center">
