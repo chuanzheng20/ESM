@@ -22,19 +22,19 @@ import java.util.List;
 public class UserServiceImpl implements UserService {
 
     @Autowired
-    public SectorDao sectorDao;
+    private SectorDao sectorDao;
 
     @Autowired
-    public GradedWagesDao gradedWagesDao;
+    private GradedWagesDao gradedWagesDao;
 
     @Autowired
-    public UserDao userDao;
+    private UserDao userDao;
 
     @Autowired
-    public UserQueryDao userQueryDao;
+    private UserQueryDao userQueryDao;
 
     @Autowired
-    public UserRoleQueryDao userRoleQueryDao;
+    private UserRoleQueryDao userRoleQueryDao;
 
     @Override
     public User getById(String id) {

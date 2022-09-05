@@ -21,7 +21,13 @@ public class TaxServiceImpl implements TaxService {
     private TaxDao taxDao;
     @Override
     public boolean save(Tax tax) {
-        return false;
+        int insert = taxDao.insert(tax);
+        if (insert > 0) {
+            return true;
+        } else {
+            return false;
+
+        }
     }
 
     @Override
@@ -31,7 +37,12 @@ public class TaxServiceImpl implements TaxService {
 
     @Override
     public boolean update(Tax tax) {
-        return false;
+        int i = taxDao.updateById(tax);
+        if (i > 0) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     @Override

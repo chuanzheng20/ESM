@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+    <!-- 页面meta -->
+
+    <meta charset="utf-8">
+
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>SpringMVC案例</title>
+
+    <meta content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" name="viewport">
+
+    <!-- 引入样式 -->
+
+    <link rel="stylesheet" href="../plugins/element-ui/lib/theme-chalk/index.css">
+    <link rel="stylesheet" href="../plugins/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+
+
+</head>
+
+<body class="hold-transition">
+
+    <div id="app">
+        <template>
+            <div class="content-header">
+
+                <h1>其他收入类型</h1>
+
+            </div>
+
+            <div class="app-container">
+
+                <div class="box">
+
+                    <!-- 新增按钮 -->
+                    <el-form :inline="true" class="demo-form-inline" style="margin-top: 10px;">
+                        <div style="float: left;">
+                            <el-row>
+                                <el-button type="primary" plain @click="popwindows">新增</el-button>
+                            </el-row>
+                        </div>
+                    </el-form>
+
+                    <!--新增对话框弹出-->
+                    <el-dialog title="新增" :visible.sync="NewComFormVisible" :close-on-click-modal="false" width="400px"
+                        style="margin: auto;">
+                        <el-form :model="addData" ref="formAdd" :rules="addrules" label-width="100px"
+                            class="demo-ruleForm">
+                            <el-form-item label="年/月" prop="ymid">
+                                <el-select v-model="addData.y_m_id" placeholder="请选择年月"
+                                    @change="selectTrigger(addData.y_m_id,payrollData,options,options2)">
+                                    <el-option v-for="item in time" :key="item.ymid" :label="item.date"
+                                        :value="item.ymid">
+
+                                    </el-option>
+                                </el-select>
+                            </el-form-item>
+                            <el-form-item label="名称" prop="name">
+                                <el-input v-model="addData.name" :disabled="ming" style="width: 220px;">
+                                </el-input>
+                            </el-form-item>
+                            <el-form-item label="金额" prop="money">
+                                <el-input v-model="addData.money" oninput="value=value.replace(/[^\d]/g,'')" :disabled="jin" style="width: 220px;">
+                                </el-input>
+                            </el-form-item>
+                            <el-form-item>
+                                <div style="float: right;margin-right: 10px;">
+                                    <el-button type="primary" @click="addTo">保存</el-button>
+                                </div>
+                                <div style="float: right;margin-right: 10px;">
+                                    <el-button @click="addDialogForm('formAdd')">关闭窗口</el-button>
+                                </div>
+                            </el-form-item>
+                        </el-form>
+                    </el-dialog>
+                    <!--修改对话框弹出-->
+                    <el-dialog title="修改" :visible.sync="comFormVisible" :close-on-click-modal="false" width="400px"
+                        style="margin: auto;">
+                        <el-form :model="payrollDataTo" ref="formAdd" :rules="addrules2" label-width="100px"
+                            class="demo-ruleForm">
+                            <el-form-item label="年/月" prop="ymid">
+                                <el-select v-model="payrollDataTo.y_m_id" placeholder="请选择年月" :disabled="true"
+                                    @change="selectTrigger(payrollDataTo.y_m_id,payrollData,options,options2)">
+                                    <el-option v-for="item in time" :key="item.ymid" :label="item.date"
+                                        :value="item.ymid">
+                                    </el-option>
+                                </el-select>
+                            </el-form-item>
+                            <el-form-item label="名称" prop="name">
+                                <el-input v-model="payrollDataTo.name" :disabled="true" style="width: 220px;">
+                                </el-input>
+                            </el-form-item>
+                            <el-form-item label="金额" prop="money">
+                                <el-input v-model="payrollDataTo.money" oninput="value=value.replace(/[^\d]/g,'')" style="width: 220px;">
+                                </el-input>
+                            </el-form-item>
+                            <el-form-item>
+                                <div style="float: right;margin-right: 10px;">
+                                    <el-button type="primary" @click="calculateto">保存</el-button>
+                                </div>
+                                <div style="float: right;margin-right: 10px;">
+                                    <el-button @click="dialogForm('formAdd')">关闭窗口</el-button>
+                                </div>
+                            </el-form-item>
+                        </el-form>
+                    </el-dialog>
+
+                    <!--表格-->
+                    <el-table :data="payrollData" style="width: 100%;" :row-class-name="tableRowClassName">
+                        <el-table-column prop="ymid" label="年月" sortable  align="center">
+                        </el-table-column>
+
+                        <el-table-column prop="name" label="类型名称" align="center">
+                        </el-table-column>
+
+                        <el-table-column prop="money" label="对应金额" align="center">
+                        </el-table-column>
+
+                        <el-table-column align="center" label="操作">
+                            <template slot-scope="scope">
+                                <el-row>
+                                    <el-button type="primary" @click.stop="handle(scope.row)">修改</el-button>
+                                </el-row>
+                            </template>
+                        </el-table-column>
+                    </el-table>
+                </div>
+            </div>
+        </template>
+
+    </div>
+
+</body>
+
+<!-- 引入组件库 -->
+
+<script src="../js/vue.js"></script>
+<script src="../plugins/element-ui/lib/index.js"></script>
+<script type="text/javascript" src="../js/jquery.min.js"></script>
+<script src="../js/axios-0.18.0.js"></script>
+<script>
+    var vue = new Vue({
+        el: '#app',
+        data() {
+            return {
+                //时间
+                time:[],
+                //     [
+                //     {
+                //         value: 1,
+                //         label: "2020-01-01"
+                //     },
+                //     {
+                //         value: 2,
+                //         label: "2020-02-01"
+                //     },
+                //     {
+                //         value: 3,
+                //         label: "2020-03-01"
+                //     },
+                //     {
+                //         value: 4,
+                //         label: "2020-04-01"
+                //     },
+                //     {
+                //         value: 5,
+                //         label: "2020-05-01"
+                //     },
+                //     {
+                //         value: 6,
+                //         label: "2020-06-01"
+                //     },
+                //     {
+                //         value: 7,
+                //         label: "2020-07-01"
+                //     },
+                //     {
+                //         value: 8,
+                //         label: "2020-08-01"
+                //     },
+                //     {
+                //         value: 9,
+                //         label: "2020-09-01"
+                //     },
+                //     {
+                //         value: 10,
+                //         label: "2020-10-01"
+                //     },
+                // ],
+
+                //打开弹窗
+                comFormVisible: false,
+                NewComFormVisible: false,
+                //进页面放的userid
+                // userId: null,
+
+
+                payrollData:[],
+                //     [
+                //     {
+                //         name: "奖金",
+                //         //年月
+                //         y_m_id: 2,
+                //         years: "2020-02-01",
+                //         money: 200,
+                //     },
+                //     {
+                //         name: "奖品",
+                //         //年月
+                //         y_m_id: 1,
+                //         years: "2020-01-01",
+                //         money: 100,
+                //     },
+                // ],
+                // 修改传数据的跳板
+                payrollDataTo: {
+                    //年月
+                    y_m_id: null,
+                    name: null,
+                    money: null,
+                }, 
+                // 新增传数据的跳板
+                addData: {
+                    //年月
+                    y_m_id: null,
+                    name: null,
+                    money: null,
+                },
+                ming: true,
+                jin: true,
+
+                //弹出窗口中的提示信息
+                addrules: {
+                    y_m_id: [
+                        { required: true, message: '请选择年/月', trigger: 'blur' }
+                    ],
+                    money:[
+                        { required: true, message: '金额不能为空', trigger: 'blur'},
+                    ],
+                    name: [
+                        { required: true, message: '名称不能为空', trigger: 'blur' },
+                      ],
+
+                },
+                addrules2: {
+                    money:[
+                        { required: true, message: '金额不能为空'},
+                    ],
+
+                },
+            }
+        },
+        created() {
+            this.getAll();
+            this.timeTo();
+        },
+        methods: {
+            // 表格颜色
+            tableRowClassName({ row, rowIndex }) {
+                if ((rowIndex + 1) % 4 === 0) {
+                    return 'warning-row';
+                } else if ((rowIndex + 1) % 2 === 0 && (rowIndex + 1) % 4 != 0) {
+                    return 'success-row';
+                }
+
+                return '';
+            },
+            //表格数据
+            getAll() {
+                //发送ajax请求
+                axios.get ("/othertype").then((res) => {
+                    this.payrollData = res.data.data;
+                    // this.taxRate = res.data.data.taxRate;
+                    //设置总记录数
+                    this.totalCount = res.data.totalCount;
+                })
+            },
+            timeTo(){
+                axios.get("/wages/timeToAll").then((res) => {
+                    this.time = res.data.data;
+                })
+            },
+            //修改弹窗打开
+            handle(row) {
+                this.payrollDataTo = { ...row };
+                this.comFormVisible = true;
+            },
+            //选中时间，开放input
+            selectTrigger(val,) {
+                this.ming = false;
+                this.jin = false;
+            },
+
+            popwindows() {
+                this.NewComFormVisible = true;
+            },
+            //修改关闭窗口
+            addDialogForm(formName) {
+                this.$refs[formName].resetFields();
+                this.NewComFormVisible = false;
+                this.ming = true;
+                this.jin = true;
+            },
+            //添加的点击事件
+            addTo(formAdd) {
+                this.$refs.formAdd.validate((valid) => {
+                    if (valid) {
+                        this.addData.money = parseInt(this.addData.money);
+                        // console.log(this.addData);
+                        axios.post("/othertype", this.addData).then((res) => {
+                            if (res.data.code == 20011) {
+                                this.$message.success("添加成功");
+                                this.NewComFormVisible = false;
+                            } else if (res.data.code == 20010) {
+                                this.$message.error("添加失败！");
+                            } else {
+                                this.$message.error(res.data.msg);
+                            }
+                        })
+                    }
+                })
+                
+            },
+            //修改关闭窗口
+            dialogForm() {
+                this.$refs[formName].resetFields();
+                this.NewComFormVisible = false;
+            },
+            //修改确定按钮
+            calculateto() {
+                this.$refs.formAdd.validate((valid) => {
+                    if (valid) {
+                        this.payrollDataTo.money = parseInt(this.payrollDataTo.money)
+                        // console.log(this.payrollDataTo)
+                        axios.put("/othertype", this.payrollDataTo).then((res) => {
+                            if (res.data.code == 20031) {
+                                this.$message.success("修改成功");
+                                this.comFormVisible = false;
+                            } else if (res.data.code == 20030) {
+                                this.$message.error("修改失败！");
+                            } else {
+                                this.$message.error(res.data.msg);
+                            }
+                        })
+
+                    }
+                })
+
+            }
+        },
+
+    })
+
+</script>
+
+</html>

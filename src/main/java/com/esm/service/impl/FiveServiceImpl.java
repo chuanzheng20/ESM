@@ -23,9 +23,9 @@ import java.util.List;
 @Service
 public class FiveServiceImpl implements  FiveService {
     @Autowired
-    public FiveQueryDao fiveQueryDao;
+    private FiveQueryDao fiveQueryDao;
     @Autowired
-    public FiveDao fiveDao;
+    private FiveDao fiveDao;
 
 
     @Override

@@ -1,5 +1,6 @@
 package com.esm.service.impl;
 
+import com.esm.dao.WagesDao;
 import com.esm.dao.WagesQueryDao;
 import com.esm.domain.Wages;
 import com.esm.service.WagesService;
@@ -19,11 +20,19 @@ import java.util.List;
 public class WagesImpl implements WagesService {
 
     @Autowired
-    public WagesQueryDao wagesQueryDao;
+    private WagesQueryDao wagesQueryDao;
+    @Autowired
+    private WagesDao wagesDao;
 
     @Override
     public boolean save(Wages wages) {
-        return false;
+        int insert = wagesDao.insert(wages);
+        if (insert > 0) {
+            return true;
+        } else {
+            return false;
+
+        }
     }
 
     @Override

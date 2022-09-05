@@ -1,6 +1,7 @@
 package com.esm.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.esm.dao.OtherDetailsDao;
 import com.esm.dao.OtherDetailsQueryDao;
 import com.esm.dao.OtherTypeDao;
 import com.esm.domain.OtherDetails;
@@ -21,7 +22,9 @@ import java.util.List;
 @Service
 public class OtherDetailsImpl implements OtherDetailsService {
     @Autowired
-    public OtherDetailsQueryDao otherDetailsQueryDao;
+    private OtherDetailsQueryDao otherDetailsQueryDao;
+    @Autowired
+    private OtherDetailsDao otherDetailsDao;
 
     @Override
     public List<OtherDetailsQuery> select(String userId,Integer yMId) {
@@ -36,7 +39,13 @@ public class OtherDetailsImpl implements OtherDetailsService {
 
     @Override
     public boolean save(OtherDetails otherDetails) {
-        return false;
+        int insert = otherDetailsDao.insert(otherDetails);
+        if (insert > 0) {
+            return true;
+        } else {
+            return false;
+
+        }
     }
 
     @Override
