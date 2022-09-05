@@ -123,6 +123,21 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public List<UserQuery> selectAll() {
+        QueryWrapper<UserQuery> queryWrapper = new QueryWrapper<>();
+        queryWrapper.apply("tb_user.graded_id=tb_graded_wages.graded_id");
+        return userQueryDao.findAll(queryWrapper);
+    }
+
+    @Override
+    public List<UserQuery> selectId(String userId) {
+        QueryWrapper<UserQuery> queryWrapper = new QueryWrapper<>();
+        queryWrapper.apply("tb_user.graded_id=tb_graded_wages.graded_id");
+        queryWrapper.like(StringUtils.hasText(userId), "tb_user.user_id", userId);
+        return userQueryDao.findAll(queryWrapper);
+    }
+
+    @Override
     public List<Level> getLevel() {
         List<Sector> sectorList = sectorDao.getAll();
         List<GradedWages> gradedWagesList = gradedWagesDao.getAll();

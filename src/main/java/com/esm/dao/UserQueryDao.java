@@ -9,6 +9,8 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
+import java.util.List;
+
 /**
  * <p>
  * 用户，部门，级别表 Mapper 接口
@@ -45,5 +47,17 @@ public interface UserQueryDao extends BaseMapper<UserQuery> {
             " ${ew.customSqlSegment} ")
     UserQuery findById(@Param("ew") Wrapper wrapper);
 
+    /**
+     * 查询全部
+     */
+    @Select("SELECT tb_user.user_id,tb_user.`name`,tb_graded_wages.money " +
+            "FROM tb_user,tb_graded_wages " +
+            " ${ew.customSqlSegment} ")
+    List<UserQuery> findAll(@Param("ew") Wrapper wrapper);
+
+    @Select("SELECT tb_user.user_id,tb_user.`name`,tb_graded_wages.money " +
+            "FROM tb_user,tb_graded_wages " +
+            " ${ew.customSqlSegment} ")
+    List<UserQuery> findId(@Param("ew") Wrapper wrapper);
 
 }

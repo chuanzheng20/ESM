@@ -3,6 +3,9 @@ package com.esm.dao;
 import com.esm.domain.YM;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Select;
+
+import java.util.List;
 
 /**
  * <p>
@@ -14,5 +17,7 @@ import org.apache.ibatis.annotations.Mapper;
  */
 @Mapper
 public interface Y_mDao extends BaseMapper<YM> {
+    @Select("SELECT tb_y_m.y_m_id,tb_y_m.date FROM tb_y_m order by tb_y_m.date desc ")
+    List<YM> selecttime();
 
 }

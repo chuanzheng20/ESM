@@ -21,7 +21,7 @@ import lombok.EqualsAndHashCode;
 @TableName("tb_other_type")
 public class OtherType implements Serializable {
 
-    @TableId(value = "type_id", type = IdType.ASSIGN_ID)
+    @TableId(value = "type_id")
     private Integer typeId;
 
     @TableField("y_m_id")
@@ -31,4 +31,13 @@ public class OtherType implements Serializable {
 
     private Double money;
 
+    @Override
+    public String toString() {
+        return "OtherType{" +
+                "\"typeId\":" + typeId +
+                ", \"yMId\":" + yMId +
+                ", \"name\":'" + name + '\'' +
+                ", \"money\":" + money +
+                '}';
+    }
 }

@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+
+<html>
+
+    <head>
+
+        <!-- 页面meta -->
+
+        <meta charset="utf-8">
+
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+        <title>SpringMVC案例</title>
+
+        <meta content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" name="viewport">
+
+        <!-- 引入样式 -->
+
+        <link rel="stylesheet" href="../plugins/element-ui/lib/theme-chalk/index.css">
+        <link rel="stylesheet" href="../plugins/font-awesome/css/font-awesome.min.css">
+        <link rel="stylesheet" href="../css/style.css">
+
+    </head>
+
+    <body class="hold-transition">
+
+        <div id="app">
+            <template>
+                <div class="content-header">
+                  <h1>税率</h1>
+                </div>
+                <div class="app-container">
+                    <div class="box">
+                        <!-- 新增按钮 -->
+                        <el-form :inline="true" :model="brand" class="demo-form-inline" style="margin-top: 10px;">
+                            <div style="float: left;">
+                              <el-row>
+                                <el-button type="primary" plain @click="popwindows">置换</el-button>    
+                              </el-row>
+                            </div>
+                        </el-form>
+                        <!--新建对话框弹出-->
+                        <el-dialog title="置换税率" :visible.sync="addDialogFormVisible" :close-on-click-modal="false" >
+                        <el-form :model="taxRateData" ref="taxRateData" :rules="addrules" label-width="auto" class="demo-ruleForm">
+                          <div class="formformItemClass" v-for="(item, index) in taxRateData.formItemArr" :key="index">
+                            <el-row>
+                                <el-col :span="7">
+                                    <el-form-item label="税（起始）" :prop="'formItemArr.' + index + '.starm_m'" >
+                                        <el-input v-model="item.starm_m"  :disabled="true"></el-input>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col :span="7">
+                                    <el-form-item label="税（结束）"  :prop="'formItemArr.' + index + '.end_m'" :rules="{ required: true, message: '请填写',trigger: 'blur',}">
+                                        <el-input v-model="item.end_m"  oninput="value=value.replace(/[^\d]/g,'')" :disabled="item.Yes"></el-input>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col :span="6">
+                                    <el-form-item label="税率" :prop="'formItemArr.' + index + '.tax_rate'" :rules="{ required: true, message: '请填写',trigger: 'blur',}">
+                                        <el-input v-model="item.tax_rate"  oninput="if(value){value=value.replace(/[^\d]/g,'')} if(value<=0){value=0} if(value>100){value=100}" :disabled="item.Yes2">
+                                          <i slot="suffix" style="color: #000;font-style:normal;">%</i>
+                                        </el-input>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col :span="4">
+                                    <div style="margin-left: 10px">
+                                  <el-button :class="item.isActiveNext" type="primary"size="medium" icon="el-icon-circle-plus-outline" circle  @click="addForm(item.end_m,index)" ></el-button>
+                                  <el-button :class="item.isActive1Next" type="danger" size="medium" icon="el-icon-remove-outline" circle @click="saveForm(index)"></el-button>
+                                    </div>
+                                </el-col>
+                            </el-row>
+                          </div>
+                          <el-form-item>
+                              <el-button type="primary" @click="handleAdd(taxRateData)" style="float: right;margin-left: 10px;">完成</el-button>
+                              <el-button @click="dialogForm('taxRateData')" style="float: right;">取 消</el-button>
+                              <el-button @click="resetForm('taxRateData')" style="float: right;">重置</el-button>        
+                          </el-form-item>
+                        </el-form>
+                        </el-dialog>
+                        <!--表格-->
+                        <el-table ref="filterTable" :data="tableData" style="width: 100%;" :row-class-name="tableRowClassName" @selection-change="handleSelectionChange" @row-click="rowClick">
+                        
+                            <el-table-column prop="tax_id" label="编号" sortable column-key="userId" align="center">
+                            </el-table-column>
+                        
+                            <el-table-column prop="starm_m" label="税率（起始金额）" align="center">
+                            </el-table-column>
+                        
+                            <el-table-column prop="end_m" label="税率（结束金额）" align="center">
+                            </el-table-column>
+                            
+                            <el-table-column prop="tax_rate" label="税率" align="center">
+                            </el-table-column>
+                                        
+                        </el-table>
+                    </div>
+                </div>
+            </template>             
+        </div>
+
+    </body>
+
+    <!-- 引入组件库 -->
+
+    <script src="../js/vue.js"></script>
+    <script src="../plugins/element-ui/lib/index.js"></script>
+    <script type="text/javascript" src="../js/jquery.min.js"></script>
+    <script src="../js/axios-0.18.0.js"></script>
+    <script>
+        var vue = new Vue({
+            el: '#app',
+            mounted(){
+              this.getall();
+            },
+            data() {
+                  return {
+                    //表格信息（传值）
+                    tableData: [
+                      {
+                        tax_id:1,
+                        starm_m:0,
+                        end_m:5000,
+                        tax_rate:0
+                      },{
+                        tax_id:2,
+                        starm_m:5000,
+                        end_m:8000,
+                        tax_rate:0.03
+                      },{
+                        tax_id:3,
+                        starm_m:8000,
+                        end_m:17000,
+                        tax_rate:0.1
+                      },{
+                        tax_id:4,
+                        starm_m:17000,
+                        end_m:30000,
+                        tax_rate:0.2
+                      },{
+                        tax_id:5,
+                        starm_m:30000,
+                        end_m:40000,
+                        tax_rate:0.25
+                      },{
+                        tax_id:6,
+                        starm_m:40000,
+                        end_m:60000,
+                        tax_rate:0.3
+                      },{
+                        tax_id:7,
+                        starm_m:60000,
+                        end_m:85000,
+                        tax_rate:0.35
+                      },{
+                        tax_id:8,
+                        starm_m:85000,
+                        end_m:999999,
+                        tax_rate:0.45
+                      },
+                    ],
+                    //打开弹窗
+                    addDialogFormVisible: false,
+                    //别动，必须得有
+                    taxRateData: {
+                      // 动态循环项数组
+                      formItemArr: [
+                        {
+                          tax_id:null,
+                          starm_m:0,
+                          end_m:null,
+                          tax_rate:null,
+                          Yes:false,
+                          Yes2:false,
+                           //设置按钮的初始显示，对应的属性active生效，即隐藏
+                          isActiveNext: "", 
+                          isActive1Next: "active",
+                        },
+                      ],
+                    },
+                }
+            },
+            created() {
+                // this.getAll();
+            },
+            methods: {
+              //表格数据
+              getAll(){
+                //发送ajax请求
+                // axios.post("/?????????",this.brand).then((res)=>{
+                //   this.tableData = res.data.data.rows;
+                //   //设置总记录数
+                //   this.totalCount = res.data.totalCount;
+                // })
+              },
+              //新建窗口添加数据 确定按钮事件
+              handleAdd(taxRateData){ 
+                var i =  taxRateData.formItemArr.length
+                if(taxRateData.formItemArr[i-1].tax_rate == null || taxRateData.formItemArr[i-1].end_m == null){
+                  this.$message.error("数据有空！");
+                }else{
+                  // console.log(this.taxRateData.formItemArr);
+                  for(;i>0;i--){
+                    taxRateData.formItemArr[i-1].starm_m = parseInt(taxRateData.formItemArr[i-1].starm_m);
+                    taxRateData.formItemArr[i-1].end_m = parseInt(taxRateData.formItemArr[i-1].end_m);
+                    taxRateData.formItemArr[i-1].tax_rate = parseInt(taxRateData.formItemArr[i-1].tax_rate)/100
+                  }
+                  // console.log(this.taxRateData.formItemArr);
+                  axios.post("/？？？？？？？",this.taxRateData.formItemArr).then((res)=>{
+                    if(res.data.code == 20011){
+                      this.addDialogFormVisible = false;
+                      this.$message.success("添加成功");
+                    }else if(res.data.code == 20010){
+                      this.$message.error("添加失败！");
+                    }else{
+                      this.$message.error(res.data.msg);
+                    }          
+                  }).finally(()=>{
+                    _this.getAll();
+                  })
+                  }
+                
+              },
+              //点击添加一个税率的行
+              addForm(vals,index) {  
+                this.$refs["taxRateData"].validate((val) => {
+                  if(this.taxRateData.formItemArr[index].end_m <= this.taxRateData.formItemArr[index].starm_m){
+                    this.$message.error('结束金额不能小于等于起始金额');
+                  }else if(index >=1 && this.taxRateData.formItemArr[index].tax_rate <= this.taxRateData.formItemArr[index-1].tax_rate){
+                    this.$message.error('当前税率不能小于等于前面的税率');
+                  }else{
+                    if (val) {  
+                    //当点击按钮触发事件时改变两个按钮的显示
+                    this.taxRateData.formItemArr[index].isActiveNext = "active";  
+                    this.taxRateData.formItemArr[index].isActive1Next = "active";
+                    this.taxRateData.formItemArr[index].Yes = true;
+                    this.taxRateData.formItemArr[index].Yes2 = true;
+                    // console.log(this.taxRateData.formItemArr)
+                    let itemObj = {
+                      tax_id:null,
+                      starm_m:vals,
+                      end_m:null,
+                      tax_rate:null,
+                      Yes:false,
+                      Yes2:false,
+                      isActiveNext:false,
+                      isActive1Next:false
+                    };
+                  this.taxRateData.formItemArr.push(itemObj);
+                  // console.log(this.taxRateData)
+                  // console.log("符合要求，保存成功", this.ruleForm);
+                  this.$message.success("添加成功!");
+                  } 
+                  else {
+                    this.$message.error("出现问题！");
+                    return false;
+                  }
+                  }                 
+                });
+              },
+              //删除新的行
+              saveForm(index){
+                if(index > 1){
+                  this.taxRateData.formItemArr[index-1].isActiveNext = "";  
+                  this.taxRateData.formItemArr[index-1].isActive1Next = "";
+                  this.taxRateData.formItemArr[index-1].Yes = false;
+                  this.taxRateData.formItemArr[index-1].Yes2 = false;
+                  this.taxRateData.formItemArr.pop();
+                }else{
+                  this.taxRateData.formItemArr[index-1].isActiveNext = "";  
+                  this.taxRateData.formItemArr[index-1].isActive1Next = "active";
+                  this.taxRateData.formItemArr[index-1].Yes = false;
+                  this.taxRateData.formItemArr[index-1].Yes2 = false;
+                  this.taxRateData.formItemArr.pop();
+                }
+                
+              },
+              // 表格颜色
+              tableRowClassName({row, rowIndex}) {
+                if ((rowIndex + 1)%4 === 0) {
+                  return 'warning-row';
+                } else if ((rowIndex + 1)%2 === 0 && (rowIndex + 1)%4 != 0) {
+                  return 'success-row';
+                }
+
+                return '';
+              },
+              //新建弹窗部分
+              popwindows(){
+                this.addDialogFormVisible = true;
+                this.$refs[formName].resetFields();
+              },
+              // 表单重置按钮
+              resetForm(formName) {
+                // var i=this.taxRateData.formItemArr.length
+                // if(i=0&&this.taxRateData.formItemArr[i].starm_m==null&&this.taxRateData.formItemArr[i].tax_rate){
+                //   this.$message.error("已经是空的了！");
+                // }else{
+                //   for(; i>1; i--){
+                //     this.taxRateData.formItemArr.pop();
+                //     this.taxRateData.formItemArr[0].Yes = false;
+                //     this.taxRateData.formItemArr[0].Yes2 = false;
+                //     this.taxRateData.formItemArr[0].isActiveNext = "";
+                //   }
+                //   this.$refs[formName].resetFields();
+                // }
+                  var i=this.taxRateData.formItemArr.length
+                  for(; i>1; i--){
+                      this.taxRateData.formItemArr.pop();
+                      this.taxRateData.formItemArr[0].Yes = false;
+                      this.taxRateData.formItemArr[0].Yes2 = false;
+                      this.taxRateData.formItemArr[0].isActiveNext = "";
+                  }
+                  this.$refs[formName].resetFields();
+              },
+              //取消表单
+              dialogForm(formName) {
+                this.addDialogFormVisible = false;
+                var i=this.taxRateData.formItemArr.length
+                for(; i>1; i--){
+                    this.taxRateData.formItemArr.pop();
+                    this.taxRateData.formItemArr[0].Yes = false;
+                    this.taxRateData.formItemArr[0].Yes2 = false; 
+                    this.taxRateData.formItemArr[0].isActiveNext = "";       
+                }  
+                this.$refs[formName].resetFields();
+              },
+            },    
+        })
+        
+    </script>
+
+</html>

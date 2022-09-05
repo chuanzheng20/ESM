@@ -1,7 +1,6 @@
 package com.esm.controller;
 
 import com.esm.domain.NavData;
-import com.esm.domain.NavDataItem;
 import com.esm.domain.User;
 import com.esm.service.LoginService;
 import com.esm.service.NavService;
@@ -14,12 +13,10 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
 public class LoginController {
-
 
     @Autowired
     private LoginService loginService;

@@ -10,4 +10,5 @@ public interface YMService {
     public boolean update(YM ym);
     public YM getById(Integer yMId);
     public List<YM> getAll();
+//    [/pages/wagescalculate.html,/wages/selectByPageAndCurrentPage,/wages/selectFive,/wages/timeToAll,/wages/taxRateAll,/wages]
 }
