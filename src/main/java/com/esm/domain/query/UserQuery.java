@@ -9,6 +9,7 @@ public class UserQuery extends User {
     private String sectorName;
     private String gradedName;
     private Double money;
+    private String roleName;
 
     @Override
     public String toString() {

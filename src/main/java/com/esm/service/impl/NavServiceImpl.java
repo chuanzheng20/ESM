@@ -1,5 +1,6 @@
 package com.esm.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.api.R;
 import com.esm.dao.RoleDao;
 import com.esm.dao.RootDao;
@@ -70,7 +71,9 @@ public class NavServiceImpl implements NavService {
             // System.out.println("--------------------------------------");
             System.out.println(listListRoot);
 
-            List<Root> fatherRoots = rootDao.selectByFatherId(0);
+            // List<Root> fatherRoots = rootDao.selectByFatherId(0);
+            List<Root> fatherRoots = rootDao.selectList(new QueryWrapper<Root>().in("father_id",0));
+
             // System.out.println(fatherRoots);
             for (ArrayList<Root> arrayList: listListRoot) {
                 ArrayList<NavDataItem> navDataItems = new ArrayList<>();

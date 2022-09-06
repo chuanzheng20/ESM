@@ -40,7 +40,7 @@
 
                 <!--编辑对话框弹出-->
                 <el-dialog title="编辑" :visible.sync="compileDialogFormVisible" @close="clearBrand2"
-                           :close-on-click-modal="false" style="margin: auto;">
+                           :close-on-click-modal="false" style="margin: auto;width: 900px;height: 900px">
                     <el-form :model="brand2" :rules="addRules2" ref="formUpdate" label-width="100px"
                              class="demo-ruleForm">
                         <el-row>
@@ -89,7 +89,7 @@
 
                 <!--查看对话框弹出-->
                 <el-dialog title="查看" :visible.sync="lookFormVisible" @close="clearBrand2" :close-on-click-modal="false"
-                           style="margin: auto;">
+                           style="margin: auto;min-width: 900px;min-height: 900px">
                     <el-form :model="brand2" label-width="100px" class="demo-ruleForm">
                         <el-row>
                             <el-col :span="12">

@@ -48,16 +48,6 @@ public interface UserQueryDao extends BaseMapper<UserQuery> {
     UserQuery findById(@Param("ew") Wrapper wrapper);
 
     /**
-     * 查询全部
-     */
-    @Select("SELECT tb_user.user_id,tb_user.`name`,tb_graded_wages.money " +
-            "FROM tb_user,tb_graded_wages " +
-            " ${ew.customSqlSegment} ")
-    List<UserQuery> findAll(@Param("ew") Wrapper wrapper);
 
-    @Select("SELECT tb_user.user_id,tb_user.`name`,tb_graded_wages.money " +
-            "FROM tb_user,tb_graded_wages " +
-            " ${ew.customSqlSegment} ")
-    List<UserQuery> findId(@Param("ew") Wrapper wrapper);
 
 }

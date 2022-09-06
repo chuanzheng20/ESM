@@ -86,4 +86,10 @@ public interface UserService {
      */
     public UserRoleQuery selectByIdRole(String id);
 
+    /**
+     * 按UserId 查询（用户表，角色表,级别表，部门表）关系表
+     * @param userId
+     * @return
+     */
+    public UserQuery selectByIdAndRole(String userId);
 }

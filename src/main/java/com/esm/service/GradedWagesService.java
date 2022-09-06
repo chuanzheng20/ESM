@@ -9,10 +9,11 @@ import java.util.List;
 public interface GradedWagesService {
     public boolean save(GradedWages gradedWages);
     public boolean delete(Integer gradedWagesId);
+    public boolean delete(List<String> ids);
     public boolean update(GradedWages gradedWages);
     public GradedWages getById(Integer gradedWagesId);
     public List<GradedWages> getAll();
 
-    public IPage<GradedWagesQuery> selectByPageAndCurrentPage(IPage<GradedWagesQuery> page, String gradedName, String sectorId, Boolean isAse);
+    public IPage<GradedWagesQuery> selectByPageAndCurrentPage(IPage<GradedWagesQuery> page, String gradedName, List<String> sectorIds, Boolean isAse);
 
 }

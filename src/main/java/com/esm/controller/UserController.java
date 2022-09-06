@@ -6,10 +6,14 @@ import com.esm.domain.User;
 import com.esm.domain.query.UserQuery;
 import com.esm.domain.query.UserRoleQuery;
 import com.esm.service.UserService;
+import com.esm.utils.JWTUtil;
+import io.jsonwebtoken.Claims;
 import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.Cookie;
 import java.util.List;
 
 @RestController
@@ -18,6 +22,9 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+
+    @Value("${key}")
+    private String  key;
 
     @GetMapping("/getLevelAll")
     public Result getLevelAll(){
@@ -112,12 +119,23 @@ public class UserController {
     public Result selectByIdRole(@PathVariable String id) {
         System.out.println(id);
         UserRoleQuery userRoleQuery = userService.selectByIdRole(id);
-
         Integer code = userRoleQuery != null ? Code.GET_OK : Code.GET_ERR;
         String msg = userRoleQuery != null ? "" : "用户信息错误，请重试！";
-
         return new Result(code,userRoleQuery,msg);
+    }
 
+    @GetMapping("/userInfo")
+    public Result selectByIdAndRole(@CookieValue("token") Cookie cookie){
+
+        System.out.println(cookie.getValue());
+        String token = cookie.getValue();
+        Claims claims = JWTUtil.parseToken(token, key);
+        String userId = (String) claims.get("userId");
+
+        UserQuery userQuery = userService.selectByIdAndRole(userId);
+        Integer code = userQuery != null ? Code.GET_OK : Code.GET_ERR;
+        String msg = userQuery != null ? "" : "用户信息错误，请重试！";
+        return new Result(code,userQuery,msg);
     }
 
 
