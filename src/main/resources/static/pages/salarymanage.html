@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+    <!-- 页面meta -->
+
+    <meta charset="utf-8">
+
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>五险一金表</title>
+
+    <meta content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" name="viewport">
+
+    <!-- 引入样式 -->
+
+    <link rel="stylesheet" href="../plugins/element-ui/lib/theme-chalk/index.css">
+    <link rel="stylesheet" href="../plugins/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+
+</head>
+
+<body class="hold-transition">
+
+    <div id="app">
+        <template>
+
+            <!--按钮-->
+
+            <!--搜索-->
+            <el-form :inline="true" :model="brand" class="demo-form-inline" style="margin-top: 10px;">
+                <div style="float: left;">
+                    <el-row>
+                        <el-button type="primary" plain @click="popwindows">新增</el-button>
+                    </el-row>
+                </div>
+            </el-form>
+            <!--新建对话框弹出-->
+            <el-dialog title="新建" :visible.sync="addDialogFormVisible" :close-on-click-modal="false"
+                style="width: 900px;height: 800px;margin: auto;" :before-close="closeDialog">
+                <el-form :model="brand" ref="brand" :rules="addrules" label-width="100px" class="demo-ruleForm">
+                    <el-form-item label="住房公积金" prop="housing">
+                        <el-input-number v-model.number="brand.housing" :step="1" :max="100" :min="0"
+                            style="width: 230px;"></el-input-number>
+                    </el-form-item>
+                    <el-form-item label="医疗保险" prop="medical">
+                        <el-input-number v-model.number="brand.medical" :step="1" :max="100" :min="0"
+                            style="width: 230px;"></el-input-number>
+                    </el-form-item>
+                    <el-form-item prop="employment" label="工伤保险">
+                        <el-input-number v-model.number="brand.employment" :step="1" :max="100" :min="0"
+                            style="width: 230px;"></el-input-number>
+                    </el-form-item>
+                    <el-form-item prop="unemployment" label="失业保险">
+                        <el-input-number v-model.number="brand.unemployment" :step="1" :max="100" :min="0"
+                            style="width: 230px;"></el-input-number>
+                    </el-form-item>
+                    <el-form-item prop="maternity" label="生育保险">
+                        <el-input-number v-model.number="brand.maternity" :step="1" :max="100" :min="0"
+                            style="width: 230px;"></el-input-number>
+                    </el-form-item>
+                    <el-form-item prop="endowment" label="养老保险">
+                        <el-input-number v-model.number="brand.endowment" :step="1" :max="100" :min="0"
+                            style="width: 230px;"></el-input-number>
+                    </el-form-item>
+                    <el-form-item label="创建时间" required>
+                        <el-col :span="11">
+                            <el-form-item prop="createDate">
+                                <el-date-picker type="month" placeholder="请填入入职时间" v-model="brand.createDate"
+                                    :picker-options="pickerOptions"></el-date-picker>
+                            </el-form-item>
+                        </el-col>
+                    </el-form-item>
+                    <el-form-item>
+                        <div style="margin-right: 0;">
+                            <el-button @click="resetForm('brand')">重置</el-button>
+                            <el-button @click="dialogForm('brand')">取 消</el-button>
+                            <el-button type="primary" @click="handleAdd">立即创建</el-button>
+                        </div>
+                    </el-form-item>
+                </el-form>
+            </el-dialog>
+
+
+            <!--查看对话框弹出-->
+            <el-dialog title="表单详情" :visible.sync="lookFormVisible" :close-on-click-modal="false"
+                style="width: 900px;height: 800px;margin: auto;">
+                <el-form :model="brand2" label-width="100px" class="demo-ruleForm">
+                    <el-form-item label="住房公积金" prop="housing">
+                        <el-input v-model="brand2.housing" style="width: 230px" :disabled="true"></el-input>
+                    </el-form-item>
+                    <el-form-item label="医疗保险" prop="medical">
+                        <el-input v-model="brand2.medical" style="width: 230px" :disabled="true"></el-input>
+                    </el-form-item>
+                    <el-form-item prop="employment" label="失业保险">
+                        <el-input v-model="brand2.employment" style="width: 230px" :disabled="true"></el-input>
+                    </el-form-item>
+                    <el-form-item label="失业保险" prop="unemployment">
+                        <el-input v-model="brand2.unemployment" style="width: 230px" :disabled="true"></el-input>
+                    </el-form-item>
+                    <el-form-item label="生育保险" prop="maternity">
+                        <el-input v-model="brand2.maternity" style="width: 230px" :disabled="true"></el-input>
+                    </el-form-item>
+                    <el-form-item label="养老保险" prop="endowment">
+                        <el-input v-model="brand2.endowment" style="width: 230px" :disabled="true"></el-input>
+                    </el-form-item>
+                    <el-form-item label="创建时间" prop="createDate">
+                        <el-input v-model="brand2.createDate" style="width: 230px" :disabled="true" type="data"
+                            :picker-options="pickerOptions"></el-input>
+                    </el-form-item>
+                    <el-form-item style="margin-left: 200px;">
+                        <el-button @click="lookFormVisible=false">关闭窗口</el-button>
+                    </el-form-item>
+                </el-form>
+            </el-dialog>
+            <!--表格-->
+            <el-table ref="filterTable" :data="tableData" style="width: 100%;" :row-class-name="tableRowClassName"
+                @selection-change="handleSelectionChange" @row-click="rowClick">
+                <el-table-column prop="fiveId" label="ID" sortable column-key="five_id" align="center">
+                </el-table-column>
+                <el-table-column prop="housing" label="住房公积金应交比例（%）" align="center">
+                </el-table-column>
+                <el-table-column prop="medical" label="医疗保险应交比例（%）" align="center">
+                </el-table-column>
+                <el-table-column prop="employment" label="工伤保险应交比例（%）" align="center">
+                </el-table-column>
+                <el-table-column prop="unemployment" label="失业保险应交比例（%）" align="center">
+                </el-table-column>
+                <el-table-column prop="maternity" label="生育保险应交比例（%）" align="center">
+                </el-table-column>
+                <el-table-column prop="endowment" label="养老保险应交比例（%）" align="center">
+                </el-table-column>
+                <el-table-column prop="date" label="时间" sortable column-key="createDate" align="center">
+                </el-table-column>
+
+                <!-- 筛选内部 filters -->
+                <!-- <el-table-column prop="postid" label="岗位" align="center"
+                    :filters="[{ text: '程序员', value: '程序员' }, { text: '架构师', value: '架构师' }]" :filter-method="formatter"
+                    filter-placement="bottom-end">
+                </el-table-column>
+                <el-table-column prop="classScaleid" label="级别" align="center"
+                    :filters="[{ text: '1级工', value: '1' }, { text: '2级工', value: '2' }, { text: '3级工', value: '3' }]"
+                    :filter-method="forclassScale" filter-placement="bottom-end">
+                </el-table-column>
+                <el-table-column prop="createDate" label="入职时间" sortable column-key="createDate" align="center">
+                </el-table-column> -->
+                <el-table-column align="center" label="操作">
+                    <template slot-scope="scope">
+                        <el-row>
+                            <el-button type="danger" @click.stop="handleDelete(scope.row)">删除</el-button>
+                        </el-row>
+                    </template>
+                </el-table-column>
+            </el-table>
+            <!-- 分页功能 -->
+            <div class="block" style="width: 600px;margin: auto;margin-top: 10px;">
+                <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" background
+                    :current-page="currentPage4" :page-size="pageSize" :page-sizes="[10,15,20,25]"
+                    layout="total, sizes, prev, pager, next, jumper" :total="totalCount">
+                </el-pagination>
+            </div>
+        </template>
+
+    </div>
+
+</body>
+
+<!-- 引入组件库 -->
+
+<script src="../js/vue.js"></script>
+<script src="../plugins/element-ui/lib/index.js"></script>
+<script type="text/javascript" src="../js/jquery.min.js"></script>
+<script src="../js/axios-0.18.0.js"></script>
+<script>
+    var vue = new Vue({
+        el: '#app',
+        mounted() {
+            this.getall();
+        },
+        data() {
+            return {
+                //每页显示数
+                pageSize: 10,
+                //总记录数
+                totalCount: 100,
+                //选中的数据
+                multipleSelection: [],
+                selectionID: [],
+                // 页数存放
+                currentPage: 1,
+                isAse:true,
+                // 创建时间必须大于当今时间
+                pickerOptions: {
+                    disabledDate(time) {
+                        return time.getTime() < Date.now() - 8.64e7
+                    }
+                },
+                listLoading: false,
+                multipleSelection: [],
+                //搜索的两个筛选 ，也能当数据模板
+                brand: {
+                    five_id: null,
+                    housing: null,
+                    medical: null,
+                    employment: null,
+                    unemployment: null,
+                    maternity: null,
+                    endowment: null,
+                    date: null,
+                },
+                //查看和修改的显示模板
+                brand2: {
+                    five_id: null,
+                    housing: null,
+                    medical: null,
+                    employment: null,
+                    unemployment: null,
+                    maternity: null,
+                    endowment: null,
+                    date: null,
+                },
+                //传数据的模板
+                brand3: {
+                    five_id: null,
+                    housing: null,
+                    medical: null,
+                    employment: null,
+                    unemployment: null,
+                    maternity: null,
+                    endowment: null,
+                    date: null,
+                },
+
+                // ['yiB','sheji','yiJ'];
+                //表格信息（传值）
+                tableData:[],
+                //     [
+                //     {
+                //         five_id: "1",
+                //         housing: "300",
+                //         medical: "200",
+                //         employment: "2000",
+                //         unemployment: "3000",
+                //         maternity: "100000",
+                //         endowment: "60000",
+                //         createDate: "2022-4"
+                //     }, {
+                //         five_id: "2",
+                //         housing: "300",
+                //         medical: "200",
+                //         employment: "2000",
+                //         unemployment: "3000",
+                //         maternity: "100000",
+                //         endowment: "60000",
+                //         createDate: "2022-4"
+                //     }, {
+                //         five_id: "3",
+                //         housing: "300",
+                //         medical: "200",
+                //         employment: "2000",
+                //         unemployment: "3000",
+                //         maternity: "100000",
+                //         endowment: "60000",
+                //         createDate: "2022-4"
+                //     }, {
+                //         five_id: "4",
+                //         housing: "300",
+                //         medical: "200",
+                //         employment: "2000",
+                //         unemployment: "3000",
+                //         maternity: "100000",
+                //         endowment: "60000",
+                //         createDate: "2022-4"
+                //     },
+                //     {
+                //         five_id: "5",
+                //         housing: "300",
+                //         medical: "200",
+                //         employment: "2000",
+                //         unemployment: "3000",
+                //         maternity: "100000",
+                //         endowment: "60000",
+                //         createDate: "2022-4"
+                //     }, {
+                //         five_id: "6",
+                //         housing: "300",
+                //         medical: "200",
+                //         employment: "2000",
+                //         unemployment: "3000",
+                //         maternity: "100000",
+                //         endowment: "60000",
+                //         createDate: "2022-4"
+                //     }, {
+                //         five_id: "7",
+                //         housing: "300",
+                //         medical: "200",
+                //         employment: "2000",
+                //         unemployment: "3000",
+                //         maternity: "100000",
+                //         endowment: "60000",
+                //         createDate: "2022-4"
+                //     }, {
+                //         five_id: "8",
+                //         housing: "300",
+                //         medical: "200",
+                //         employment: "2000",
+                //         unemployment: "3000",
+                //         maternity: "100000",
+                //         endowment: "60000",
+                //         createDate: "2022-4"
+                //     }
+                // ],
+                //打开弹窗
+                addDialogFormVisible: false,
+                compileDialogFormVisible: false,
+                lookFormVisible: false,
+                formLabelWidth: '120px',
+
+
+                //弹出窗口中的提示信息
+                addrules: {
+                    housing: [
+                        { required: true, message: '填写住房公积金', trigger: 'input' },
+                        { min: 1, message: '长度至少1字符', trigger: 'input' },
+                        { type: 'number', message: '填入的必须为数字' }
+                    ],
+                    medical: [
+                        { required: true, message: '填写医疗保险', trigger: 'input' },
+                        { min: 1, message: '长度至少1字符', trigger: 'input' },
+                        { type: 'number', message: '填入的必须为数字' }
+                    ],
+                    employment: [
+                        { required: true, message: '填写工伤保险', trigger: 'input' },
+                        { min: 1, message: '长度至少1字符', trigger: 'input' },
+                        { type: 'number', message: '填入的必须为数字' }
+                    ],
+                    unemployment: [
+                        { required: true, message: '填写失业保险', trigger: 'input' },
+                        { min: 1, message: '长度至少1字符', trigger: 'input' },
+                        { type: 'number', message: '填入的必须为数字' }
+                    ],
+                    maternity: [
+                        { required: true, message: '填写生育保险', trigger: 'input' },
+                        { min: 1, message: '长度至少1字符', trigger: 'input' },
+                        { type: 'number', message: '填入的必须为数字' }
+                    ],
+                    endowment: [
+                        { required: true, message: '填写养老保险', trigger: 'input' },
+                        { min: 1, message: '长度至少1字符', trigger: 'input' },
+                        { type: 'number', message: '填入的必须为数字' }
+                    ]
+                },
+            }
+        },
+        created() {
+            this.getAll();
+        },
+        methods: {
+            //右上角关闭清空表单
+            closeDialog() {
+                this.addDialogFormVisible=false
+                this.$refs['brand'].resetFields()
+                this.$refs['brand'].resetFields()
+                
+            },
+            // 点击查看
+            rowClick(row) {
+                this.lookFormVisible = true;
+                this.brand2.fiveId = row.fiveId;
+                this.brand2.housing = row.housing;
+                this.brand2.medical = row.medical;
+                this.brand2.employment = row.employment;
+                this.brand2.unemployment = row.unemployment;
+                this.brand2.maternity = row.maternity;
+                this.brand2.endowment = row.endowment;
+                this.brand2.createDate = row.createDate;
+            },
+            //表格数据
+            getAll() {
+                //发送ajax请求
+                axios.post("/five/selectByPageAndCurrentPage?currentPage=" + this.currentPage + "&pageSize=" + this.pageSize+"&isAse=" + this.isAse,this.brand).then((res) => {
+                    this.tableData = res.data.data.rows;
+                    //设置总记录数
+                    this.totalCount = res.data.date.totalCount;
+                })
+            },
+            //新建窗口添加数据 确定按钮事件
+            handleAdd() {
+                var _this = this;
+                axios.post("/five", this.brand).then((res) => {
+                    if (res.data.code == 20011) {
+                        _this.addDialogFormVisible = false;
+                        _this.$message.success("添加成功");
+                    } else if (res.data.code == 20010) {
+                        _this.$message.error("添加失败！");
+                    } else {
+                        _this.$message.error(res.data.msg);
+                    }
+
+                }).finally(() => {
+                    _this.getAll();
+                })
+            },
+            // 表格颜色
+            tableRowClassName({ row, rowIndex }) {
+                if ((rowIndex + 1) % 4 === 0) {
+                    return 'warning-row';
+                } else if ((rowIndex + 1) % 2 === 0 && (rowIndex + 1) % 4 != 0) {
+                    return 'success-row';
+                }
+
+                return '';
+            },
+
+            //新建弹窗部分
+            popwindows() {
+                this.addDialogFormVisible = true;
+                this.$refs[formName].resetFields();
+            },
+            // 表单重置按钮
+            resetForm(formName) {
+                this.$refs[formName].resetFields();
+            },
+            // 表单取消按钮
+            dialogForm(formName) {
+                this.$refs[formName].resetFields();
+                this.addDialogFormVisible = false;
+            },
+            // 每页多少条
+            handleSizeChange(val) {
+                // console.log(`每页 ${val} 条`);
+                this.pageSize = val;
+                this.getAll();
+            },
+            // 当前页
+            handleCurrentChange(val) {
+                //console.log(`当前页: ${val}`);
+                this.currentPage = val;
+                this.getAll();
+            },
+            handleDelete(row) {
+                this.$confirm("是否删除当前表单信息（不可撤销）", "提示", {
+                    type: 'info'
+                }).then(() => {
+                    axios.delete("/five/" + row.fiveId).then((res) => {
+                        if (res.data.code == 20021) {
+                            this.$message.success("删除成功");
+
+                        } else {
+                            this.$message.error("删除失败"+res.data.msg);
+                        }
+                    }).finally(() => {
+                        this.getAll();
+                    })
+                }).catch(() => {
+                    this.$message.info("取消删除");
+                })
+            },
+        },
+        //单独删除
+
+    })
+
+</script>
+
+</html>

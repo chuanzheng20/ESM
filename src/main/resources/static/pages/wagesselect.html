@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+
+<html>
+
+    <head>
+
+        <!-- 页面meta -->
+
+        <meta charset="utf-8">
+
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+        <title>SpringMVC案例</title>
+
+        <meta content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" name="viewport">
+
+        <!-- 引入样式 -->
+
+        <link rel="stylesheet" href="../plugins/element-ui/lib/theme-chalk/index.css">
+        <link rel="stylesheet" href="../plugins/font-awesome/css/font-awesome.min.css">
+        <link rel="stylesheet" href="../css/style.css">
+
+
+    </head>
+
+    <body class="hold-transition">
+
+        <div id="app">
+            <template>
+              
+                <!--标题-->
+              <div>
+                <div class="content-header">
+
+                  <h1>薪酬查看</h1>
+  
+                </div>
+                <div class="app-container">
+                  <div class="box">
+              
+                <!--统一计算 和查询-->
+                <el-form :inline="true" :model="brand" class="demo-form-inline" style="margin-top: 10px;">
+                  <div>
+                    <el-form-item label="工号">
+                      <el-input v-model="brand.userId" placeholder="员工号"></el-input>
+                    </el-form-item>
+                    <el-form-item>
+                      <el-button type="primary" @click="onSubmit">查询</el-button>
+                    </el-form-item>
+                </div>
+                </el-form>
+                <!--表格-->
+                <el-table :data="tableData" style="width: 100%;" :row-class-name="tableRowClassName" expandedRows @expand-change="handledetail" > 
+                    <el-table-column type="expand">
+                        <template slot-scope="props" >
+                          <el-form label-position="left" class="demo-table-expand" style="margin-left: 200px;" >
+                            <el-row>
+                              <el-col :span="8">
+                                <el-form-item label="基础工资" style="margin:auto;">
+                                  <span>{{props.row.money}}</span>
+                                </el-form-item>
+                                <el-form-item label="养老保险" style="margin:auto;">
+                                  <span>{{(props.row.endowment)*(props.row.money)}}</span>
+                                </el-form-item>
+                                <el-form-item label="医疗保险" style="margin:auto;">
+                                  <span>{{(props.row.maternity)*(props.row.money)}}</span>
+                                </el-form-item>
+                                <el-form-item label="失业保险" style="margin:auto;">
+                                  <span>{{(props.row.medical)*(props.row.money)}}</span>
+                                </el-form-item>
+                                <el-form-item label="工伤保险" style="margin:auto;">
+                                  <span>{{(props.row.employment)*(props.row.money)}}</span>
+                                </el-form-item>
+                                <el-form-item label="生育保险" style="margin:auto;">
+                                    <span>{{(props.row.unemployment)*(props.row.money)}}</span>
+                                </el-form-item>
+                                <el-form-item label="住房公积金" style="margin:auto;">
+                                    <span>{{(props.row.housing)*(props.row.money)}}</span>
+                                </el-form-item>
+                              </el-col>
+                              <el-col :span="8">
+                                <el-form-item v-for="item in otherDataGT" :label="item.name" style="margin:auto;">
+                                  <span>{{ (item.money)*(item.num)}}</span>
+                              </el-form-item>
+                              </el-col>
+                              <el-col :span="8">
+                                <el-form-item label="税前总计" style="margin:auto;">
+                                    <span>{{ props.row.pre_tax }}</span>
+                                </el-form-item>
+                                <el-form-item label="税后" style="margin:auto;">
+                                  <span>{{ props.row.after_tax }}</span>
+                                </el-form-item>
+                              </el-col>
+                            </el-row>
+                          </el-form>
+                        </template>
+                      </el-table-column>
+
+                  <el-table-column prop="userId" label="用户" sortable column-key="userId" align="center">
+                  </el-table-column>
+
+                  <el-table-column prop="name" label="姓名" align="center">
+                  </el-table-column> 
+
+                  <el-table-column prop="date" align="center" label="年月">
+                  </el-table-column>
+                </el-table>
+                <!-- 分页功能 -->
+                <div class="block" style="width: 600px;margin: auto;margin-top: 10px;">
+                  <el-pagination
+                    @size-change="handleSizeChange"
+                    @current-change="handleCurrentChange"
+                    background
+                    :current-page="currentPage4"
+                    :page-size="pageSize"
+                    :page-sizes="[10,15,20,25]"
+                    layout="total, sizes, prev, pager, next, jumper"
+                    :total="totalCount">
+                  </el-pagination>
+                </div>
+              </div>
+            </div>
+              </div>
+            </template>
+
+        </div>
+
+    </body>
+
+    <!-- 引入组件库 -->
+
+    <script src="../js/vue.js"></script>
+    <script src="../plugins/element-ui/lib/index.js"></script>
+    <script type="text/javascript" src="../js/jquery.min.js"></script>
+    <script src="../js/axios-0.18.0.js"></script>
+    <script>
+        var vue = new Vue({
+            el: '#app',
+            data() {
+                  return {
+                    brand:{
+                      userId:null,
+                    },
+                    num:this.num=0,
+                    //每页显示数
+                    pageSize:10,
+                    //总记录数
+                    totalCount:null,
+
+                    // 页数存放
+                    currentPage: 1,
+                      isAse:true,
+                    listLoading: false,
+                    multipleSelection:[],
+                    //其他工资
+                    otherDataGT:[],
+                        
+                    // 第五个其他工资类型(传过来)
+                    tableData: []
+                }
+            },
+            created() {
+                this.getAll();
+            },
+            methods: {
+              //点击行展开事件
+                handledetail(row,e){
+                    //获取后台数据
+                    console.log(row.userId,row.ymid);
+                    axios.get("/wages/selectById?userId="+row.userId+"&yMId="+row.ymid).then((res)=>{
+                    this.otherDataGT = res.data.data;
+                })
+                // })
+                },
+              //表格数据
+              getAll(){
+                //发送ajax请求
+                axios.post("/wages/selectByPageAndCurrentPage?currentPage="+this.currentPage+"&pageSize="+this.pageSize +"&isAse=" + this.isAse,this.brand).then((res)=>{
+                  this.tableData = res.data.data.rows;
+                  //设置总记录数
+                  this.totalCount = res.data.data.totalCount;
+                })
+              },
+              
+              // 表格颜色
+              tableRowClassName({row, rowIndex}) {
+                if ((rowIndex + 1)%4 === 0) {
+                  return 'warning-row';
+                } else if ((rowIndex + 1)%2 === 0 && (rowIndex + 1)%4 != 0) {
+                  return 'success-row';
+                }
+
+                return '';
+              },  
+
+              // 每页多少条
+              handleSizeChange(val) {
+                this.pageSize = val;
+                this.getAll();
+              },
+              // 当前页
+              handleCurrentChange(val) {
+                this.currentPage = val;
+                this.getAll();
+              },
+                onSubmit() {
+                    this.getAll();
+                },
+              },
+
+        })
+
+    </script>
+
+</html>

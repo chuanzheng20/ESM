@@ -22,19 +22,19 @@ import java.util.List;
 public class UserServiceImpl implements UserService {
 
     @Autowired
-    public SectorDao sectorDao;
+    private SectorDao sectorDao;
 
     @Autowired
-    public GradedWagesDao gradedWagesDao;
+    private GradedWagesDao gradedWagesDao;
 
     @Autowired
-    public UserDao userDao;
+    private UserDao userDao;
 
     @Autowired
-    public UserQueryDao userQueryDao;
+    private UserQueryDao userQueryDao;
 
     @Autowired
-    public UserRoleQueryDao userRoleQueryDao;
+    private UserRoleQueryDao userRoleQueryDao;
 
     @Override
     public User getById(String id) {
@@ -122,19 +122,7 @@ public class UserServiceImpl implements UserService {
         return userQueryDao.findById(queryWrapper);
     }
 
-    @Override
-    public UserQuery selectByIdAndRole(String userId) {
-
-        QueryWrapper<UserQuery> queryWrapper = new QueryWrapper<>();
-        queryWrapper.in("tb_user.user_id",userId);
-        queryWrapper.apply("tb_user.graded_id = tb_graded_wages.graded_id");
-        queryWrapper.apply("tb_graded_wages.sector_id = tb_sector.sector_id");
-        queryWrapper.apply("tb_user.role_id = tb_role.role_id");
-        queryWrapper.in("deleted",0);
-        return userQueryDao.findByIdRole(queryWrapper);
-    }
-
-
+  
     @Override
     public List<Level> getLevel() {
         List<Sector> sectorList = sectorDao.getAll();

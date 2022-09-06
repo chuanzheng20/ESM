@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+    <!-- 页面meta -->
+
+    <meta charset="utf-8">
+
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>SpringMVC案例</title>
+
+    <meta content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" name="viewport">
+
+    <!-- 引入样式 -->
+
+    <link rel="stylesheet" href="../plugins/element-ui/lib/theme-chalk/index.css">
+    <link rel="stylesheet" href="../plugins/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+
+</head>
+
+<body class="hold-transition">
+
+<div id="app">
+    <template>
+        <div class="content-header">
+
+            <h1>薪酬计算</h1>
+
+        </div>
+
+        <div class="app-container">
+
+            <div class="box">
+
+                <!--按钮-->
+
+                <!--统一计算 和查询-->
+                <el-form :inline="true" :model="brand" class="demo-form-inline" style="margin-top: 10px;">
+                    <!-- <div style="float: left;">
+                      <el-row>
+                        <el-button type="danger" plain @click="deleteByIds">统一计算</el-button>
+                      </el-row>
+                    </div> -->
+                    <div>
+                        <el-form-item label="工号">
+                            <el-input v-model="brand.userId" placeholder="员工号"></el-input>
+                        </el-form-item>
+                        <el-form-item>
+                            <el-button type="primary" @click="onSubmit">查询</el-button>
+                        </el-form-item>
+                    </div>
+                </el-form>
+
+                <!--计算对话框弹出-->
+                <el-dialog title="计算" :visible.sync="comFormVisible" :close-on-click-modal="false"
+                           style="margin: auto;">
+                    <el-form :model="payrollDataTo" ref="formAdd" :rules="addrules" label-width="100px"
+                             class="demo-ruleForm">
+                        <el-row>
+                            <el-col :span="12">
+                                <el-form-item label="名字" prop="name">
+                                    <el-input v-model="payrollDataTo.name" :disabled="true"></el-input>
+                                </el-form-item>
+                                <el-form-item label="员工号" prop="userId">
+                                    <el-input v-model="payrollDataTo.userId" :disabled="true"></el-input>
+                                </el-form-item>
+                                <el-form-item label="年/月" prop="ymid">
+                                    <el-select v-model="payrollDataTo.y_m_id" placeholder="请选择年月"
+                                               @change="selectTrigger(payrollDataTo.y_m_id)">
+                                        <el-option v-for="item in time" :key="item.ymid" :label="item.date"
+                                                   :value="item.ymid">
+                                            <!--                                <span>{{ item.date }}</span>-->
+                                        </el-option>
+                                    </el-select>
+                                </el-form-item>
+                                <el-form-item label="五险一金" prop="five_id">
+                                    <el-select v-model="payrollDataTo.five_id" placeholder="请选择五险一金比例"
+                                               @change="selectFive(payrollDataTo.five_id)">
+                                        <el-option v-for="item in options" :label="item.label" :value="item.value">
+                                        </el-option>
+                                    </el-select>
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="12">
+                                <el-form-item v-for="(item, index) in payrollTypeList" :label="item.text">
+                                    <el-input-number v-model="item.number" :min="0" ref="xin"></el-input-number>
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
+
+                        <el-form-item style="margin-left: 200px;">
+                            <div style="float: right;margin-right: 30px;">
+                                <el-button :class="isActiveNext" type="primary"
+                                           @click="calculate(payrollDataTo,payrollTypeList,taxRate,proportion)">添加
+                                </el-button>
+                            </div>
+                            <div style="float: right;margin-right: 10px;">
+                                <el-button :class="isActive1Next" type="primary"
+                                           @click="calculateto(payrollDataTo,payrollTypeList)">导出其他工资
+                                </el-button>
+                            </div>
+                            <div style="float: right;margin-right: 10px;">
+                                <el-button @click="dialogForm('formAdd')">关闭窗口</el-button>
+                            </div>
+                        </el-form-item>
+                    </el-form>
+                </el-dialog>
+
+                <!--表格-->
+                <el-table :data="payrollData" style="width: 100%;" :row-class-name="tableRowClassName">
+                    <el-table-column prop="userId" label="用户" sortable column-key="userId" align="center">
+                    </el-table-column>
+
+                    <el-table-column prop="name" label="姓名" align="center">
+                    </el-table-column>
+
+                    <el-table-column align="center" label="新增">
+                        <template slot-scope="scope">
+                            <el-row>
+                                <el-button type="primary" @click.stop="handle(scope.row)">操作</el-button>
+                            </el-row>
+                        </template>
+                    </el-table-column>
+                </el-table>
+                <!-- 分页功能 -->
+                <div class="block" style="width: 600px;margin: auto;margin-top: 10px;">
+                    <el-pagination
+                            @size-change="handleSizeChange"
+                            @current-change="handleCurrentChange"
+                            background
+                            :current-page="currentPage"
+                            :page-size="pageSize"
+                            :page-sizes="[10,15,20,25]"
+                            layout="total, sizes, prev, pager, next, jumper"
+                            :total="totalCount">
+                    </el-pagination>
+                </div>
+            </div>
+        </div>
+    </template>
+
+</div>
+
+</body>
+
+<!-- 引入组件库 -->
+
+<script src="../js/vue.js"></script>
+<script src="../plugins/element-ui/lib/index.js"></script>
+<script type="text/javascript" src="../js/jquery.min.js"></script>
+<script src="../js/axios-0.18.0.js"></script>
+<script>
+    var vue = new Vue({
+        el: '#app',
+        data() {
+            return {
+                //查询的userId
+                brand: {
+                    user_id: null,
+                },
+                brand2:[],
+                // 按钮显示不显示
+                isActiveNext: "active",
+                isActive1Next: "",
+                //传的年月
+                value: null,
+                //时间
+                time: [
+                    // {
+                    //   value:1,
+                    //   label:"2020-01-01"
+                    // },
+                    // {
+                    //   value:2,
+                    //   label:"2020-02-01"
+                    // },
+                    // {
+                    //   value:3,
+                    //   label:"2020-03-01"
+                    // },
+                    // {
+                    //   value:4,
+                    //   label:"2020-04-01"
+                    // },
+                    // {
+                    //   value:5,
+                    //   label:"2020-05-01"
+                    // },
+                    // {
+                    //   value:6,
+                    //   label:"2020-06-01"
+                    // },
+                    // {
+                    //   value:7,
+                    //   label:"2020-07-01"
+                    // },
+                    // {
+                    //   value:8,
+                    //   label:"2020-08-01"
+                    // },
+                    // {
+                    //   value:9,
+                    //   label:"2020-09-01"
+                    // },
+                    // {
+                    //   value:10,
+                    //   label:"2020-10-01"
+                    // },
+                ],
+                //下拉栏里的选择选项
+                options: [],
+                //实验修改五险一金
+                // options2:[
+                //   {
+                //     label:" 0.2, 0.3, 0.4, 0.5, 0.12, 0.3",
+                //     value:1,
+                //   },
+                //   {
+                //     label:" 0.2, 0.3, 0.4, 0.5, 0.12, 0.3",
+                //     value:2
+                //   },
+                //   {
+                //     label:" 0.2, 0.3, 0.4, 0.5, 0.12, 0.3",
+                //     value:2
+                //   },
+                //   {
+                //     label:" 0.2, 0.3, 0.4, 0.5, 0.12, 0.3",
+                //     value:2
+                //   }
+                // ],
+                num: 5,
+                //每页显示数
+                pageSize: 10,
+                //总记录数
+                totalCount: null,
+                // 页数存放
+                currentPage: 1,
+                isAse: true,
+                //打开弹窗
+                comFormVisible: false,
+                //进页面放的userid
+                userId: null,
+                // 第五个其他工资类型(传过来)
+                payrollTypeList: [],
+                // [
+                //   {
+                //     text:"福利",
+                //     other_id:"1",
+                //     number:0,
+                //     money:200
+                //   },{
+                //     text:"奖金",
+                //     other_id:"2",
+                //     number:0,
+                //     money:200
+                //   },{
+                //     text:"奖品",
+                //     other_id:"3",
+                //     number:0,
+                //     money:200
+                //   },{
+                //     text:"津贴",
+                //     other_id:"4",
+                //     number:0,
+                //     money:200
+                //   },{
+                //     text:"加班",
+                //     other_id:"5",
+                //     number:0,
+                //     money:200
+                //   },{
+                //     text:"未出勤",
+                //     other_id:"6",
+                //     number:0,
+                //     money:-200
+                //   },
+                //
+                // ],
+                // 第三个五险一金的比例（传过来）
+                proportion: null,
+                // proportion2:{
+                //     endowment:0.2,
+                //     maternity:0.02,
+                //     medical:0.03,
+                //     employment:0.1,
+                //     unemployment:0.15,
+                //     housing:0.25,
+                // },
+                // 第四个其他工资明细
+                // 第一个用户id
+                // 第二个基础工资
+                payrollData: [],
+                // {
+                //     userId:"205805123",
+                //     name:"俞剑辉",
+                //     //年月
+                //     y_m_id:null,
+                //     // 基础工资
+                //     money:8000,
+                //     //五险一金
+                //     // endowmentMoney:20,
+                //     // maternityMoney:30,
+                //     // medicalMoney:10,
+                //     // employmentMoney:40,
+                //     // unemploymentMoney:50,
+                //     // housingMoney:60,
+                // },
+                // {
+                //     userId:"205805122",
+                //     name:"黄进恒",
+                //     //年月
+                //     years:null,
+                //     // 基础工资
+                //     money:8000,
+                //     //五险一金
+                // },
+                // 传数据的跳板
+                payrollDataTo: {
+                    userId: null,
+                    //年月
+                    y_m_id: null,
+                    //五险一金
+                    five_id: null,
+                    // 使用税率
+                    other_wages: null,
+                    pre_tax: null,
+                    after_tax: null,
+                },
+
+                // 第六个税率
+                taxRate: [],
+                // {
+                //   tax_id:1,
+                //   starm_m:5000,
+                //   end_m:8000,
+                //   tax_rate:0.3
+                // }
+
+
+                //弹出窗口中的提示信息
+                addrules: {
+                    y_m_id: [
+                        {required: true, message: '请选择年/月', trigger: 'blur'}
+                    ],
+                    five_id: [
+                        {required: true, message: '请选择五险一金比例', trigger: 'blur'}
+                    ]
+                },
+            }
+        },
+        created() {
+            this.getAll();
+            this.taxRateAll();
+            this.timeTo();
+        },
+        methods: {
+            // 表格颜色
+            tableRowClassName({row, rowIndex}) {
+                if ((rowIndex + 1) % 4 === 0) {
+                    return 'warning-row';
+                } else if ((rowIndex + 1) % 2 === 0 && (rowIndex + 1) % 4 != 0) {
+                    return 'success-row';
+                }
+
+                return '';
+            },
+            taxRateAll() {
+                axios.get("/wages/taxRateAll").then((res) => {
+                    this.taxRate = res.data.data;
+                });
+            },
+            //表格数据
+            getAll() {
+                //发送ajax请求
+                axios.post("/wages/selectByPageAndCurrentPage?currentPage=" + this.currentPage + "&pageSize=" + this.pageSize + "&isAse=" + this.isAse, this.brand).then((res) => {
+                    this.payrollData = res.data.data.rows;
+                    //设置总记录数
+                    this.totalCount = res.data.data.totalCount;
+                })
+            },
+            //改时间事件
+            timeTo() {
+                //发送ajax请求
+                axios.get("/wages/timeToAll").then((res) => {
+                    this.time = res.data.data;
+                })
+            },
+            //弹窗打开
+            handle(row) {
+                this.payrollDataTo = {...row};
+                this.comFormVisible = true;
+            },
+            // 关闭窗口
+            dialogForm(formAdd) {
+                this.$refs[formAdd].resetFields();
+                // this.$refs[xin].resetFields();
+                for (var i = 0; i < this.payrollTypeList.length; i++) {
+                    this.payrollTypeList[i].number = 0;
+                }
+                this.comFormVisible = false;
+            },
+            //选中时间，修改五险一金绑定数据
+            selectTrigger(val) {
+                this.payrollDataTo.y_m_id = val;
+                console.log(val)
+                // this.options = this.options2
+                axios.get("/wages/" + val).then((res) => {
+                    if (res.data.code == 20041) {
+
+                        this.options = []
+
+                        for (let i = 0; i < res.data.data.length; i++) {
+                            this.options.push({
+                                label: res.data.data[i].employment+ " "+res.data.data[i].endowment+ " "+res.data.data[i].maternity+ " "+res.data.data[i].medical+ " "+res.data.data[i].unemployment+ " "+res.data.data[i].housing,
+                                value: res.data.data[i].fiveId
+                            })
+                        }
+                    } else if (res.data.code == 20040) {
+                        this.$message.error("获取五险一金失败！");
+                    } else {
+                        this.$message.error(res.data.msg);
+                    }
+                })
+            },
+            //选中五险一金，请求后返回数据到计算那边用
+            selectFive(val) {
+                this.payrollDataTo.five_id = val;
+                axios.get("/wages/selectFive/" + this.payrollDataTo.five_id).then((res) => {
+                    if (res.data.code == 20041) {
+                        this.proportion = res.data.data;
+                    } else if (res.data.code == 20040) {
+                        this.$message.error("获取五险一金失败！");
+                    } else {
+                        this.$message.error(res.data.msg);
+                    }
+                })
+            },
+            //把其他类型明细传进数据库
+            calculateto(payrollDataTo, payrollTypeList) {
+                var data = [];
+                for (var i = 0; i < payrollTypeList.length; i++) {
+                    if (payrollTypeList[i].number > 0) {
+                        data.push({
+                            user_id: payrollDataTo.userId,
+                            y_m_id: payrollDataTo.y_m_id,
+                            other_id: payrollTypeList[i].other_id,
+                            num: payrollTypeList[i].number
+                        })
+                    }
+                }
+                //未完成有问题
+                // axios.post("/wages/add",data).then((res) => {
+                //     if (res.data.code == 20011) {
+                //         this.$message.success("添加成功");
+                //         this.isActiveNext = "";
+                //         this.isActive1Next = "active"
+                //     } else if (res.data.code == 20010) {
+                //         this.$message.error("添加失败！");
+                //     } else {
+                //         this.$message.error(res.data.msg);
+                //     }
+                // })
+                // this.isActiveNext = "";
+                //         this.isActive1Next = "active"
+            },
+            //点击计算
+            calculate(payrollDataTo, payrollTypeList, taxRate, proportion) {
+                this.$refs.formAdd.validate((valid) => {
+                    if (valid) {
+                        var sum = 0;
+                        var proportionNum = 0;
+                        proportionNum = (proportion.endowment * payrollDataTo.money) + (proportion.maternity * payrollDataTo.money) + (proportion.medical * payrollDataTo.money) + (proportion.employment * payrollDataTo.money) + (proportion.unemployment * payrollDataTo.money) + (proportion.housing * payrollDataTo.money)
+                        for (var i = 0; i < payrollTypeList.length; i++) {
+                            sum += parseInt(payrollTypeList[i].number) * parseInt(payrollTypeList[i].money)
+                        }
+                        this.payrollDataTo.other_wages = sum;
+                        this.payrollDataTo.pre_tax = payrollDataTo.money - proportionNum + sum
+                        for (var i = 0; i < taxRate.length; i++) {
+                            if (taxRate[i].starm_m <= this.payrollDataTo.pre_tax && taxRate[i].end_m > this.payrollDataTo.pre_tax) {
+                                this.payrollDataTo.after_tax = payrollDataTo.pre_tax - ((payrollDataTo.pre_tax) * (taxRate[i].tax_rate))
+                            }
+                        }
+                        console.log(this.payrollDataTo)
+                        axios.post("/wages/adds", payrollDataTo).then((res) => {
+                            if (res.data.code == 20011) {
+                                this.$message.success("添加成功");
+                            } else if (res.data.code == 20010) {
+                                this.$message.error("添加失败！");
+                            } else {
+                                this.$message.error(res.data.msg);
+                            }
+
+                        })
+                    }
+                })
+            },
+            //查询事件
+            onSubmit() {
+                this.getAll();
+            },
+
+            // 每页多少条
+            handleSizeChange(val) {
+                this.pageSize = val;
+                this.getAll();
+            },
+            // 当前页
+            handleCurrentChange(val) {
+                this.currentPage = val;
+                this.getAll();
+            }
+        },
+
+    })
+
+</script>
+
+</html>

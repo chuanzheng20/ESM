@@ -66,6 +66,8 @@ public interface UserService {
      * @return UserQuery对象
      */
     public UserQuery selectById(String id);
+    public List<UserQuery> selectAll();
+    public List<UserQuery> selectId(String userId);
 
     /**
      * 分页查询（用户表，角色表）关系表
